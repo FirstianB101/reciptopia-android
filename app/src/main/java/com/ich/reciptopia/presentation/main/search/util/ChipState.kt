@@ -6,3 +6,8 @@ data class ChipState(
     var text: String,
     var isSubIngredient: MutableState<Boolean>
 )
+
+data class NormalChipState(
+    var text: String,
+    var isSubIngredient: Boolean
+)

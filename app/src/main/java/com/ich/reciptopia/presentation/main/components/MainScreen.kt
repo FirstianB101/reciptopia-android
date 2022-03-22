@@ -49,6 +49,7 @@ fun MainScreen(
     val tabIndex = pagerState.currentPage
     val scope = rememberCoroutineScope()
 
+    var loginDialogState by remember { mutableStateOf(false) }
     var searchMode by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
 
@@ -66,7 +67,9 @@ fun MainScreen(
                 backgroundColor = Color.White
             ) {
                 IconButton(
-                    onClick = {}
+                    onClick = {
+                        loginDialogState = true
+                    }
                 ) {
                     Icon(
                         modifier = Modifier.size(36.dp),
@@ -174,6 +177,9 @@ fun MainScreen(
                         chipStates = chipStates.addChipState {
                             it.removeAt(idx)
                         }
+                    },
+                    onChipReset = {
+                        chipStates = emptyList()
                     }
                 )
             }else{

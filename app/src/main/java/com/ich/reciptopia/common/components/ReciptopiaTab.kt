@@ -28,11 +28,11 @@ fun ReciptopiaTabRow(
             targetState = selectedIndex,
             transitionSpec = {
                 if(selectedIndex > initialState){
-                    slideInHorizontally{ width -> width/4 } + fadeIn() with
-                            slideOutHorizontally { width -> -width/4 } + fadeOut()
+                    slideInHorizontally{ width -> width/8 } + fadeIn() with
+                            slideOutHorizontally { width -> -width/8 } + fadeOut()
                 }else{
-                    slideInHorizontally{ width -> -width/4 } + fadeIn() with
-                            slideOutHorizontally { width -> width/4 } + fadeOut()
+                    slideInHorizontally{ width -> -width/8 } + fadeIn() with
+                            slideOutHorizontally { width -> width/8 } + fadeOut()
                 }.using(
                     SizeTransform(clip = false)
                 )
