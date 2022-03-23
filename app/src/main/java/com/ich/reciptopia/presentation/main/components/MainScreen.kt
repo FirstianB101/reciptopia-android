@@ -27,6 +27,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.components.ReciptopiaTabRow
+import com.ich.reciptopia.presentation.login.components.LoginDialog
 import com.ich.reciptopia.presentation.main.analyze_ingredient.components.AnalyzeIngredientScreen
 import com.ich.reciptopia.presentation.main.community.CommunityScreen
 import com.ich.reciptopia.presentation.main.search.components.CustomTextField
@@ -208,5 +209,11 @@ fun MainScreen(
                 }
             )
         }
+    }
+
+    LoginDialog(
+        showDialog = loginDialogState
+    ) {
+        loginDialogState = false
     }
 }

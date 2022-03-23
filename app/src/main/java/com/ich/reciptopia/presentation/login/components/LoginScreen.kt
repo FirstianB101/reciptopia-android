@@ -34,7 +34,7 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(16.dp),
             text = stringResource(id = R.string.login),
             color = Color.Black,
             fontWeight = FontWeight.Bold,

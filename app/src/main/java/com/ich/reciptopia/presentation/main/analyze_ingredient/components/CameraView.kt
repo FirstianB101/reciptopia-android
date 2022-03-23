@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Cameraswitch
 import androidx.compose.material.icons.filled.Collections
 import androidx.compose.material.icons.filled.FlashlightOn
 import androidx.compose.material.icons.filled.PhotoCamera
@@ -228,8 +229,8 @@ fun CameraControls(cameraUIAction: (CameraUIAction) -> Unit) {
         )
 
         CameraControl(
-            imageVector = Icons.Filled.FlashlightOn,
-            contentDesc = "Flash Icon",
+            imageVector = Icons.Filled.Cameraswitch,
+            contentDesc = "CameraSwitch Icon",
             modifier= Modifier.size(36.dp),
             onClick = { cameraUIAction(CameraUIAction.OnSwitchCameraClick) }
         )

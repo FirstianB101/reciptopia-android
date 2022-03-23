@@ -2,10 +2,9 @@ package com.ich.reciptopia.presentation.login.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,10 +15,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.ich.reciptopia.R
 
 @Composable
-fun SignupScreen(){
+fun SignupScreen(
+    navController: NavController
+){
     var emailId by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordCheck by remember { mutableStateOf("") }
@@ -29,13 +31,28 @@ fun SignupScreen(){
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            modifier = Modifier.padding(8.dp),
-            text = stringResource(id = R.string.signup),
-            color = Color.Black,
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp
-        )
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            IconButton(
+                onClick = { navController.navigateUp() }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = null
+                )
+            }
+
+            Text(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(16.dp),
+                text = stringResource(id = R.string.signup),
+                color = Color.Black,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+        }
 
         Image(
             modifier = Modifier
