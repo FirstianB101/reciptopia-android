@@ -1,16 +1,19 @@
 package com.ich.reciptopia.presentation.main.search.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -20,16 +23,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.ich.reciptopia.R
-import com.ich.reciptopia.presentation.main.search.util.ChipState
-import com.ich.reciptopia.presentation.main.search.util.NormalChipState
+import com.ich.reciptopia.presentation.main.search.util.ChipInfo
+import com.ich.reciptopia.presentation.main.search.util.getTextsWithComma
 
 @Composable
 fun SearchHistoryListItem(
     modifier: Modifier = Modifier,
-    items: List<NormalChipState>?
+    items: List<ChipInfo>?,
+    onItemClicked: () -> Unit,
+    onDeleteItem: () -> Unit
 ){
     Row(
-        modifier = modifier,
+        modifier = Modifier
+            .clickable{ onItemClicked() }
+            .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -49,26 +56,23 @@ fun SearchHistoryListItem(
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        if(items == null) {
-            Text(
-                text = "검색 기록"
-            )
-        }else{
-            Text(
-                buildAnnotatedString {
-                    items.forEach { chip ->
-                        withStyle(style = SpanStyle(
-                            color = if(chip.isSubIngredient) colorResource(R.color.sub_ingredient)
-                            else colorResource(id = R.color.main_ingredient)
-                        )){
-                            append(chip.text)
-                        }
-                        append(", ")
-                    }
-                },
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+        Text(
+            modifier = Modifier.weight(1f),
+            text = items?.getTextsWithComma() ?: "",
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        IconButton(
+            modifier = Modifier.size(24.dp),
+            onClick = onDeleteItem
+        ) {
+            Icon(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Search History Delete Icon",
+                tint = colorResource(id = R.color.main_color)
             )
         }
+
     }
 }

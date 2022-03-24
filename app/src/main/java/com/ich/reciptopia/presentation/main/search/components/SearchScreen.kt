@@ -1,41 +1,57 @@
 package com.ich.reciptopia.presentation.main.search.components
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
+import com.ich.reciptopia.domain.model.SearchHistory
+import com.ich.reciptopia.presentation.main.search.SearchState
+import com.ich.reciptopia.presentation.main.search.SearchViewModel
+import com.ich.reciptopia.presentation.main.search.util.ChipInfo
 import com.ich.reciptopia.presentation.main.search.util.ChipState
-import com.ich.reciptopia.presentation.main.search.util.NormalChipState
 
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     chipStates: List<ChipState>,
+    viewModel: SearchViewModel = hiltViewModel(),
     onChipClicked: (String, Boolean, Int) -> Unit,
     onDeleteClicked: (String, Boolean, Int) -> Unit,
     onChipReset: () -> Unit
 ){
+    val state = viewModel.state.collectAsState()
+    val context = LocalContext.current
+
     var tabIndex by remember { mutableStateOf(0) }
     val tabTitles = listOf(
         stringResource(id = R.string.search_history),
         stringResource(id = R.string.favorite)
     )
 
-    var testStates by remember { mutableStateOf(listOf(
-        listOf(NormalChipState("검색 메인 재료1",false),NormalChipState("검색 서브 재료1",true)),
-        listOf(NormalChipState("검색 메인 재료2",false),NormalChipState("검색 서브 재료2",true)),
-        listOf(NormalChipState("검색 메인 재료3",false),NormalChipState("검색 서브 재료3",true)),
-    )) }
+    var testStates by remember { mutableStateOf(listOf<SearchHistory>()) }
+
+    when(state.value){
+        is SearchState.AddSearchHistory -> {
+            Toast.makeText(context, "검색 기록 추가", Toast.LENGTH_SHORT).show()
+        }
+        is SearchState.DeleteSearchHistory -> {
+            Toast.makeText(context, "검색 기록 삭제", Toast.LENGTH_SHORT).show()
+        }
+        is SearchState.GetSearchHistory -> {
+            testStates = (state.value as SearchState.GetSearchHistory).histories
+        }
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -69,14 +85,19 @@ fun SearchScreen(
                 }
                 when (tabIndex) {
                     0 -> {
-                        for(st in testStates) {
+                        testStates.forEachIndexed { index, history ->
                             SearchHistoryListItem(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(24.dp),
-                                items = st
+                                items = history.ingredients,
+                                onItemClicked = {
+                                    Toast.makeText(context, "${index}번째 아이템", Toast.LENGTH_SHORT).show()
+                                },
+                                onDeleteItem = {
+                                    viewModel.deleteSearchHistory(history)
+                                }
                             )
-
                             Divider()
                         }
                     }
@@ -87,7 +108,6 @@ fun SearchScreen(
                                     .fillMaxWidth()
                                     .padding(24.dp)
                             )
-
                             Divider()
                         }
                     }
@@ -101,13 +121,8 @@ fun SearchScreen(
                 .align(Alignment.BottomEnd)
                 .offset(x = (-16).dp, y = (-16).dp),
             onClick = {
-                testStates = testStates.toMutableList().also {
-                    val newChips = mutableListOf<NormalChipState>()
-                    for(st in chipStates){
-                        newChips.add(NormalChipState(st.text,st.isSubIngredient.value))
-                    }
-                    it.add(0,newChips)
-                }
+                val newHistory = SearchHistory(ingredients = chipStates.map{s->s.toChipInfo()})
+                viewModel.addSearchHistory(newHistory)
                 onChipReset()
             },
             backgroundColor = colorResource(id = R.color.main_color),
