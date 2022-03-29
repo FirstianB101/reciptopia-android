@@ -1,5 +1,6 @@
 package com.ich.reciptopia.presentation.main.search.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.text.BasicTextField
@@ -20,6 +21,7 @@ fun CustomTextField(
     placeholderText: String = "",
     fontSize: TextUnit = MaterialTheme.typography.body2.fontSize,
     value: String,
+    interactionSource: MutableInteractionSource,
     onValueChange: (String) -> Unit
 ) {
     BasicTextField(
@@ -50,6 +52,7 @@ fun CustomTextField(
                 }
                 if (trailingIcon != null) trailingIcon()
             }
-        }
+        },
+        interactionSource = interactionSource
     )
 }

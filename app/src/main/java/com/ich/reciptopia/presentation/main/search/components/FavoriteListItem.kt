@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Grade
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +25,7 @@ fun FavoriteListItem(
     ) {
         Icon(
             modifier = Modifier.size(36.dp),
-            imageVector = Icons.Filled.Grade,
+            imageVector = Icons.Filled.Star,
             contentDescription = "Favorite List Item Icon",
             tint = Color.Yellow
         )

@@ -13,7 +13,6 @@ import com.ich.reciptopia.presentation.main.analyze_ingredient.components.Manage
 @SuppressLint("MutableCollectionMutableState")
 @Composable
 fun AnalyzeIngredientScreen(
-
 ){
     val context = LocalContext.current
     val images by remember { mutableStateOf(mutableListOf<Bitmap>()) }

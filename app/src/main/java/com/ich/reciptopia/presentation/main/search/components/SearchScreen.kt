@@ -14,17 +14,19 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.ich.reciptopia.R
 import com.ich.reciptopia.domain.model.SearchHistory
+import com.ich.reciptopia.presentation.main.components.MainScreenUI
 import com.ich.reciptopia.presentation.main.search.SearchState
 import com.ich.reciptopia.presentation.main.search.SearchViewModel
-import com.ich.reciptopia.presentation.main.search.util.ChipInfo
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     chipStates: List<ChipState>,
+    navController: NavController,
     viewModel: SearchViewModel = hiltViewModel(),
     onChipClicked: (String, Boolean, Int) -> Unit,
     onDeleteClicked: (String, Boolean, Int) -> Unit,
@@ -39,7 +41,7 @@ fun SearchScreen(
         stringResource(id = R.string.favorite)
     )
 
-    var testStates by remember { mutableStateOf(listOf<SearchHistory>()) }
+    var histories by remember { mutableStateOf(listOf<SearchHistory>()) }
 
     when(state.value){
         is SearchState.AddSearchHistory -> {
@@ -49,7 +51,7 @@ fun SearchScreen(
             Toast.makeText(context, "검색 기록 삭제", Toast.LENGTH_SHORT).show()
         }
         is SearchState.GetSearchHistory -> {
-            testStates = (state.value as SearchState.GetSearchHistory).histories
+            histories = (state.value as SearchState.GetSearchHistory).histories
         }
     }
 
@@ -85,14 +87,17 @@ fun SearchScreen(
                 }
                 when (tabIndex) {
                     0 -> {
-                        testStates.forEachIndexed { index, history ->
+                        histories.forEachIndexed { index, history ->
                             SearchHistoryListItem(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(24.dp),
                                 items = history.ingredients,
                                 onItemClicked = {
-                                    Toast.makeText(context, "${index}번째 아이템", Toast.LENGTH_SHORT).show()
+                                    navController.navigate(MainScreenUI.BoardListScreen.route){
+                                        popUpTo(MainScreenUI.BoardListScreen.route){ inclusive = true }
+                                        launchSingleTop = true
+                                    }
                                 },
                                 onDeleteItem = {
                                     viewModel.deleteSearchHistory(history)
@@ -123,6 +128,7 @@ fun SearchScreen(
             onClick = {
                 val newHistory = SearchHistory(ingredients = chipStates.map{s->s.toChipInfo()})
                 viewModel.addSearchHistory(newHistory)
+                navController.navigate(MainScreenUI.BoardListScreen.route)
                 onChipReset()
             },
             backgroundColor = colorResource(id = R.color.main_color),

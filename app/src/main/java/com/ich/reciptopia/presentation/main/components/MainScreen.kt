@@ -1,36 +1,30 @@
 package com.ich.reciptopia.presentation.main.components
 
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
-import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.components.ReciptopiaTabRow
+import com.ich.reciptopia.presentation.board.components.BoardListScreen
 import com.ich.reciptopia.presentation.login.components.LoginDialog
 import com.ich.reciptopia.presentation.main.analyze_ingredient.components.AnalyzeIngredientScreen
 import com.ich.reciptopia.presentation.main.community.CommunityScreen
-import com.ich.reciptopia.presentation.main.search.components.CustomTextField
 import com.ich.reciptopia.presentation.main.search.components.SearchScreen
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 import com.ich.reciptopia.presentation.main.search.util.addChipState
@@ -40,175 +34,122 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainScreen(
 
-){
+) {
     val context = LocalContext.current
+    val navController = rememberNavController()
     val pagerState = rememberPagerState()
+    val scope = rememberCoroutineScope()
     val tabTexts = listOf(
         stringResource(id = R.string.search_ingredient),
         stringResource(id = R.string.community)
     )
     val tabIndex = pagerState.currentPage
-    val scope = rememberCoroutineScope()
 
     var loginDialogState by remember { mutableStateOf(false) }
     var searchMode by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
+    val searchSource = remember { MutableInteractionSource() }
 
     var chipStates by remember { mutableStateOf(listOf<ChipState>()) }
 
-    BackHandler(searchMode) {
-        searchMode = false
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    LaunchedEffect(currentRoute) {
+        when (currentRoute) {
+            MainScreenUI.CameraScreen.route -> searchMode = false
+        }
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(8.dp),
-                backgroundColor = Color.White
-            ) {
-                IconButton(
-                    onClick = {
-                        loginDialogState = true
-                    }
-                ) {
-                    Icon(
-                        modifier = Modifier.size(36.dp),
-                        imageVector = Icons.Filled.AccountCircle,
-                        contentDescription = "Login Icon",
-                        tint = colorResource(id = R.color.main_color)
-                    )
-                }
+    if (searchSource.collectIsPressedAsState().value) {
+        if (currentRoute != MainScreenUI.SearchScreen.route)
+            navController.navigate(MainScreenUI.SearchScreen.route)
+    }
 
-                if(!searchMode)
-                    Spacer(Modifier.weight(1f))
-
-                AnimatedVisibility(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(4.dp),
-                    visible = searchMode,
-                    enter = scaleIn() + expandHorizontally(),
-                    exit = scaleOut() + shrinkHorizontally()
-                ) {
-                    CustomTextField(
-                        value = searchText,
-                        onValueChange = { searchText = it },
-                        trailingIcon = {
-                            IconButton(
-                                modifier = Modifier.offset(x = 10.dp),
-                                onClick = {
-                                    chipStates = chipStates.addChipState{
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        HorizontalPager(
+            modifier = Modifier.weight(1f),
+            count = tabTexts.size,
+            state = pagerState
+        ) { page ->
+            when(page){
+                0 -> {
+                    Scaffold(
+                        topBar = {
+                            SearchableTopBar(
+                                modifier = Modifier.fillMaxWidth(),
+                                searchMode = searchMode,
+                                searchText = searchText,
+                                searchSource = searchSource,
+                                onLoginButtonClicked = { loginDialogState = true },
+                                onAddChip = {
+                                    chipStates = chipStates.addChipState {
                                         it.add(ChipState(searchText, mutableStateOf(true)))
                                     }
-                                    searchText = ""
+                                },
+                                onSearchTextChanged = { searchText = it },
+                                onSearchTextReset = { searchText = "" },
+                                onSearchButtonClicked = {
+                                    searchMode = true
+                                    navController.navigate(MainScreenUI.SearchScreen.route)
                                 }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Add,
-                                    contentDescription = "",
-                                    tint = LocalContentColor.current.copy(alpha = 0.5f)
+                            )
+                        }
+                    ) {
+                        NavHost(
+                            modifier = Modifier.weight(1f),
+                            navController = navController,
+                            startDestination = MainScreenUI.CameraScreen.route
+                        ) {
+                            composable(route = MainScreenUI.CameraScreen.route) {
+                                AnalyzeIngredientScreen()
+                            }
+                            composable(route = MainScreenUI.SearchScreen.route) {
+                                SearchScreen(
+                                    chipStates = chipStates,
+                                    navController = navController,
+                                    onChipClicked = { content, isMain, idx ->
+                                        chipStates[idx].isSubIngredient.value =
+                                            !chipStates[idx].isSubIngredient.value
+                                    },
+                                    onDeleteClicked = { content, isMain, idx ->
+                                        Toast.makeText(context, "$content 삭제", Toast.LENGTH_SHORT).show()
+                                        chipStates = chipStates.addChipState {
+                                            it.removeAt(idx)
+                                        }
+                                    },
+                                    onChipReset = {
+                                        chipStates = emptyList()
+                                    }
                                 )
                             }
-                        },
-                        modifier = Modifier
-                            .background(
-                                Color(0xDDDDDDDD),
-                                RoundedCornerShape(10.dp)
-                            )
-                            .padding(4.dp)
-                            .height(36.dp),
-                        fontSize = 16.sp,
-                        placeholderText = "재료 추가",
-                    )
-                }
-
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        modifier = Modifier.size(36.dp),
-                        imageVector = Icons.Filled.Notifications,
-                        contentDescription = "Notification Icon",
-                        tint = Color.Black
-                    )
-                }
-            }
-
-            if(!searchMode) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    TextButton(
-                        onClick = { searchMode = true }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search Icon",
-                            tint = Color.Black
-                        )
-
-                        Text(
-                            text = "이름으로 검색",
-                            color = Color.Black,
-                            fontSize = 17.sp,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-                }
-            }
-        }
-    ){
-        Column(
-            modifier = Modifier.background(Color.White),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if(searchMode){
-                SearchScreen(
-                    modifier = Modifier.weight(1f),
-                    chipStates = chipStates,
-                    onChipClicked = { content, isMain, idx ->
-                        chipStates[idx].isSubIngredient.value = !chipStates[idx].isSubIngredient.value
-                    },
-                    onDeleteClicked = { content, isMain, idx ->
-                        Toast.makeText(context, "$content 삭제", Toast.LENGTH_SHORT).show()
-                        chipStates = chipStates.addChipState {
-                            it.removeAt(idx)
+                            composable(route = MainScreenUI.BoardListScreen.route) {
+                                BoardListScreen()
+                            }
                         }
-                    },
-                    onChipReset = {
-                        chipStates = emptyList()
                     }
-                )
-            }else{
-                HorizontalPager(
+                }
+                1 -> CommunityScreen(
                     modifier = Modifier.weight(1f),
-                    count = tabTexts.size,
-                    state = pagerState
-                ) { page ->
-                    when(page){
-                        0 -> AnalyzeIngredientScreen()
-                        1 -> CommunityScreen()
-                    }
+                    onLoginButtonClicked = { loginDialogState = true }
+                )
+            }
+        }
+
+        ReciptopiaTabRow(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .padding(top = 8.dp, bottom = 16.dp, start = 0.dp, end = 0.dp),
+            tabTexts = tabTexts,
+            selectedIndex = tabIndex,
+            onTabSelected = {
+                scope.launch {
+                    pagerState.animateScrollToPage(it)
                 }
             }
-
-            ReciptopiaTabRow(
-                modifier = Modifier
-                    .fillMaxWidth(0.6f)
-                    .padding(top = 8.dp, bottom = 16.dp, start = 0.dp, end = 0.dp),
-                tabTexts = tabTexts,
-                selectedIndex = tabIndex,
-                onTabSelected = {
-                    scope.launch {
-                        pagerState.animateScrollToPage(it)
-                    }
-                }
-            )
-        }
+        )
     }
 
     LoginDialog(
