@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.main.community
+package com.ich.reciptopia.presentation.main.community.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -6,7 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +24,8 @@ fun CommunityScreen(
     modifier: Modifier = Modifier,
     onLoginButtonClicked: () -> Unit
 ){
+    var createDialog by remember { mutableStateOf(false) }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -75,7 +77,7 @@ fun CommunityScreen(
                     .size(48.dp)
                     .align(Alignment.BottomEnd)
                     .offset(x = (-16).dp, y = (-16).dp),
-                onClick = {},
+                onClick = { createDialog = true },
                 backgroundColor = colorResource(id = R.color.main_color),
                 contentColor = Color.White
             ) {
@@ -85,5 +87,11 @@ fun CommunityScreen(
                 )
             }
         }
+    }
+
+    CreateBoardDialog(
+        showDialog = createDialog
+    ) {
+        createDialog = false
     }
 }

@@ -13,13 +13,17 @@
     <string name="favorite">즐겨찾기</string>
     <string name="add_ingredient">재료 추가</string>
     <string name="comment">댓글</string>
-    
+    <string name="complete">완료</string>
+
     <string name="analyze_pictures">%d개의 재료 분석하기</string>
     <string name="find_recipes">레시피 찾기</string>
+    <string name="write_recipe">레시피 작성</string>
 
     <string name="comment_find_password">비밀번호를 잊어 버리셨나요?</string>
     <string name="comment_analyze_ingredients">재료를 분석했어요</string>
     <string name="comment_analyze_check">재료가 맞는지 확인해주세요. \n핵심 재료를 체크하면 해당 재료는 검색에 반드시 포함됩니다.</string>
     <string name="comment_input_comment">댓글을 작성해보세요.</string>
+    <string name="comment_input_title">제목을 입력하세요.</string>
+    <string name="comment_input_content">내용을 입력하세요.</string>
     <string name="title_activity_board">BoardActivity</string>
 </resources>
