@@ -27,7 +27,6 @@ import com.ich.reciptopia.presentation.main.analyze_ingredient.components.Analyz
 import com.ich.reciptopia.presentation.main.community.components.CommunityScreen
 import com.ich.reciptopia.presentation.main.search.components.SearchScreen
 import com.ich.reciptopia.presentation.main.search.util.ChipState
-import com.ich.reciptopia.presentation.main.search.util.addChipState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
@@ -49,7 +48,7 @@ fun MainScreen(
     var searchText by remember { mutableStateOf("") }
     val searchSource = remember { MutableInteractionSource() }
 
-    var chipStates by remember { mutableStateOf(listOf<ChipState>()) }
+    val chipStates = remember { mutableStateListOf<ChipState>() }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -84,9 +83,7 @@ fun MainScreen(
                                 searchSource = searchSource,
                                 onLoginButtonClicked = { loginDialogState = true },
                                 onAddChip = {
-                                    chipStates = chipStates.addChipState {
-                                        it.add(ChipState(searchText, mutableStateOf(true)))
-                                    }
+                                    chipStates.add(ChipState(searchText, mutableStateOf(true)))
                                 },
                                 onSearchTextChanged = { searchText = it },
                                 onSearchTextReset = { searchText = "" },
@@ -113,12 +110,10 @@ fun MainScreen(
                                         chipStates[idx].isSubIngredient.value = !chipStates[idx].isSubIngredient.value
                                     },
                                     onDeleteClicked = { content, isMain, idx ->
-                                        chipStates = chipStates.addChipState {
-                                            it.removeAt(idx)
-                                        }
+                                        chipStates.removeAt(idx)
                                     },
                                     onChipReset = {
-                                        chipStates = emptyList()
+                                        chipStates.clear()
                                     }
                                 )
                             }

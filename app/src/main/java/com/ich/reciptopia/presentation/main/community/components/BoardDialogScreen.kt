@@ -8,7 +8,6 @@ import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.outlined.Image
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -40,7 +38,7 @@ fun BoardDialogScreen(
     val context = LocalContext.current
     var titleText by remember { mutableStateOf("") }
     var contentText by remember { mutableStateOf("") }
-    var images by remember { mutableStateOf(listOf<Bitmap>()) }
+    val images = remember { mutableStateListOf<Bitmap>() }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
@@ -52,9 +50,7 @@ fun BoardDialogScreen(
                 MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
             }
 
-            if(bitmap != null){
-                images = images.toMutableList().also { it.add(bitmap) }
-            }
+            if(bitmap != null) images.add(bitmap)
         }
     }
 
@@ -150,7 +146,7 @@ fun BoardDialogScreen(
                     bitmap = images[idx].asImageBitmap(),
                     imageSize = 98.dp
                 ) {
-                    images = images.toMutableList().also { it.removeAt(idx) }
+                    images.removeAt(idx)
                 }
             }
         }

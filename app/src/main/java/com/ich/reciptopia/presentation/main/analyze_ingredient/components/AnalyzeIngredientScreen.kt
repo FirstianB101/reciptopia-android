@@ -1,21 +1,17 @@
 package com.ich.reciptopia.presentation.main.analyze_ingredient.components
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.ich.reciptopia.common.util.Constants
-import com.ich.reciptopia.presentation.main.analyze_ingredient.components.ManageImageDialog
 
-@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun AnalyzeIngredientScreen(
 ){
     val context = LocalContext.current
-    val images by remember { mutableStateOf(mutableListOf<Bitmap>()) }
+    val images = remember { mutableStateListOf<Bitmap>() }
     var currentImageCnt by remember { mutableStateOf(0) }
 
     var manageDialogState by remember { mutableStateOf(false) }

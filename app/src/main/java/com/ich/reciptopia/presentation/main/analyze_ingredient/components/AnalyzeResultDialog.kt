@@ -1,6 +1,5 @@
 package com.ich.reciptopia.presentation.main.analyze_ingredient.components
 
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,11 +7,13 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -24,8 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.ich.reciptopia.R
 import com.ich.reciptopia.presentation.main.search.util.ChipState
-import com.ich.reciptopia.presentation.main.search.util.addChipState
-import com.ich.reciptopia.presentation.main.search.util.removeChipState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -34,13 +33,12 @@ fun AnalyzeResultDialog(
     onClose: () -> Unit
 ){
     if(showDialog){
-        val context = LocalContext.current
-        var chipStates by remember { mutableStateOf(listOf(
+        val chipStates = remember { mutableStateListOf(
             ChipState("메인 재료1", mutableStateOf(false)),
             ChipState("메인 재료2", mutableStateOf(false)),
             ChipState("서브 재료1", mutableStateOf(true)),
             ChipState("서브 재료2", mutableStateOf(true)),
-        ))}
+        )}
 
         Dialog(onDismissRequest = onClose) {
             Surface(
@@ -91,12 +89,10 @@ fun AnalyzeResultDialog(
                                 chipStates[idx].isSubIngredient.value = !chipStates[idx].isSubIngredient.value
                             },
                             onImageClicked = {  content, isMain, idx ->
-                                chipStates = chipStates.removeChipState(idx)
+                                chipStates.removeAt(idx)
                             },
                             onChipAdd = { newChipText ->
-                                chipStates = chipStates.addChipState {
-                                    it.add(ChipState(newChipText, mutableStateOf(true))
-                                )}
+                                chipStates.add(ChipState(newChipText, mutableStateOf(true)))
                             }
                         )
 
