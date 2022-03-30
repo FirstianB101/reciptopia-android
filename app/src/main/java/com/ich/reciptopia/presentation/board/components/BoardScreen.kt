@@ -9,6 +9,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -16,17 +17,21 @@ import kotlinx.coroutines.launch
 fun BoardScreen(
 
 ){
-    val bottomState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
+    )
     val scope = rememberCoroutineScope()
 
-    BackHandler(bottomState.isVisible) {
-        scope.launch {
-            bottomState.hide()
+    BackHandler{
+        if(bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+            scope.launch {
+                bottomSheetScaffoldState.bottomSheetState.collapse()
+            }
         }
     }
 
-    ModalBottomSheetLayout(
-        sheetState = bottomState,
+    BottomSheetScaffold(
+        scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
             Box(
                 Modifier
@@ -35,12 +40,12 @@ fun BoardScreen(
             ) {
                 BoardCommentBottomSheet()
             }
-        }
+        }, sheetPeekHeight = 0.dp
     ) {
         BoardDetailScreen(
             modifier = Modifier.fillMaxSize(),
             onCommentClicked = {
-                scope.launch { bottomState.animateTo(ModalBottomSheetValue.Expanded) }
+                scope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
             }
         )
     }
