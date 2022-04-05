@@ -1,5 +1,6 @@
 package com.ich.reciptopia.presentation.board.components
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -9,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 
@@ -21,12 +23,15 @@ fun BoardScreen(
         bottomSheetState = BottomSheetState(BottomSheetValue.Collapsed)
     )
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     BackHandler{
         if(bottomSheetScaffoldState.bottomSheetState.isExpanded) {
             scope.launch {
                 bottomSheetScaffoldState.bottomSheetState.collapse()
             }
+        }else{
+            (context as Activity).finish()
         }
     }
 

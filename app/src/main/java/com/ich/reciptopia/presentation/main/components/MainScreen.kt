@@ -74,8 +74,26 @@ fun MainScreen(
         ) { page ->
             when(page){
                 0 -> {
-                    Scaffold(
-                        topBar = {
+                    MainNavigation(
+                        navController = navController,
+                        cameraScreen = { AnalyzeIngredientScreen() },
+                        searchScreen = {
+                            SearchScreen(
+                                chipStates = chipStates,
+                                navController = navController,
+                                onChipClicked = { content, isMain, idx ->
+                                    chipStates[idx].isSubIngredient.value = !chipStates[idx].isSubIngredient.value
+                                },
+                                onDeleteClicked = { content, isMain, idx ->
+                                    chipStates.removeAt(idx)
+                                },
+                                onChipReset = {
+                                    chipStates.clear()
+                                }
+                            )
+                        },
+                        boardScreen = { BoardListScreen() },
+                        searchBar = {
                             SearchableTopBar(
                                 modifier = Modifier.fillMaxWidth(),
                                 searchMode = searchMode,
@@ -93,35 +111,7 @@ fun MainScreen(
                                 }
                             )
                         }
-                    ) {
-                        NavHost(
-                            modifier = Modifier.weight(1f),
-                            navController = navController,
-                            startDestination = MainScreenUI.CameraScreen.route
-                        ) {
-                            composable(route = MainScreenUI.CameraScreen.route) {
-                                AnalyzeIngredientScreen()
-                            }
-                            composable(route = MainScreenUI.SearchScreen.route) {
-                                SearchScreen(
-                                    chipStates = chipStates,
-                                    navController = navController,
-                                    onChipClicked = { content, isMain, idx ->
-                                        chipStates[idx].isSubIngredient.value = !chipStates[idx].isSubIngredient.value
-                                    },
-                                    onDeleteClicked = { content, isMain, idx ->
-                                        chipStates.removeAt(idx)
-                                    },
-                                    onChipReset = {
-                                        chipStates.clear()
-                                    }
-                                )
-                            }
-                            composable(route = MainScreenUI.BoardListScreen.route) {
-                                BoardListScreen()
-                            }
-                        }
-                    }
+                    )
                 }
                 1 -> CommunityScreen(
                     modifier = Modifier.weight(1f),
