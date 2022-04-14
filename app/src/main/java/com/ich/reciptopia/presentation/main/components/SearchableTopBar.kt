@@ -32,6 +32,7 @@ fun SearchableTopBar(
     searchText: String,
     searchSource: MutableInteractionSource,
     onLoginButtonClicked: () -> Unit,
+    onNotificationButtonClicked: () -> Unit,
     onAddChip: () -> Unit,
     onSearchTextChanged: (String) -> Unit,
     onSearchTextReset: () -> Unit,
@@ -96,7 +97,7 @@ fun SearchableTopBar(
         }
 
         IconButton(
-            onClick = {}
+            onClick = onNotificationButtonClicked
         ) {
             Icon(
                 modifier = Modifier.size(36.dp),

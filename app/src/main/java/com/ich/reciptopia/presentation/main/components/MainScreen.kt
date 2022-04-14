@@ -27,6 +27,7 @@ import com.ich.reciptopia.presentation.main.analyze_ingredient.components.Analyz
 import com.ich.reciptopia.presentation.main.community.components.CommunityScreen
 import com.ich.reciptopia.presentation.main.search.components.SearchScreen
 import com.ich.reciptopia.presentation.main.search.util.ChipState
+import com.ich.reciptopia.presentation.notification.components.NotificationDialog
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
@@ -44,6 +45,7 @@ fun MainScreen(
     val tabIndex = pagerState.currentPage
 
     var loginDialogState by remember { mutableStateOf(false) }
+    var notificationDialogState by remember { mutableStateOf(false) }
     var searchMode by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
     val searchSource = remember { MutableInteractionSource() }
@@ -100,6 +102,7 @@ fun MainScreen(
                                 searchText = searchText,
                                 searchSource = searchSource,
                                 onLoginButtonClicked = { loginDialogState = true },
+                                onNotificationButtonClicked = {notificationDialogState = true},
                                 onAddChip = {
                                     chipStates.add(ChipState(searchText, mutableStateOf(true)))
                                 },
@@ -138,5 +141,11 @@ fun MainScreen(
         showDialog = loginDialogState
     ) {
         loginDialogState = false
+    }
+
+    NotificationDialog(
+        showDialog = notificationDialogState
+    ) {
+        notificationDialogState = false
     }
 }

@@ -14,6 +14,7 @@
     <string name="add_ingredient">재료 추가</string>
     <string name="comment">댓글</string>
     <string name="complete">완료</string>
+    <string name="notification">알림</string>
 
     <string name="analyze_pictures">%d개의 재료 분석하기</string>
     <string name="find_recipes">레시피 찾기</string>
