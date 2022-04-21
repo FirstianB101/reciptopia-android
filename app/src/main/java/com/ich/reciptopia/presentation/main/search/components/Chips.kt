@@ -17,10 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.util.TestTags
 
 @Composable
 private fun ChipWithImage(
@@ -76,7 +78,9 @@ fun Chips(
     onChipClicked: (String, Boolean, Int) -> Unit,
     onImageClicked: (String, Boolean, Int) -> Unit
 ) {
-    LazyRow(modifier = modifier) {
+    LazyRow(
+        modifier = modifier.testTag(TestTags.CHIP_ROW)
+    ) {
         items(elements.size){ idx ->
             ChipWithImage(
                 text = elements[idx],

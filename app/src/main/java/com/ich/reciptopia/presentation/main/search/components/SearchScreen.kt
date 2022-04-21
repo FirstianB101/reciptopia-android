@@ -128,7 +128,8 @@ fun SearchScreen(
             modifier = Modifier
                 .size(48.dp)
                 .align(Alignment.BottomEnd)
-                .offset(x = (-16).dp, y = (-16).dp),
+                .offset(x = (-16).dp, y = (-16).dp)
+                .testTag(TestTags.SEARCH_SCREEN_SEARCH_BUTTON),
             onClick = {
                 val newHistory = SearchHistory(ingredients = chipStates.map{s->s.toChipInfo()})
                 viewModel.addSearchHistory(newHistory)
