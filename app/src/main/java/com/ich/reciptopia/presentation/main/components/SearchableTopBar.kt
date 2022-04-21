@@ -16,11 +16,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.util.TestTags
 import com.ich.reciptopia.presentation.main.search.components.CustomTextField
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 
@@ -70,7 +72,9 @@ fun SearchableTopBar(
                 onValueChange = onSearchTextChanged,
                 trailingIcon = {
                     IconButton(
-                        modifier = Modifier.offset(x = 10.dp),
+                        modifier = Modifier
+                            .offset(x = 10.dp)
+                            .testTag(TestTags.ADD_INGREDIENT_BUTTON),
                         onClick = {
                             onAddChip()
                             onSearchTextReset()
@@ -89,7 +93,8 @@ fun SearchableTopBar(
                         RoundedCornerShape(10.dp)
                     )
                     .padding(4.dp)
-                    .height(36.dp),
+                    .height(36.dp)
+                    .testTag(TestTags.ADD_INGREDIENT_TEXT_FIELD),
                 fontSize = 16.sp,
                 placeholderText = "재료 추가",
                 interactionSource = searchSource
@@ -116,6 +121,7 @@ fun SearchableTopBar(
             contentAlignment = Alignment.Center
         ) {
             TextButton(
+                modifier = Modifier.testTag(TestTags.SEARCH_WITH_NAME),
                 onClick = onSearchButtonClicked
             ) {
                 Icon(
