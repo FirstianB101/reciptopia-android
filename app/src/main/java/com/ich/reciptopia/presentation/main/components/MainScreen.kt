@@ -46,25 +46,6 @@ fun MainScreen(
 
     var loginDialogState by remember { mutableStateOf(false) }
     var notificationDialogState by remember { mutableStateOf(false) }
-    var searchMode by remember { mutableStateOf(false) }
-    var searchText by remember { mutableStateOf("") }
-    val searchSource = remember { MutableInteractionSource() }
-
-    val chipStates = remember { mutableStateListOf<ChipState>() }
-
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
-    LaunchedEffect(currentRoute) {
-        when (currentRoute) {
-            MainScreenUI.CameraScreen.route -> searchMode = false
-        }
-    }
-
-    if (searchSource.collectIsPressedAsState().value) {
-        if (currentRoute != MainScreenUI.SearchScreen.route)
-            navController.navigate(MainScreenUI.SearchScreen.route)
-    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -78,42 +59,8 @@ fun MainScreen(
                 0 -> {
                     MainNavigation(
                         navController = navController,
-                        cameraScreen = { AnalyzeIngredientScreen() },
-                        searchScreen = {
-                            SearchScreen(
-                                chipStates = chipStates,
-                                navController = navController,
-                                onChipClicked = { content, isMain, idx ->
-                                    chipStates[idx].isSubIngredient.value = !chipStates[idx].isSubIngredient.value
-                                },
-                                onDeleteClicked = { content, isMain, idx ->
-                                    chipStates.removeAt(idx)
-                                },
-                                onChipReset = {
-                                    chipStates.clear()
-                                }
-                            )
-                        },
-                        boardScreen = { BoardListScreen() },
-                        searchBar = {
-                            SearchableTopBar(
-                                modifier = Modifier.fillMaxWidth(),
-                                searchMode = searchMode,
-                                searchText = searchText,
-                                searchSource = searchSource,
-                                onLoginButtonClicked = { loginDialogState = true },
-                                onNotificationButtonClicked = {notificationDialogState = true},
-                                onAddChip = {
-                                    chipStates.add(ChipState(searchText, mutableStateOf(true)))
-                                },
-                                onSearchTextChanged = { searchText = it },
-                                onSearchTextReset = { searchText = "" },
-                                onSearchButtonClicked = {
-                                    searchMode = true
-                                    navController.navigate(MainScreenUI.SearchScreen.route)
-                                }
-                            )
-                        }
+                        loginButtonClicked = { loginDialogState = true },
+                        notificationButtonClicked = { notificationDialogState = true }
                     )
                 }
                 1 -> CommunityScreen(

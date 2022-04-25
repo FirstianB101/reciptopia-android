@@ -20,9 +20,11 @@ import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.TestTags
 import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.presentation.main.components.MainScreenUI
+import com.ich.reciptopia.presentation.main.search.SearchScreenEvent
 import com.ich.reciptopia.presentation.main.search.SearchState
 import com.ich.reciptopia.presentation.main.search.SearchViewModel
 import com.ich.reciptopia.presentation.main.search.util.ChipState
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SearchScreen(
@@ -33,7 +35,7 @@ fun SearchScreen(
     onChipClicked: (String, Boolean, Int) -> Unit,
     onDeleteClicked: (String, Boolean, Int) -> Unit,
     onChipReset: () -> Unit
-){
+) {
     val state = viewModel.state.collectAsState()
     val context = LocalContext.current
 
@@ -43,17 +45,13 @@ fun SearchScreen(
         stringResource(id = R.string.favorite)
     )
 
-    var histories by remember { mutableStateOf(listOf<SearchHistory>()) }
-
-    when(state.value){
-        is SearchState.AddSearchHistory -> {
-            Toast.makeText(context, "검색 기록 추가", Toast.LENGTH_SHORT).show()
-        }
-        is SearchState.DeleteSearchHistory -> {
-            Toast.makeText(context, "검색 기록 삭제", Toast.LENGTH_SHORT).show()
-        }
-        is SearchState.GetSearchHistory -> {
-            histories = (state.value as SearchState.GetSearchHistory).histories
+    LaunchedEffect(Unit){
+        viewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is SearchViewModel.UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -61,7 +59,7 @@ fun SearchScreen(
         modifier = Modifier
             .fillMaxSize()
             .testTag(TestTags.SEARCH_SCREEN)
-    ){
+    ) {
         Column(
             modifier = modifier
         ) {
@@ -69,8 +67,8 @@ fun SearchScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                elements = chipStates.map{ s->s.text },
-                selectStates = chipStates.map{ s->s.isSubIngredient.value },
+                elements = chipStates.map { s -> s.text },
+                selectStates = chipStates.map { s -> s.isSubIngredient.value },
                 onChipClicked = onChipClicked,
                 onImageClicked = onDeleteClicked
             )
@@ -85,33 +83,35 @@ fun SearchScreen(
                         Tab(
                             selected = tabIndex == index,
                             onClick = { tabIndex = index },
-                            text = { Text(text = title, maxLines = 1, softWrap = false)},
+                            text = { Text(text = title, maxLines = 1, softWrap = false) },
                         )
                     }
                 }
                 when (tabIndex) {
                     0 -> {
-                        histories.forEachIndexed { index, history ->
+                        state.value.searchHistories.forEachIndexed { index, history ->
                             SearchHistoryListItem(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(24.dp),
                                 items = history.ingredients,
                                 onItemClicked = {
-                                    navController.navigate(MainScreenUI.BoardListScreen.route){
-                                        popUpTo(MainScreenUI.BoardListScreen.route){ inclusive = true }
+                                    navController.navigate(MainScreenUI.BoardListScreen.route) {
+                                        popUpTo(MainScreenUI.BoardListScreen.route) {
+                                            inclusive = true
+                                        }
                                         launchSingleTop = true
                                     }
                                 },
                                 onDeleteItem = {
-                                    viewModel.deleteSearchHistory(history)
+                                    viewModel.onEvent(SearchScreenEvent.DeleteSearchHistory(history))
                                 }
                             )
                             Divider()
                         }
                     }
                     1 -> {
-                        for(i in 0..4) {
+                        for (i in 0..4) {
                             FavoriteListItem(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -131,8 +131,11 @@ fun SearchScreen(
                 .offset(x = (-16).dp, y = (-16).dp)
                 .testTag(TestTags.SEARCH_SCREEN_SEARCH_BUTTON),
             onClick = {
-                val newHistory = SearchHistory(ingredients = chipStates.map{s->s.toChipInfo()})
-                viewModel.addSearchHistory(newHistory)
+                viewModel.onEvent(
+                    SearchScreenEvent.AddSearchHistory(
+                        SearchHistory(ingredients = chipStates.map { s -> s.toChipInfo() })
+                    )
+                )
                 navController.navigate(MainScreenUI.BoardListScreen.route)
                 onChipReset()
             },

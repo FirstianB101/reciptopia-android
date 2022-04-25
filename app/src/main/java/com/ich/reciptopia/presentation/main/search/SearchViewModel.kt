@@ -5,9 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.domain.use_case.search_history.SearchHistoryUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,32 +16,58 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val searchHistoryUseCases: SearchHistoryUseCases
 ): ViewModel() {
-    private val _state = MutableStateFlow<SearchState>(SearchState.Normal)
+    private val _state = MutableStateFlow(SearchState())
     val state: StateFlow<SearchState> = _state
+
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     init {
         getSearchHistories()
     }
 
-    fun getSearchHistories(){
-        viewModelScope.launch {
-            searchHistoryUseCases.getSearchHistories().collect { result ->
-                _state.value = SearchState.GetSearchHistory(result)
+    fun onEvent(event: SearchScreenEvent){
+        when(event){
+            is SearchScreenEvent.AddSearchHistory -> {
+                addSearchHistory(event.history)
+            }
+            is SearchScreenEvent.DeleteSearchHistory -> {
+                deleteSearchHistory(event.history)
+            }
+            is SearchScreenEvent.ChipTextChanged -> {
+                _state.value = _state.value.copy(
+                    chipText = event.text
+                )
             }
         }
     }
 
-    fun addSearchHistory(history: SearchHistory){
+    private fun getSearchHistories(){
         viewModelScope.launch {
-            searchHistoryUseCases.addSearchHistory(history)
-            _state.value = SearchState.AddSearchHistory
+            searchHistoryUseCases.getSearchHistories().collect { result ->
+                _state.value = _state.value.copy(
+                    searchHistories = result
+                )
+            }
         }
     }
 
-    fun deleteSearchHistory(history: SearchHistory){
+    private fun addSearchHistory(history: SearchHistory){
+        viewModelScope.launch {
+            searchHistoryUseCases.addSearchHistory(history)
+            _eventFlow.emit(UiEvent.ShowToast("검색 기록이 추가되었습니다"))
+        }
+    }
+
+    private fun deleteSearchHistory(history: SearchHistory){
         viewModelScope.launch {
             searchHistoryUseCases.deleteSearchHistory(history)
-            _state.value = SearchState.DeleteSearchHistory
+            _eventFlow.emit(UiEvent.ShowToast("검색 기록이 삭제되었습니다"))
         }
+    }
+
+    sealed class UiEvent{
+        data class ShowToast(val message: String): UiEvent()
+        object ShowSearchResult: SearchScreenEvent()
     }
 }
