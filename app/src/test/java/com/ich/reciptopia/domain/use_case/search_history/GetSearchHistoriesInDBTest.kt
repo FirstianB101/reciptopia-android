@@ -23,7 +23,7 @@ class GetSearchHistoriesInDBTest{
 
     @Test
     fun `get search history test`() = runBlocking {
-        var data = fakeRepository.getSearchHistories().first()
+        var data = getSearchHistoriesInDB().first()
         assert(data.isEmpty())
 
         for(i in 1..5){
@@ -40,7 +40,7 @@ class GetSearchHistoriesInDBTest{
             testHistories.forEach { fakeRepository.insertSearchHistory(it) }
         }
 
-        data = fakeRepository.getSearchHistories().first()
+        data = getSearchHistoriesInDB().first()
         assert(data.size == testHistories.size)
 
         for(i in data.indices){

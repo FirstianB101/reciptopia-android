@@ -1,40 +1,34 @@
 package com.ich.reciptopia.presentation.main.search.components
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.compose.rememberNavController
 import com.ich.reciptopia.MainActivity
+import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.TestTags
 import com.ich.reciptopia.di.AppModule
 import com.ich.reciptopia.di.RepositoryModule
 import com.ich.reciptopia.di.UseCaseModule
-import com.ich.reciptopia.domain.use_case.search_history.SearchHistoryUseCases
-import com.ich.reciptopia.presentation.board.components.BoardListScreen
-import com.ich.reciptopia.presentation.main.analyze_ingredient.components.AnalyzeIngredientScreen
+import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.presentation.main.components.MainNavigation
-import com.ich.reciptopia.presentation.main.components.MainScreenUI
-import com.ich.reciptopia.presentation.main.components.SearchableTopBar
-import com.ich.reciptopia.presentation.main.search.util.ChipState
+import com.ich.reciptopia.presentation.main.search.util.ChipInfo
+import com.ich.reciptopia.ui.theme.ReciptopiaTheme
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
 import dagger.hilt.android.testing.UninstallModules
 import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import javax.inject.Inject
-import com.ich.reciptopia.R
-import com.ich.reciptopia.domain.model.SearchHistory
-import com.ich.reciptopia.presentation.main.search.util.ChipInfo
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-@HiltAndroidTest
 @UninstallModules(AppModule::class, RepositoryModule::class, UseCaseModule::class)
+@HiltAndroidTest
+@Config(application = HiltTestApplication::class)
 class SearchScreenKtTest {
 
     @get:Rule(order = 0)
@@ -43,59 +37,19 @@ class SearchScreenKtTest {
     @get:Rule(order = 1)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    @Inject
-    lateinit var useCases: SearchHistoryUseCases
-
     @Before
     fun setUp() {
         hiltRule.inject()
 
         composeRule.setContent {
             val navController = rememberNavController()
-            var searchMode by remember { mutableStateOf(false) }
-            var searchText by remember { mutableStateOf("") }
-            val searchSource = remember { MutableInteractionSource() }
-            val chipStates = remember { mutableStateListOf<ChipState>() }
-
-            MainNavigation(
-                navController = navController,
-                cameraScreen = { AnalyzeIngredientScreen() },
-                searchScreen = {
-                    SearchScreen(
-                        chipStates = chipStates,
-                        navController = navController,
-                        onChipClicked = { content, isMain, idx ->
-                            chipStates[idx].isSubIngredient.value = !chipStates[idx].isSubIngredient.value
-                        },
-                        onDeleteClicked = { content, isMain, idx ->
-                            chipStates.removeAt(idx)
-                        },
-                        onChipReset = {
-                            chipStates.clear()
-                        }
-                    )
-                },
-                boardScreen = { BoardListScreen() },
-                searchBar = {
-                    SearchableTopBar(
-                        modifier = Modifier.fillMaxWidth(),
-                        searchMode = searchMode,
-                        searchText = searchText,
-                        searchSource = searchSource,
-                        onLoginButtonClicked = { },
-                        onNotificationButtonClicked = { },
-                        onAddChip = {
-                            chipStates.add(ChipState(searchText, mutableStateOf(true)))
-                        },
-                        onSearchTextChanged = { searchText = it },
-                        onSearchTextReset = { searchText = "" },
-                        onSearchButtonClicked = {
-                            searchMode = true
-                            navController.navigate(MainScreenUI.SearchScreen.route)
-                        }
-                    )
-                }
-            )
+            ReciptopiaTheme {
+                MainNavigation(
+                    navController = navController,
+                    loginButtonClicked = {},
+                    notificationButtonClicked = {}
+                )
+            }
         }
     }
 
@@ -118,11 +72,11 @@ class SearchScreenKtTest {
             // 추가 버튼 클릭
             composeRule.onNodeWithTag(TestTags.ADD_INGREDIENT_BUTTON).performClick()
         }
-        
+
         (1..10).forEach { i ->
             // 다음 요소까지 스크롤
             composeRule.onNodeWithTag(TestTags.CHIP_ROW).performScrollToIndex(i - 1)
-            
+
             // 해당하는 chip 존재여부 확인
             composeRule.onNodeWithText("ingredient $i").assertIsDisplayed()
         }

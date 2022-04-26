@@ -32,7 +32,7 @@ class AddSearchHistoryTest {
                 )
             )
         }
-        testHistories.forEach { fakeRepository.insertSearchHistory(it) }
+        testHistories.forEach { addSearchHistory(it) }
 
         val data = fakeRepository.getSearchHistories().first()
 

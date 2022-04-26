@@ -5,6 +5,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.util.Constants
 
 @Composable
 fun BoardDialogScreen(
@@ -122,7 +124,13 @@ fun BoardDialogScreen(
                             color = Color.LightGray,
                             shape = RoundedCornerShape(10)
                         )
-                        .clickable { galleryLauncher.launch("image/*") },
+                        .clickable {
+                            if(images.size < Constants.MAX_IMAGE_CNT) {
+                                galleryLauncher.launch("image/*")
+                            }else{
+                                Toast.makeText(context, "이미지는 최대 10장까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
+                            }
+                        },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ){
