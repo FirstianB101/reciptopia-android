@@ -20,6 +20,4 @@ class FakeSearchHistoryRepository: SearchHistoryRepository {
     override suspend fun deleteSearchHistory(history: SearchHistory) {
         histories.remove(history)
     }
-
-    fun getFakeHistories() = histories
 }
