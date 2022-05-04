@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.login.components
+package com.ich.reciptopia.presentation.my_page.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
-import com.ich.reciptopia.presentation.login.MyPageScreens
+import com.ich.reciptopia.presentation.my_page.MyPageScreens
 
 @Composable
 fun MyPageScreenWithLogin(

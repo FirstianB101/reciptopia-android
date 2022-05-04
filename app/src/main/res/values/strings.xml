@@ -19,7 +19,9 @@
     <string name="logout">로그아웃</string>
     <string name="edit_profile">프로필 편집</string>
     <string name="save">저장</string>
+    <string name="confirm">확인</string>
 
+    <string name="signup_success">회원가입 완료</string>
     <string name="analyze_pictures">%d개의 재료 분석하기</string>
     <string name="find_recipes">레시피 찾기</string>
     <string name="write_recipe">레시피 작성</string>
@@ -32,4 +34,8 @@
     <string name="comment_input_content">내용을 입력하세요.</string>
     <string name="title_activity_board">BoardActivity</string>
     <string name="comment_require_login">로그인이 필요합니다.</string>
+    <string name="comment_email_already_exist">이미 가입되어 있는 이메일입니다.</string>
+    <string name="comment_wrong_password_format">비밀번호는 8~15자리의 영문 대소문자, 기호, 숫자를 포함합니다.</string>
+    <string name="comment_nickname_already_exist">이미 존재하는 닉네임입니다.</string>
+    <string name="comment_login_with_information">입력하신 정보로 로그인해 주세요.</string>
 </resources>

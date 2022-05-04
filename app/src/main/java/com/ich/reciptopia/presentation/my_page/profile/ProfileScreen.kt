@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.login.components
+package com.ich.reciptopia.presentation.my_page.profile
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*

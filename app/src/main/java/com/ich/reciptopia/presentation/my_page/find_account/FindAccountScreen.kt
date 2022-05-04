@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.login.components
+package com.ich.reciptopia.presentation.my_page.find_account
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable

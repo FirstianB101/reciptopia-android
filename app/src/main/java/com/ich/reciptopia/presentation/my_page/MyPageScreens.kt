@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.login
+package com.ich.reciptopia.presentation.my_page
 
 sealed class MyPageScreens(val route: String){
     object LoginScreen: MyPageScreens("login_screen")

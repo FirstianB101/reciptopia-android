@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.login.components
+package com.ich.reciptopia.presentation.my_page.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
 @Composable
-fun LoginDialog(
+fun MyPageDialog(
     showDialog: Boolean,
     logined: Boolean,
     onClose: () -> Unit
@@ -24,7 +24,7 @@ fun LoginDialog(
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ){
-                    LoginNavigation(logined)
+                    MyPageNavigation(logined)
                 }
             }
         }

@@ -1,5 +1,6 @@
-package com.ich.reciptopia.presentation.login.components
+package com.ich.reciptopia.presentation.my_page.login.components
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -9,23 +10,38 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
+import com.ich.reciptopia.presentation.my_page.MyPageScreens
+import com.ich.reciptopia.presentation.my_page.login.LoginScreenEvent
+import com.ich.reciptopia.presentation.my_page.login.LoginViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun SignupScreen(
-    navController: NavController
+fun LoginScreen(
+    navController: NavController,
+    viewModel: LoginViewModel = hiltViewModel()
 ){
-    var emailId by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordCheck by remember { mutableStateOf("") }
-    var nickname by remember { mutableStateOf("") }
+    val state = viewModel.state.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit){
+        viewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is LoginViewModel.UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -47,19 +63,21 @@ fun SignupScreen(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp),
-                text = stringResource(id = R.string.signup),
+                text = stringResource(id = R.string.login),
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )
         }
 
+        Spacer(modifier = Modifier.height(8.dp))
+
         Image(
             modifier = Modifier
                 .size(120.dp)
                 .padding(top = 16.dp),
             painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = "Signup Screen Main Icon"
+            contentDescription = "Login Screen Main Icon"
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -68,8 +86,8 @@ fun SignupScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 4.dp, start = 16.dp, end = 16.dp),
-            value = emailId,
-            onValueChange = { emailId = it },
+            value = state.value.email,
+            onValueChange = { viewModel.onEvent(LoginScreenEvent.EmailChanged(it)) },
             label = {
                 Text(
                     text = stringResource(id = R.string.email),
@@ -81,40 +99,12 @@ fun SignupScreen(
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 4.dp, start = 16.dp, end = 16.dp),
-            value = password,
-            onValueChange = { password = it },
+                .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
+            value = state.value.password,
+            onValueChange = { viewModel.onEvent(LoginScreenEvent.PasswordChanged(it)) },
             label = {
                 Text(
                     text = stringResource(id = R.string.password),
-                    color = Color.Gray
-                )
-            }
-        )
-
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp, start = 16.dp, end = 16.dp),
-            value = passwordCheck,
-            onValueChange = { passwordCheck = it },
-            label = {
-                Text(
-                    text = stringResource(id = R.string.password_check),
-                    color = Color.Gray
-                )
-            }
-        )
-
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp, bottom = 16.dp, start = 16.dp, end = 16.dp),
-            value = nickname,
-            onValueChange = { nickname = it },
-            label = {
-                Text(
-                    text = stringResource(id = R.string.nickname),
                     color = Color.Gray
                 )
             }
@@ -125,13 +115,24 @@ fun SignupScreen(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp, horizontal = 16.dp),
             onClick = {
-
+                navController.navigate(MyPageScreens.MyPageWithLogin.route)
             }
         ) {
             Text(
                 modifier = Modifier.padding(4.dp),
-                text = stringResource(id = R.string.signup),
+                text = stringResource(id = R.string.login),
                 color = Color.White
+            )
+        }
+
+        TextButton(
+            onClick = {
+                navController.navigate(MyPageScreens.FindAccountScreen.route)
+            }
+        ) {
+            Text(
+                text = stringResource(id = R.string.comment_find_password),
+                color = colorResource(id = R.color.main_color)
             )
         }
 
@@ -154,8 +155,23 @@ fun SignupScreen(
                 ) {
                     Text(
                         modifier = Modifier.padding(4.dp),
-                        text = "소셜 회원가입",
+                        text = "소셜 로그인",
                         color = Color.White
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                TextButton(
+                    onClick = {
+                        navController.navigate(MyPageScreens.SignupScreen.route)
+                    }
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.signup),
+                        color = Color.Black,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }

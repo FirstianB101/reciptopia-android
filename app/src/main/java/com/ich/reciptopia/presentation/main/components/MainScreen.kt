@@ -1,32 +1,22 @@
 package com.ich.reciptopia.presentation.main.components
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.components.ReciptopiaTabRow
-import com.ich.reciptopia.presentation.board.components.BoardListScreen
-import com.ich.reciptopia.presentation.login.components.LoginDialog
-import com.ich.reciptopia.presentation.main.analyze_ingredient.components.AnalyzeIngredientScreen
+import com.ich.reciptopia.presentation.my_page.components.MyPageDialog
 import com.ich.reciptopia.presentation.main.community.components.CommunityScreen
-import com.ich.reciptopia.presentation.main.search.components.SearchScreen
-import com.ich.reciptopia.presentation.main.search.util.ChipState
 import com.ich.reciptopia.presentation.notification.components.NotificationDialog
 import kotlinx.coroutines.launch
 
@@ -84,7 +74,7 @@ fun MainScreen(
         )
     }
 
-    LoginDialog(
+    MyPageDialog(
         showDialog = loginDialogState,
         logined = true
     ) {
