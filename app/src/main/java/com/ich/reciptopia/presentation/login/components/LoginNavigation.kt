@@ -33,7 +33,7 @@ fun LoginNavigation(
             MyPageScreenWithLogin(navController)
         }
         composable(route = MyPageScreens.ProfileScreen.route){
-            ProfileScreen()
+            ProfileScreen(navController)
         }
     }
 }
