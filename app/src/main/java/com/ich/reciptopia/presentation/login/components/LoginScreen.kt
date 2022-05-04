@@ -14,13 +14,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
-import com.ich.reciptopia.presentation.login.LoginWithSignupScreens
-import com.ich.reciptopia.ui.theme.ReciptopiaTheme
+import com.ich.reciptopia.presentation.login.MyPageScreens
 
 @Composable
 fun LoginScreen(
@@ -86,7 +84,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp, horizontal = 16.dp),
             onClick = {
-
+                navController.navigate(MyPageScreens.MyPageWithLogin.route)
             }
         ) {
             Text(
@@ -98,7 +96,7 @@ fun LoginScreen(
 
         TextButton(
             onClick = {
-                navController.navigate(LoginWithSignupScreens.FindAccountScreen.route)
+                navController.navigate(MyPageScreens.FindAccountScreen.route)
             }
         ) {
             Text(
@@ -135,7 +133,7 @@ fun LoginScreen(
 
                 TextButton(
                     onClick = {
-                        navController.navigate(LoginWithSignupScreens.SignupScreen.route)
+                        navController.navigate(MyPageScreens.SignupScreen.route)
                     }
                 ) {
                     Text(

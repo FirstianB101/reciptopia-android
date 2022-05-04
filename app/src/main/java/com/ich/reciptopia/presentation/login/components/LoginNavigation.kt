@@ -4,24 +4,36 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.ich.reciptopia.presentation.login.LoginWithSignupScreens
+import com.ich.reciptopia.presentation.login.MyPageScreens
 
 @Composable
-fun LoginNavigation(){
+fun LoginNavigation(
+    logined: Boolean
+){
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = LoginWithSignupScreens.LoginScreen.route
+        startDestination = if(logined) MyPageScreens.MyPageWithLogin.route
+                           else MyPageScreens.MyPageWithoutLogin.route
     ){
-        composable(route = LoginWithSignupScreens.LoginScreen.route){
+        composable(route = MyPageScreens.LoginScreen.route){
             LoginScreen(navController)
         }
-        composable(route = LoginWithSignupScreens.SignupScreen.route){
+        composable(route = MyPageScreens.SignupScreen.route){
             SignupScreen(navController)
         }
-        composable(route = LoginWithSignupScreens.FindAccountScreen.route){
+        composable(route = MyPageScreens.FindAccountScreen.route){
             FindAccountScreen()
+        }
+        composable(route = MyPageScreens.MyPageWithoutLogin.route){
+            MyPageScreenWithoutLogin(navController)
+        }
+        composable(route = MyPageScreens.MyPageWithLogin.route){
+            MyPageScreenWithLogin(navController)
+        }
+        composable(route = MyPageScreens.ProfileScreen.route){
+            ProfileScreen()
         }
     }
 }

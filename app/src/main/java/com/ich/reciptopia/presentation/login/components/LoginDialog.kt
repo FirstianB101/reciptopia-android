@@ -12,6 +12,7 @@ import androidx.compose.ui.window.Dialog
 @Composable
 fun LoginDialog(
     showDialog: Boolean,
+    logined: Boolean,
     onClose: () -> Unit
 ){
     if(showDialog){
@@ -23,7 +24,7 @@ fun LoginDialog(
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ){
-                    LoginNavigation()
+                    LoginNavigation(logined)
                 }
             }
         }
