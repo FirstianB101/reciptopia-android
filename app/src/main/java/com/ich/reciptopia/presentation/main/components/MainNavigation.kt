@@ -7,12 +7,15 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ich.reciptopia.presentation.board.components.BoardListScreen
 import com.ich.reciptopia.presentation.main.analyze_ingredient.components.AnalyzeIngredientScreen
+import com.ich.reciptopia.presentation.main.search.SearchScreenEvent
+import com.ich.reciptopia.presentation.main.search.SearchViewModel
 import com.ich.reciptopia.presentation.main.search.components.SearchScreen
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 
@@ -20,11 +23,11 @@ import com.ich.reciptopia.presentation.main.search.util.ChipState
 fun MainNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    viewModel: SearchViewModel = hiltViewModel(),
     loginButtonClicked: () -> Unit,
     notificationButtonClicked: () -> Unit
 ){
-    var searchMode by remember { mutableStateOf(false) }
-    var searchText by remember { mutableStateOf("") }
+    val state = viewModel.state.collectAsState()
 
     val chipStates = remember { mutableStateListOf<ChipState>() }
 
@@ -35,7 +38,8 @@ fun MainNavigation(
 
     LaunchedEffect(currentRoute) {
         when (currentRoute) {
-            MainScreenUI.CameraScreen.route -> searchMode = false
+            MainScreenUI.CameraScreen.route ->
+                viewModel.onEvent(SearchScreenEvent.SearchModeChanged(false))
         }
     }
 
@@ -48,18 +52,18 @@ fun MainNavigation(
         topBar = {
             SearchableTopBar(
                 modifier = Modifier.fillMaxWidth(),
-                searchMode = searchMode,
-                searchText = searchText,
+                searchMode = state.value.searchMode,
+                searchText = state.value.searchQuery,
                 searchSource = searchSource,
                 onLoginButtonClicked = loginButtonClicked,
                 onNotificationButtonClicked = notificationButtonClicked,
                 onAddChip = {
-                    chipStates.add(ChipState(searchText, mutableStateOf(true)))
+                    chipStates.add(ChipState(state.value.searchQuery, mutableStateOf(true)))
                 },
-                onSearchTextChanged = { searchText = it },
-                onSearchTextReset = { searchText = "" },
+                onSearchTextChanged = { viewModel.onEvent(SearchScreenEvent.SearchQueryChanged(it)) },
+                onSearchTextReset = { viewModel.onEvent(SearchScreenEvent.SearchQueryChanged("")) },
                 onSearchButtonClicked = {
-                    searchMode = true
+                    viewModel.onEvent(SearchScreenEvent.SearchModeChanged(true))
                     navController.navigate(MainScreenUI.SearchScreen.route)
                 }
             )

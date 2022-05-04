@@ -28,6 +28,16 @@ class SearchViewModel @Inject constructor(
 
     fun onEvent(event: SearchScreenEvent){
         when(event){
+            is SearchScreenEvent.SearchQueryChanged -> {
+                _state.value = _state.value.copy(
+                    searchQuery = event.query
+                )
+            }
+            is SearchScreenEvent.SearchModeChanged -> {
+                _state.value = _state.value.copy(
+                    searchMode = event.isOn
+                )
+            }
             is SearchScreenEvent.AddSearchHistory -> {
                 addSearchHistory(event.history)
             }
@@ -68,6 +78,5 @@ class SearchViewModel @Inject constructor(
 
     sealed class UiEvent{
         data class ShowToast(val message: String): UiEvent()
-        object ShowSearchResult: SearchScreenEvent()
     }
 }
