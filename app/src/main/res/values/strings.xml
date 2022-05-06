@@ -38,4 +38,5 @@
     <string name="comment_wrong_password_format">비밀번호는 8~15자리의 영문 대소문자, 기호, 숫자를 포함합니다.</string>
     <string name="comment_nickname_already_exist">이미 존재하는 닉네임입니다.</string>
     <string name="comment_login_with_information">입력하신 정보로 로그인해 주세요.</string>
+    <string name="comment_input_text_for_search">검색어를 입력하세요</string>
 </resources>

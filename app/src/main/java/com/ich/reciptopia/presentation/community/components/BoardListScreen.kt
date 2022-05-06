@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.board_detail.components
+package com.ich.reciptopia.presentation.community.components
 
 import android.content.Context
 import android.content.Intent
@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.ich.reciptopia.presentation.board_detail.BoardActivity
+import com.ich.reciptopia.presentation.board_detail.components.BoardPreviewItem
 
 @Composable
 fun BoardListScreen(

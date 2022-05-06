@@ -11,13 +11,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.ich.reciptopia.presentation.board_detail.components.BoardListScreen
+import com.ich.reciptopia.presentation.community.components.BoardListScreen
 import com.ich.reciptopia.presentation.main.MainScreenEvent
 import com.ich.reciptopia.presentation.main.MainViewModel
 import com.ich.reciptopia.presentation.main.analyze_ingredient.components.AnalyzeIngredientScreen
-import com.ich.reciptopia.presentation.main.search.SearchScreenEvent
 import com.ich.reciptopia.presentation.main.search.components.SearchScreen
-import com.ich.reciptopia.presentation.main.search.util.ChipState
 
 @Composable
 fun MainNavigation(

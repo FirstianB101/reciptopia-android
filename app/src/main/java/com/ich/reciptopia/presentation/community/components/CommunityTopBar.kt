@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.main.components
+package com.ich.reciptopia.presentation.community.components
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
@@ -8,37 +8,28 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ich.reciptopia.R
-import com.ich.reciptopia.common.util.TestTags
 import com.ich.reciptopia.presentation.main.search.components.CustomTextField
-import com.ich.reciptopia.presentation.main.search.util.ChipState
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun SearchableTopBar(
+fun CommunityTopBar(
     modifier: Modifier = Modifier,
     searchMode: Boolean,
     searchText: String,
-    searchSource: MutableInteractionSource,
     onLoginButtonClicked: () -> Unit,
-    onNotificationButtonClicked: () -> Unit,
-    onAddChip: () -> Unit,
     onSearchTextChanged: (String) -> Unit,
-    onSearchTextReset: () -> Unit,
     onSearchButtonClicked: () -> Unit
 ){
     TopAppBar(
@@ -71,73 +62,48 @@ fun SearchableTopBar(
             CustomTextField(
                 value = searchText,
                 onValueChange = onSearchTextChanged,
-                trailingIcon = {
-                    IconButton(
-                        modifier = Modifier
-                            .offset(x = 10.dp)
-                            .testTag(TestTags.ADD_INGREDIENT_BUTTON),
-                        onClick = {
-                            onAddChip()
-                            onSearchTextReset()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Add,
-                            contentDescription = "",
-                            tint = LocalContentColor.current.copy(alpha = 0.5f)
-                        )
-                    }
-                },
+                trailingIcon = null,
                 modifier = Modifier
                     .background(
                         Color(0xDDDDDDDD),
                         RoundedCornerShape(10.dp)
                     )
                     .padding(4.dp)
-                    .height(36.dp)
-                    .testTag(TestTags.ADD_INGREDIENT_TEXT_FIELD),
+                    .height(36.dp),
                 fontSize = 16.sp,
-                placeholderText = "재료 추가",
-                interactionSource = searchSource
+                placeholderText = stringResource(id = R.string.comment_input_text_for_search),
+                interactionSource = MutableInteractionSource()
             )
         }
 
         IconButton(
-            onClick = onNotificationButtonClicked
+            onClick = onSearchButtonClicked
         ) {
             Icon(
-                modifier = Modifier.size(36.dp),
-                imageVector = Icons.Filled.Notifications,
-                contentDescription = "Notification Icon",
+                modifier = Modifier.size(28.dp),
+                imageVector = Icons.Outlined.Search,
+                contentDescription = "Community Search Icon",
                 tint = Color.Black
             )
         }
+
+
     }
 
     if(!searchMode) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
+                .offset(y = 24.dp),
             contentAlignment = Alignment.Center
         ) {
-            TextButton(
-                modifier = Modifier.testTag(TestTags.SEARCH_WITH_NAME),
-                onClick = onSearchButtonClicked
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Search,
-                    contentDescription = "Search Icon",
-                    tint = Color.Black
-                )
-
-                Text(
-                    text = stringResource(id = R.string.search_by_name),
-                    color = Color.Black,
-                    fontSize = 17.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            Text(
+                text = stringResource(id = R.string.community),
+                color = Color.Black,
+                fontSize = 17.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
