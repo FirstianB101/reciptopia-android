@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,8 +31,8 @@ fun ManageImageDialog(
     onClose: () -> Unit
 ){
     if(showDialog){
-        var deleteModeState by remember { mutableStateOf(false) }
-        val deleteImageStates = List(images.size){ remember { mutableStateOf(false) } }
+        var deleteModeState by rememberSaveable { mutableStateOf(false) }
+        val deleteImageStates = List(images.size){ rememberSaveable { mutableStateOf(false) } }
 
         Dialog(onDismissRequest = onClose) {
             Surface(

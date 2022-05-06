@@ -30,6 +30,7 @@ import com.ich.reciptopia.presentation.main.search.util.ChipState
 @Composable
 fun AnalyzeResultDialog(
     showDialog: Boolean,
+    onSearchRecipes: (List<ChipState>) -> Unit,
     onClose: () -> Unit
 ){
     if(showDialog){
@@ -103,7 +104,7 @@ fun AnalyzeResultDialog(
                                 contentColor = Color.White
                             ),
                             onClick = {
-
+                                onSearchRecipes(chipStates)
                             }
                         ) {
                             Text(

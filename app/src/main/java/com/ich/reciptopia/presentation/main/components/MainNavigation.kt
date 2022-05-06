@@ -5,17 +5,17 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.ich.reciptopia.presentation.board.components.BoardListScreen
+import com.ich.reciptopia.presentation.board_detail.components.BoardListScreen
+import com.ich.reciptopia.presentation.main.MainScreenEvent
+import com.ich.reciptopia.presentation.main.MainViewModel
 import com.ich.reciptopia.presentation.main.analyze_ingredient.components.AnalyzeIngredientScreen
 import com.ich.reciptopia.presentation.main.search.SearchScreenEvent
-import com.ich.reciptopia.presentation.main.search.SearchViewModel
 import com.ich.reciptopia.presentation.main.search.components.SearchScreen
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 
@@ -23,13 +23,11 @@ import com.ich.reciptopia.presentation.main.search.util.ChipState
 fun MainNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: SearchViewModel = hiltViewModel(),
+    viewModel: MainViewModel = hiltViewModel(),
     loginButtonClicked: () -> Unit,
     notificationButtonClicked: () -> Unit
-){
+) {
     val state = viewModel.state.collectAsState()
-
-    val chipStates = remember { mutableStateListOf<ChipState>() }
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -39,7 +37,7 @@ fun MainNavigation(
     LaunchedEffect(currentRoute) {
         when (currentRoute) {
             MainScreenUI.CameraScreen.route ->
-                viewModel.onEvent(SearchScreenEvent.SearchModeChanged(false))
+                viewModel.onEvent(MainScreenEvent.SearchModeChanged(false))
         }
     }
 
@@ -58,12 +56,12 @@ fun MainNavigation(
                 onLoginButtonClicked = loginButtonClicked,
                 onNotificationButtonClicked = notificationButtonClicked,
                 onAddChip = {
-                    chipStates.add(ChipState(state.value.searchQuery, mutableStateOf(true)))
+                    viewModel.onEvent(MainScreenEvent.AddChip)
                 },
-                onSearchTextChanged = { viewModel.onEvent(SearchScreenEvent.SearchQueryChanged(it)) },
-                onSearchTextReset = { viewModel.onEvent(SearchScreenEvent.SearchQueryChanged("")) },
+                onSearchTextChanged = { viewModel.onEvent(MainScreenEvent.SearchQueryChanged(it)) },
+                onSearchTextReset = { viewModel.onEvent(MainScreenEvent.SearchQueryChanged("")) },
                 onSearchButtonClicked = {
-                    viewModel.onEvent(SearchScreenEvent.SearchModeChanged(true))
+                    viewModel.onEvent(MainScreenEvent.SearchModeChanged(true))
                     navController.navigate(MainScreenUI.SearchScreen.route)
                 }
             )
@@ -75,20 +73,22 @@ fun MainNavigation(
             startDestination = MainScreenUI.CameraScreen.route
         ) {
             composable(route = MainScreenUI.CameraScreen.route) {
-                AnalyzeIngredientScreen()
+                AnalyzeIngredientScreen(navController) {
+                    viewModel.onEvent(MainScreenEvent.SetChipsFromAnalyze(it))
+                }
             }
             composable(route = MainScreenUI.SearchScreen.route) {
                 SearchScreen(
-                    chipStates = chipStates,
+                    chipStates = state.value.chipStates,
                     navController = navController,
                     onChipClicked = { content, isMain, idx ->
-                        chipStates[idx].isSubIngredient.value = !chipStates[idx].isSubIngredient.value
+                        viewModel.onEvent(MainScreenEvent.OnChipClicked(idx))
                     },
                     onDeleteClicked = { content, isMain, idx ->
-                        chipStates.removeAt(idx)
+                        viewModel.onEvent(MainScreenEvent.RemoveChip(state.value.chipStates[idx]))
                     },
                     onChipReset = {
-                        chipStates.clear()
+                        viewModel.onEvent(MainScreenEvent.ResetChips)
                     }
                 )
             }

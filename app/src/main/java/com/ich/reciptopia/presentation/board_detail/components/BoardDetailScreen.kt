@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.board.components
+package com.ich.reciptopia.presentation.board_detail.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*

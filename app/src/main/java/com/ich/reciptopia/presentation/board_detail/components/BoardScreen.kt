@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.board.components
+package com.ich.reciptopia.presentation.board_detail.components
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
