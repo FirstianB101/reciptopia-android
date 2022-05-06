@@ -18,10 +18,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.TestTags
-import com.ich.reciptopia.domain.model.SearchHistory
+import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.main.components.MainScreenUI
 import com.ich.reciptopia.presentation.main.search.SearchScreenEvent
-import com.ich.reciptopia.presentation.main.search.SearchState
 import com.ich.reciptopia.presentation.main.search.SearchViewModel
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 import kotlinx.coroutines.flow.collectLatest
@@ -89,7 +88,7 @@ fun SearchScreen(
                 }
                 when (tabIndex) {
                     0 -> {
-                        state.value.searchHistories.forEachIndexed { index, history ->
+                        state.value.searchHistoryEntities.forEachIndexed { index, history ->
                             SearchHistoryListItem(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -133,7 +132,7 @@ fun SearchScreen(
             onClick = {
                 viewModel.onEvent(
                     SearchScreenEvent.AddSearchHistory(
-                        SearchHistory(ingredients = chipStates.map { s -> s.toChipInfo() })
+                        SearchHistoryEntity(ingredients = chipStates.map { s -> s.toChipInfo() })
                     )
                 )
                 navController.navigate(MainScreenUI.BoardListScreen.route)

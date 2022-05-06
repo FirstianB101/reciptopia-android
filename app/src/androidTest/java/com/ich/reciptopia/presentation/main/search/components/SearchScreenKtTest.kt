@@ -10,7 +10,7 @@ import com.ich.reciptopia.common.util.TestTags
 import com.ich.reciptopia.di.AppModule
 import com.ich.reciptopia.di.RepositoryModule
 import com.ich.reciptopia.di.UseCaseModule
-import com.ich.reciptopia.domain.model.SearchHistory
+import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.main.components.MainNavigation
 import com.ich.reciptopia.presentation.main.search.util.ChipInfo
 import com.ich.reciptopia.ui.theme.ReciptopiaTheme
@@ -22,8 +22,6 @@ import junit.framework.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
 @UninstallModules(AppModule::class, RepositoryModule::class, UseCaseModule::class)
@@ -122,7 +120,7 @@ class SearchScreenKtTest {
         }
 
         // 검색 기록 생성 확인
-        val newHistory = SearchHistory(info)
+        val newHistory = SearchHistoryEntity(info)
         composeRule.onNodeWithText(newHistory.toString()).assertIsDisplayed()
     }
 

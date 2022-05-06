@@ -2,7 +2,7 @@ package com.ich.reciptopia.presentation.main.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ich.reciptopia.domain.model.SearchHistory
+import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.domain.use_case.search_history.SearchHistoryUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,10 +29,10 @@ class SearchViewModel @Inject constructor(
     fun onEvent(event: SearchScreenEvent){
         when(event){
             is SearchScreenEvent.AddSearchHistory -> {
-                addSearchHistory(event.history)
+                addSearchHistory(event.historyEntity)
             }
             is SearchScreenEvent.DeleteSearchHistory -> {
-                deleteSearchHistory(event.history)
+                deleteSearchHistory(event.historyEntity)
             }
         }
     }
@@ -41,22 +41,22 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             searchHistoryUseCases.getSearchHistories().collect { result ->
                 _state.value = _state.value.copy(
-                    searchHistories = result
+                    searchHistoryEntities = result
                 )
             }
         }
     }
 
-    private fun addSearchHistory(history: SearchHistory){
+    private fun addSearchHistory(historyEntity: SearchHistoryEntity){
         viewModelScope.launch {
-            searchHistoryUseCases.addSearchHistory(history)
+            searchHistoryUseCases.addSearchHistory(historyEntity)
             _eventFlow.emit(UiEvent.ShowToast("검색 기록이 추가되었습니다"))
         }
     }
 
-    private fun deleteSearchHistory(history: SearchHistory){
+    private fun deleteSearchHistory(historyEntity: SearchHistoryEntity){
         viewModelScope.launch {
-            searchHistoryUseCases.deleteSearchHistory(history)
+            searchHistoryUseCases.deleteSearchHistory(historyEntity)
             _eventFlow.emit(UiEvent.ShowToast("검색 기록이 삭제되었습니다"))
         }
     }

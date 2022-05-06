@@ -3,12 +3,11 @@ package com.ich.reciptopia.data.data_source
 import com.ich.reciptopia.di.AppModule
 import com.ich.reciptopia.di.RepositoryModule
 import com.ich.reciptopia.di.UseCaseModule
-import com.ich.reciptopia.domain.model.SearchHistory
+import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.main.search.util.ChipInfo
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
@@ -20,7 +19,7 @@ import javax.inject.Inject
 
 @HiltAndroidTest
 @UninstallModules(AppModule::class, RepositoryModule::class, UseCaseModule::class)
-class SearchHistoryDatabaseTest {
+class SearchHistoryEntityDatabaseTest {
 
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
@@ -46,10 +45,10 @@ class SearchHistoryDatabaseTest {
     fun addNewSearchHistoryTest() = runBlocking {
 
         // 검색 기록 5개 추가
-        val histories = mutableListOf<SearchHistory>().also { historyList ->
+        val histories = mutableListOf<SearchHistoryEntity>().also { historyList ->
             (0..4).forEach { i ->
                 historyList.add(
-                    SearchHistory(
+                    SearchHistoryEntity(
                         listOf(
                             ChipInfo("apple$i", true),
                             ChipInfo("orange$i", true),
@@ -86,10 +85,10 @@ class SearchHistoryDatabaseTest {
 
     @Test
     fun deleteSearchHistoryTest() = runBlocking {
-        val histories = mutableListOf<SearchHistory>().also { historyList ->
+        val histories = mutableListOf<SearchHistoryEntity>().also { historyList ->
             (0..4).forEach { i ->
                 historyList.add(
-                    SearchHistory(
+                    SearchHistoryEntity(
                         listOf(
                             ChipInfo("apple$i", true),
                             ChipInfo("orange$i", true),

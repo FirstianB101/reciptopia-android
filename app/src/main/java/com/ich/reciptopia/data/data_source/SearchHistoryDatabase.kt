@@ -4,10 +4,10 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.ich.reciptopia.common.util.ChipInfoListTypeConverter
-import com.ich.reciptopia.domain.model.SearchHistory
+import com.ich.reciptopia.domain.model.SearchHistoryEntity
 
 @Database(
-    entities = [SearchHistory::class],
+    entities = [SearchHistoryEntity::class],
     version = 1
 )
 @TypeConverters(

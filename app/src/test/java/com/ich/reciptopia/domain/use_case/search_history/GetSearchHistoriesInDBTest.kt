@@ -1,11 +1,10 @@
 package com.ich.reciptopia.domain.use_case.search_history
 
-import com.ich.reciptopia.domain.model.SearchHistory
+import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.main.search.util.ChipInfo
 import com.ich.reciptopia.repository.FakeSearchHistoryRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
@@ -13,7 +12,7 @@ class GetSearchHistoriesInDBTest{
 
     private lateinit var getSearchHistoriesInDB: GetSearchHistoriesInDB
     private lateinit var fakeRepository: FakeSearchHistoryRepository
-    private val testHistories = mutableListOf<SearchHistory>()
+    private val testHistories = mutableListOf<SearchHistoryEntity>()
 
     @Before
     fun setUp() {
@@ -28,7 +27,7 @@ class GetSearchHistoriesInDBTest{
 
         for(i in 1..5){
             testHistories.add(
-                SearchHistory(
+                SearchHistoryEntity(
                     listOf(
                         ChipInfo("ingredient$i",false),
                         ChipInfo("ingredient${i+1}",true)

@@ -1,8 +1,9 @@
 package com.ich.reciptopia.domain.model
 
-data class SearchHistory(
+data class Comment(
     var ownerId: Long? = null,
-    var ingredientNames: List<String?> = emptyList()
+    var postId: Long? = null,
+    var content: String? = null
 ){
     var id: Long? = null
 }
