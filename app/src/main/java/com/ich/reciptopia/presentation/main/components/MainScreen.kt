@@ -16,7 +16,7 @@ import com.google.accompanist.pager.rememberPagerState
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.components.ReciptopiaTabRow
 import com.ich.reciptopia.presentation.my_page.components.MyPageDialog
-import com.ich.reciptopia.presentation.main.community.components.CommunityScreen
+import com.ich.reciptopia.presentation.community.components.CommunityScreen
 import com.ich.reciptopia.presentation.notification.components.NotificationDialog
 import kotlinx.coroutines.launch
 

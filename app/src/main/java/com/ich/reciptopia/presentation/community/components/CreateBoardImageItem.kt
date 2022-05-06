@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.main.community.components
+package com.ich.reciptopia.presentation.community.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
