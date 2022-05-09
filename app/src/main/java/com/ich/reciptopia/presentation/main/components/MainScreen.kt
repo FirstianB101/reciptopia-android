@@ -75,8 +75,7 @@ fun MainScreen(
     }
 
     MyPageDialog(
-        showDialog = loginDialogState,
-        logined = true
+        showDialog = loginDialogState
     ) {
         loginDialogState = false
     }

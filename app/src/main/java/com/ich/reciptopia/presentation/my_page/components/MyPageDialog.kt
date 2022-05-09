@@ -12,7 +12,6 @@ import androidx.compose.ui.window.Dialog
 @Composable
 fun MyPageDialog(
     showDialog: Boolean,
-    logined: Boolean,
     onClose: () -> Unit
 ){
     if(showDialog){
@@ -24,7 +23,7 @@ fun MyPageDialog(
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ){
-                    MyPageNavigation(logined)
+                    MyPageNavigation()
                 }
             }
         }

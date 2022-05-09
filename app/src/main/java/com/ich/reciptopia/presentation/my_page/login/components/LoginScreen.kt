@@ -20,6 +20,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
+import com.ich.reciptopia.application.ReciptopiaApplication
+import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.presentation.my_page.MyPageScreens
 import com.ich.reciptopia.presentation.my_page.login.LoginScreenEvent
 import com.ich.reciptopia.presentation.my_page.login.LoginViewModel
@@ -115,6 +117,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp, horizontal = 16.dp),
             onClick = {
+                ReciptopiaApplication.instance!!.login(Account())
                 navController.navigate(MyPageScreens.MyPageWithLogin.route)
             }
         ) {

@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
+import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.presentation.my_page.MyPageScreens
 
 @Composable
@@ -41,8 +42,8 @@ fun MyPageScreenWithLogin(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
-                .clickable { navController.navigate(MyPageScreens.ProfileScreen.route) },
+                .clickable { navController.navigate(MyPageScreens.ProfileScreen.route) }
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ){
             Icon(
@@ -94,6 +95,7 @@ fun MyPageScreenWithLogin(
 
         TextButton(
             onClick = {
+                ReciptopiaApplication.instance!!.logout()
                 navController.navigate(MyPageScreens.MyPageWithoutLogin.route)
             }
         ) {
