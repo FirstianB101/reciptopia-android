@@ -5,14 +5,18 @@ import androidx.room.Room
 import com.google.gson.Gson
 import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.ChipInfoListTypeConverter
+import com.ich.reciptopia.common.util.Constants
 import com.ich.reciptopia.data.data_source.SearchHistoryDatabase
 import com.ich.reciptopia.data.remote.AuthenticationInterceptor
+import com.ich.reciptopia.data.remote.ReciptopiaApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -42,6 +46,18 @@ object AppModule {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideReciptopiaRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(Constants.BASE_URL)
+        .client(okHttpClient)
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideReciptopiaService(retrofit: Retrofit): ReciptopiaApi = retrofit.create(ReciptopiaApi::class.java)
 
     @Provides
     @Singleton

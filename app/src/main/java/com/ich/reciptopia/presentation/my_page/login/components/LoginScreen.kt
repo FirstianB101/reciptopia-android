@@ -117,7 +117,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp, horizontal = 16.dp),
             onClick = {
-                ReciptopiaApplication.instance!!.login(Account())
+                //ReciptopiaApplication.instance!!.login(Account())
                 navController.navigate(MyPageScreens.MyPageWithLogin.route)
             }
         ) {

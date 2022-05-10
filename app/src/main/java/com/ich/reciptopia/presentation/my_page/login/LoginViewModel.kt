@@ -1,6 +1,7 @@
 package com.ich.reciptopia.presentation.my_page.login
 
 import androidx.lifecycle.ViewModel
+import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-
+    private val useCase: LoginUseCase
 ): ViewModel() {
 
     private val _state = MutableStateFlow(LoginState())

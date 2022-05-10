@@ -1,6 +1,12 @@
 package com.ich.reciptopia.di
 
+import com.ich.reciptopia.domain.repository.LoginRepository
 import com.ich.reciptopia.domain.repository.SearchHistoryRepository
+import com.ich.reciptopia.domain.repository.SignUpRepository
+import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
+import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
+import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
+import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
 import com.ich.reciptopia.domain.use_case.search_history.AddSearchHistory
 import com.ich.reciptopia.domain.use_case.search_history.DeleteSearchHistory
 import com.ich.reciptopia.domain.use_case.search_history.GetSearchHistoriesInDB
@@ -22,6 +28,21 @@ object UseCaseModule {
             getSearchHistories = GetSearchHistoriesInDB(repository),
             addSearchHistory = AddSearchHistory(repository),
             deleteSearchHistory = DeleteSearchHistory(repository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoginUseCase(repository: LoginRepository): LoginUseCase{
+        return LoginUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSignUpUseCases(repository: SignUpRepository): SignUpUseCases{
+        return SignUpUseCases(
+            emailExists = EmailExistsUseCase(repository),
+            createAccount = CreateAccountUseCase(repository)
         )
     }
 }
