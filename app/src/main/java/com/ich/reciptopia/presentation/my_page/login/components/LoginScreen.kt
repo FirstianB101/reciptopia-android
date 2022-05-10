@@ -15,6 +15,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,6 +41,9 @@ fun LoginScreen(
             when(event){
                 is LoginViewModel.UiEvent.ShowToast -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+                is LoginViewModel.UiEvent.LoginSuccess -> {
+                    navController.navigate(MyPageScreens.MyPageWithLogin.route)
                 }
             }
         }
@@ -104,6 +108,7 @@ fun LoginScreen(
                 .padding(bottom = 16.dp, start = 16.dp, end = 16.dp),
             value = state.value.password,
             onValueChange = { viewModel.onEvent(LoginScreenEvent.PasswordChanged(it)) },
+            visualTransformation = PasswordVisualTransformation(),
             label = {
                 Text(
                     text = stringResource(id = R.string.password),
@@ -117,8 +122,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(vertical = 8.dp, horizontal = 16.dp),
             onClick = {
-                //ReciptopiaApplication.instance!!.login(Account())
-                navController.navigate(MyPageScreens.MyPageWithLogin.route)
+                viewModel.onEvent(LoginScreenEvent.Login)
             }
         ) {
             Text(
@@ -178,6 +182,15 @@ fun LoginScreen(
                     )
                 }
             }
+        }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        if(state.value.isLoading){
+            CircularProgressIndicator()
         }
     }
 }

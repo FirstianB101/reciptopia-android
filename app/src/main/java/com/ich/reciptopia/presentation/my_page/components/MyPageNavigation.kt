@@ -1,6 +1,7 @@
 package com.ich.reciptopia.presentation.my_page.components
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -8,7 +9,8 @@ import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.presentation.my_page.MyPageScreens
 import com.ich.reciptopia.presentation.my_page.find_account.FindAccountScreen
 import com.ich.reciptopia.presentation.my_page.login.components.LoginScreen
-import com.ich.reciptopia.presentation.my_page.profile.ProfileScreen
+import com.ich.reciptopia.presentation.my_page.profile.ProfileViewModel
+import com.ich.reciptopia.presentation.my_page.profile.components.ProfileScreen
 import com.ich.reciptopia.presentation.my_page.sign_up.components.SignupScreen
 
 @Composable

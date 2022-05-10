@@ -14,14 +14,17 @@ interface ReciptopiaApi {
     suspend fun authorizeUser(): UserDto
 
     // Account
-    @GET("accounts/id")
-    suspend fun getAccount(): AccountDto
+    @GET("accounts/{id}")
+    suspend fun getAccount(@Path("id")accountId: Long): AccountDto
 
     @GET("accounts")
     suspend fun getAccounts(): List<AccountDto>
 
     @POST("accounts")
     suspend fun createAccount(@Body account: Account): AccountDto
+
+    @PATCH("accounts/{id}")
+    suspend fun patchAccount(@Path("id")accountId: Long, @Body account: Account): AccountDto
 
     @GET("accounts/{email}/exists")
     suspend fun accountExists(@Path("email") email: String): Exist

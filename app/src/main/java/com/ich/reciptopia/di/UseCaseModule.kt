@@ -1,9 +1,11 @@
 package com.ich.reciptopia.di
 
 import com.ich.reciptopia.domain.repository.LoginRepository
+import com.ich.reciptopia.domain.repository.ProfileRepository
 import com.ich.reciptopia.domain.repository.SearchHistoryRepository
 import com.ich.reciptopia.domain.repository.SignUpRepository
 import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
+import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
@@ -44,5 +46,11 @@ object UseCaseModule {
             emailExists = EmailExistsUseCase(repository),
             createAccount = CreateAccountUseCase(repository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileUseCase(repository: ProfileRepository): NicknameChangeUseCase{
+        return NicknameChangeUseCase(repository)
     }
 }

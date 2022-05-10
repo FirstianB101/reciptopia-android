@@ -1,12 +1,10 @@
-package com.ich.reciptopia.presentation.my_page.login
+package com.ich.reciptopia.presentation.my_page.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
-import com.ich.reciptopia.domain.model.Account
-import com.ich.reciptopia.domain.model.Auth
-import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
+import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,51 +14,45 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
-    private val useCase: LoginUseCase,
+class ProfileViewModel @Inject constructor(
+    private val useCase: NicknameChangeUseCase,
     private val app: ReciptopiaApplication
 ): ViewModel() {
 
-    private val _state = MutableStateFlow(LoginState())
+    private val _state = MutableStateFlow(ProfileState(
+        nickname = app.getCurrentUser()?.account?.nickname ?: "",
+        email = app.getCurrentUser()?.account?.email ?: ""
+    ))
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    fun onEvent(event: LoginScreenEvent){
+    fun onEvent(event: ProfileScreenEvent){
         when(event){
-            is LoginScreenEvent.EmailChanged -> {
+            is ProfileScreenEvent.ChangeNickname -> {
+                changeNickname(event.nickname)
+            }
+            is ProfileScreenEvent.EditDialogStateChanged -> {
                 _state.value = _state.value.copy(
-                    email = event.email
+                    showEditDialogState = event.show
                 )
-            }
-            is LoginScreenEvent.PasswordChanged -> {
-                _state.value = _state.value.copy(
-                    password = event.password
-                )
-            }
-            is LoginScreenEvent.Login -> {
-                login()
-            }
-            is LoginScreenEvent.Logout -> {
-                app.logout()
             }
         }
     }
 
-    private fun login() = viewModelScope.launch {
-        val auth = Auth(
-            email = _state.value.email,
-            password = _state.value.password
-        )
-        useCase(auth).collect{ result ->
+    private fun changeNickname(newNickname: String) = viewModelScope.launch {
+        val edited = app.getCurrentUser()?.account?.also { it.nickname = newNickname }!!
+        useCase(edited).collect{ result ->
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
+                        nickname = result.data?.nickname!!,
                         isLoading = false
                     )
-                    app.login(result.data!!)
-                    _eventFlow.emit(UiEvent.LoginSuccess)
+                    _eventFlow.emit(UiEvent.ShowToast("닉네임이 수정되었습니다"))
+                    _eventFlow.emit(UiEvent.CloseEditDialog)
+                    app.editAccount(result.data)
                 }
                 is Resource.Loading -> {
                     _state.value = _state.value.copy(
@@ -71,7 +63,7 @@ class LoginViewModel @Inject constructor(
                     _state.value = _state.value.copy(
                         isLoading = false
                     )
-                    _eventFlow.emit(UiEvent.ShowToast("로그인에 실패했습니다 (${result.message})"))
+                    _eventFlow.emit(UiEvent.ShowToast("닉네임을 수정하지 못했습니다 (${result.message})"))
                 }
             }
         }
@@ -79,6 +71,6 @@ class LoginViewModel @Inject constructor(
 
     sealed class UiEvent{
         data class ShowToast(val message: String): UiEvent()
-        object LoginSuccess: UiEvent()
+        object CloseEditDialog: UiEvent()
     }
 }

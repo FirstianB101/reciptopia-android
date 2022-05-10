@@ -6,7 +6,7 @@ import com.ich.reciptopia.domain.model.Exist
 import com.ich.reciptopia.domain.repository.SignUpRepository
 
 class SignUpRepositoryImpl(
-    api: ReciptopiaApi
+    private val api: ReciptopiaApi
 ): SignUpRepository {
     override suspend fun accountExists(email: String): Exist {
         return Exist(

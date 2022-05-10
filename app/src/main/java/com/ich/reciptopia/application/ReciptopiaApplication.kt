@@ -1,6 +1,7 @@
 package com.ich.reciptopia.application
 
 import android.app.Application
+import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.User
 import dagger.hilt.android.HiltAndroidApp
 
@@ -18,6 +19,10 @@ class ReciptopiaApplication: Application(){
 
     fun logout(){
         user = null
+    }
+
+    fun editAccount(account: Account){
+        user?.account = account
     }
 
     fun getCurrentUser() = user

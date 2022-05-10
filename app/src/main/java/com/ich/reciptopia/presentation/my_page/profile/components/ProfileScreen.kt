@@ -1,5 +1,6 @@
-package com.ich.reciptopia.presentation.my_page.profile
+package com.ich.reciptopia.presentation.my_page.profile.components
 
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,22 +9,46 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
+import com.ich.reciptopia.presentation.my_page.profile.ProfileScreenEvent
+import com.ich.reciptopia.presentation.my_page.profile.ProfileViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ProfileScreen(
-    navController: NavController
+    navController: NavController,
+    viewModel: ProfileViewModel = hiltViewModel()
 ){
+    val state = viewModel.state.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit){
+        viewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is ProfileViewModel.UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+                is ProfileViewModel.UiEvent.CloseEditDialog -> {
+                    viewModel.onEvent(ProfileScreenEvent.EditDialogStateChanged(false))
+                }
+            }
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -65,7 +90,7 @@ fun ProfileScreen(
                 .fillMaxWidth(0.8f)
                 .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(30))
                 .padding(4.dp),
-            text = "nickname",
+            text = state.value.nickname,
             textAlign = TextAlign.Center,
             fontSize = 17.sp
         )
@@ -78,14 +103,26 @@ fun ProfileScreen(
                 backgroundColor = colorResource(id = R.color.main_color),
                 contentColor = Color.White
             ),
-            onClick = {}
+            onClick = {
+                viewModel.onEvent(ProfileScreenEvent.EditDialogStateChanged(true))
+            }
         ) {
             Text(
                 modifier = Modifier.padding(8.dp),
-                text = stringResource(id = R.string.save),
+                text = stringResource(id = R.string.edit_profile),
                 fontSize = 18.sp,
                 color = Color.White
             )
         }
     }
+
+    ChangeNicknameDialog(
+        modifier = Modifier.padding(16.dp),
+        initialNickname = state.value.nickname,
+        dialogState = state.value.showEditDialogState,
+        onDismiss = { viewModel.onEvent(ProfileScreenEvent.EditDialogStateChanged(false)) },
+        onButtonClick = {
+            viewModel.onEvent(ProfileScreenEvent.ChangeNickname(it))
+        }
+    )
 }

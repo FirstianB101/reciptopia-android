@@ -6,4 +6,5 @@ sealed class SignUpScreenEvent{
     data class PasswordCheckChanged(val passwordCheck: String): SignUpScreenEvent()
     data class NicknameChanged(val nickname: String): SignUpScreenEvent()
     data class ShowNotification(val show: Boolean): SignUpScreenEvent()
+    object SignUp: SignUpScreenEvent()
 }

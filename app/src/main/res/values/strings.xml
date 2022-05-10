@@ -18,6 +18,8 @@
     <string name="mypage">마이페이지</string>
     <string name="logout">로그아웃</string>
     <string name="edit_profile">프로필 편집</string>
+    <string name="edit_nickname">닉네임 변경</string>
+    <string name="modify">수정하기</string>
     <string name="save">저장</string>
     <string name="confirm">확인</string>
 

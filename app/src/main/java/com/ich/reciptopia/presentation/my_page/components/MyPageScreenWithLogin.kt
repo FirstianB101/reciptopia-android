@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,15 +17,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
 import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.presentation.my_page.MyPageScreens
+import com.ich.reciptopia.presentation.my_page.profile.ProfileViewModel
 
 @Composable
 fun MyPageScreenWithLogin(
-    navController: NavController
+    navController: NavController,
+    viewModel: ProfileViewModel = hiltViewModel()
 ){
+    val state = viewModel.state.collectAsState()
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -57,14 +62,14 @@ fun MyPageScreenWithLogin(
 
             Column {
                 Text(
-                    text = "nickname",
+                    text = state.value.nickname,
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
 
                 Text(
-                    text = "toomuchhair@gmail.com",
+                    text = state.value.email,
                     color = Color.Gray,
                     fontSize = 16.sp
                 )
