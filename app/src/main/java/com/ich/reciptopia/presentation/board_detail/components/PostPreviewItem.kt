@@ -9,9 +9,17 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,12 +27,19 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.rememberImagePainter
 import com.ich.reciptopia.R
+import com.ich.reciptopia.domain.model.Post
+import com.ich.reciptopia.presentation.community.CommunityScreenEvent
+import com.ich.reciptopia.presentation.community.CommunityViewModel
 
 @Composable
-fun BoardPreviewItem(
+fun PostPreviewItem(
     modifier: Modifier = Modifier,
-    starFilled: Boolean = false,
+    post: Post,
+    starFilled: Boolean,
+    onStarClick: () -> Unit,
     onBoardClick: () -> Unit
 ){
     Column(
@@ -38,7 +53,7 @@ fun BoardPreviewItem(
                 modifier = Modifier
                     .weight(1f)
                     .padding(top = 8.dp, start = 16.dp),
-                text = "Title Text",
+                text = post.title ?: "",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -46,7 +61,7 @@ fun BoardPreviewItem(
 
             IconButton(
                 modifier = Modifier.padding(top = 8.dp, end = 8.dp),
-                onClick = {}
+                onClick = onStarClick
             ) {
                 Icon(
                     modifier = Modifier.size(32.dp),
@@ -70,7 +85,7 @@ fun BoardPreviewItem(
             Spacer(modifier = Modifier.width(4.dp))
             
             Text(
-                text = "username",
+                text = "nickname",
                 color = Color.Black
             )
         }
@@ -79,7 +94,7 @@ fun BoardPreviewItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp),
-            text = "ingredient1, ingredient2, ingredient3",
+            text = post.content ?: "",
             color = Color.Gray
         )
 
@@ -88,10 +103,10 @@ fun BoardPreviewItem(
                 .fillMaxWidth()
                 .padding(8.dp)
         ){
-            items(4){
+            items(post.pictureUrls.size){ idx ->
                 Image(
                     modifier = Modifier.size(200.dp),
-                    imageVector = Icons.Filled.Image,
+                    painter = rememberImagePainter(post.pictureUrls[idx]),
                     contentDescription = ""
                 )
             }
@@ -105,7 +120,7 @@ fun BoardPreviewItem(
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
-                text = "조회수 10",
+                text = "조회수 ${post.views ?: 0}",
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.width(12.dp))
@@ -115,26 +130,6 @@ fun BoardPreviewItem(
                 imageVector = Icons.Filled.ThumbUp,
                 contentDescription = "",
                 tint = Color.Gray
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            
-            Text(
-                text = "5",
-                color = Color.Gray
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Icon(
-                modifier = Modifier.size(16.dp),
-                imageVector = Icons.Filled.ThumbDown,
-                contentDescription = "",
-                tint = Color.Gray
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-
-            Text(
-                text = "2",
-                color = Color.Gray
             )
             Spacer(modifier = Modifier.width(4.dp))
         }

@@ -1,9 +1,7 @@
 package com.ich.reciptopia.di
 
-import com.ich.reciptopia.domain.repository.LoginRepository
-import com.ich.reciptopia.domain.repository.ProfileRepository
-import com.ich.reciptopia.domain.repository.SearchHistoryRepository
-import com.ich.reciptopia.domain.repository.SignUpRepository
+import com.ich.reciptopia.domain.repository.*
+import com.ich.reciptopia.domain.use_case.community.*
 import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
 import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
@@ -52,5 +50,18 @@ object UseCaseModule {
     @Singleton
     fun provideProfileUseCase(repository: ProfileRepository): NicknameChangeUseCase{
         return NicknameChangeUseCase(repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommunityUseCases(repository: CommunityRepository): CommunityUseCases{
+        return CommunityUseCases(
+            createPost = CreatePostUseCase(repository),
+            getPostsByTime = GetPostsByTimeUseCase(repository),
+            getPostsByViews = GetPostsByViewsUseCase(repository),
+            getPostLikeTags = GetPostLikeTagsUseCase(repository),
+            postLike = PostLikeUseCase(repository),
+            getOwnerOfPost = GetOwnerOfPostUseCase(repository)
+        )
     }
 }

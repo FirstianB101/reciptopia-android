@@ -1,20 +1,29 @@
 package com.ich.reciptopia.presentation.community.components
 
+import android.content.Context
+import android.content.Intent
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
+import com.ich.reciptopia.presentation.board_detail.BoardActivity
+import com.ich.reciptopia.presentation.board_detail.components.PostPreviewItem
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 import com.ich.reciptopia.presentation.community.CommunityViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CommunityScreen(
@@ -23,9 +32,22 @@ fun CommunityScreen(
     onLoginButtonClicked: () -> Unit
 ){
     val state = viewModel.state.collectAsState()
+    val options = listOf("최신순", "조회순")
+    var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     BackHandler(state.value.searchMode) {
         viewModel.onEvent(CommunityScreenEvent.SearchModeOff)
+    }
+
+    LaunchedEffect(Unit){
+        viewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is CommunityViewModel.UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
     
     Scaffold(
@@ -44,7 +66,60 @@ fun CommunityScreen(
         Box(
             modifier = Modifier.fillMaxSize()
         ){
-            BoardListScreen()
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    TextButton(
+                        modifier = Modifier.padding(top = 8.dp, end = 8.dp),
+                        onClick = { expanded = !expanded }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FilterList,
+                            contentDescription = null,
+                            tint = Color.Black
+                        )
+                        Text(
+                            text = state.value.sortOption,
+                            color = Color.Black
+                        )
+                    }
+                    DropdownMenu(
+                        modifier = Modifier.width(85.dp),
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                    ) {
+                        options.forEach { label ->
+                            DropdownMenuItem(onClick = {
+                                expanded = false
+                                viewModel.onEvent(CommunityScreenEvent.SortOptionChanged(label))
+                            }) {
+                                Text(text = label)
+                            }
+                        }
+                    }
+                }
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth()
+                ){
+                    items(state.value.posts.size){ idx ->
+                        Divider()
+                        PostPreviewItem(
+                            modifier = Modifier.fillMaxWidth(),
+                            post = state.value.posts[idx],
+                            starFilled = state.value.like[idx],
+                            onStarClick = {
+                            },
+                            onBoardClick = {
+                                startBoardActivity(context)
+                            }
+                        )
+                    }
+                }
+            }
 
             FloatingActionButton(
                 modifier = Modifier
@@ -68,4 +143,9 @@ fun CommunityScreen(
     ) {
         viewModel.onEvent(CommunityScreenEvent.CreateBoardStateChanged(false))
     }
+}
+
+private fun startBoardActivity(context: Context){
+    val intent = Intent(context, BoardActivity::class.java)
+    context.startActivity(intent)
 }

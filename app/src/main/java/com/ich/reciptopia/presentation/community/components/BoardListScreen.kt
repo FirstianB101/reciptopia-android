@@ -13,13 +13,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.ich.reciptopia.presentation.board_detail.BoardActivity
-import com.ich.reciptopia.presentation.board_detail.components.BoardPreviewItem
+import com.ich.reciptopia.presentation.board_detail.components.PostPreviewItem
 
 @Composable
 fun BoardListScreen(
 
 ){
-    val options = listOf("최신순", "인기순", "모발순")
+    val options = listOf("최신순", "조회순")
     var expanded by remember { mutableStateOf(false) }
     var selectedOptionText by remember { mutableStateOf(options[0]) }
     val context = LocalContext.current
@@ -61,21 +61,12 @@ fun BoardListScreen(
         }
 
         Divider()
-        BoardPreviewItem(
-            modifier = Modifier.fillMaxWidth(),
-            onBoardClick = {
-                startBoardActivity(context)
-            }
-        )
-        Divider()
-        BoardPreviewItem(
-            modifier = Modifier.fillMaxWidth(),
-            starFilled = true,
-            onBoardClick = {
-                startBoardActivity(context)
-            }
-        )
-        Divider()
+//        PostPreviewItem(
+//            modifier = Modifier.fillMaxWidth(),
+//            onBoardClick = {
+//                startBoardActivity(context)
+//            }
+//        )
     }
 }
 

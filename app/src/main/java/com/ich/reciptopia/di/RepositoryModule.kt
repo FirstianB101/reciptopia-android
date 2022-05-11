@@ -2,14 +2,8 @@ package com.ich.reciptopia.di
 
 import com.ich.reciptopia.data.data_source.SearchHistoryDatabase
 import com.ich.reciptopia.data.remote.ReciptopiaApi
-import com.ich.reciptopia.data.repository.LoginRepositoryImpl
-import com.ich.reciptopia.data.repository.ProfileRepositoryImpl
-import com.ich.reciptopia.data.repository.SearchHistoryRepositoryImpl
-import com.ich.reciptopia.data.repository.SignUpRepositoryImpl
-import com.ich.reciptopia.domain.repository.LoginRepository
-import com.ich.reciptopia.domain.repository.ProfileRepository
-import com.ich.reciptopia.domain.repository.SearchHistoryRepository
-import com.ich.reciptopia.domain.repository.SignUpRepository
+import com.ich.reciptopia.data.repository.*
+import com.ich.reciptopia.domain.repository.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,5 +36,11 @@ object RepositoryModule {
     @Singleton
     fun provideProfileRepository(api: ReciptopiaApi): ProfileRepository{
         return ProfileRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommunityRepository(api: ReciptopiaApi): CommunityRepository{
+        return CommunityRepositoryImpl(api)
     }
 }
