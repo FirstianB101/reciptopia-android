@@ -19,8 +19,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
-import com.ich.reciptopia.presentation.board_detail.BoardActivity
-import com.ich.reciptopia.presentation.board_detail.components.PostPreviewItem
+import com.ich.reciptopia.presentation.post_detail.PostActivity
+import com.ich.reciptopia.presentation.post_detail.components.PostPreviewItem
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 import com.ich.reciptopia.presentation.community.CommunityViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -146,6 +146,6 @@ fun CommunityScreen(
 }
 
 private fun startBoardActivity(context: Context){
-    val intent = Intent(context, BoardActivity::class.java)
+    val intent = Intent(context, PostActivity::class.java)
     context.startActivity(intent)
 }

@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.board_detail.components
+package com.ich.reciptopia.presentation.post_detail.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -25,7 +25,7 @@ import com.ich.reciptopia.R
 import com.ich.reciptopia.presentation.main.search.components.CustomTextField
 
 @Composable
-fun BoardCommentBottomSheet(
+fun PostCommentBottomSheet(
     modifier: Modifier = Modifier
 ){
     var commentText by remember{ mutableStateOf("") }

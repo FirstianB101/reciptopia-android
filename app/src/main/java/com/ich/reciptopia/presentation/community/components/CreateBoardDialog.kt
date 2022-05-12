@@ -23,7 +23,7 @@ fun CreateBoardDialog(
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ){
-                    BoardDialogScreen()
+                    PostDialogScreen()
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.board_detail.components
+package com.ich.reciptopia.presentation.post_detail.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import com.ich.reciptopia.R
 
 @Composable
-fun BoardDetailScreen(
+fun PostDetailScreen(
     modifier: Modifier = Modifier,
     starFilled: Boolean = false,
     onCommentClicked: () -> Unit

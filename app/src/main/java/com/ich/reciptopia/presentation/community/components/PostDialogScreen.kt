@@ -34,7 +34,7 @@ import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.Constants
 
 @Composable
-fun BoardDialogScreen(
+fun PostDialogScreen(
 
 ){
     val context = LocalContext.current

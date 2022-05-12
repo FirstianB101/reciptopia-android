@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.board_detail.components
+package com.ich.reciptopia.presentation.post_detail.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,12 +14,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,12 +21,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.ich.reciptopia.R
 import com.ich.reciptopia.domain.model.Post
-import com.ich.reciptopia.presentation.community.CommunityScreenEvent
-import com.ich.reciptopia.presentation.community.CommunityViewModel
 
 @Composable
 fun PostPreviewItem(

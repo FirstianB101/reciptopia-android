@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Reciptopia">
         <activity
-            android:name=".presentation.board_detail.BoardActivity"
+            android:name=".presentation.post_detail.PostActivity"
             android:exported="false"
             android:label="@string/title_activity_board"
             android:theme="@style/Theme.Reciptopia"

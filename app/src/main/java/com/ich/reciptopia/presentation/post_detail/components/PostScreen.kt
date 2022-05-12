@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.board_detail.components
+package com.ich.reciptopia.presentation.post_detail.components
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BoardScreen(
+fun PostScreen(
 
 ){
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -43,11 +43,11 @@ fun BoardScreen(
                     .fillMaxWidth()
                     .fillMaxHeight(0.95f)
             ) {
-                BoardCommentBottomSheet()
+                PostCommentBottomSheet()
             }
         }, sheetPeekHeight = 0.dp
     ) {
-        BoardDetailScreen(
+        PostDetailScreen(
             modifier = Modifier.fillMaxSize(),
             onCommentClicked = {
                 scope.launch { bottomSheetScaffoldState.bottomSheetState.expand() }
