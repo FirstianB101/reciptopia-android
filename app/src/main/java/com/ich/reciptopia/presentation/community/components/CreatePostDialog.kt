@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 
 @Composable
-fun CreateBoardDialog(
+fun CreatePostDialog(
     showDialog: Boolean,
     onClose: () -> Unit
 ){

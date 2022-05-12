@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
@@ -37,9 +36,9 @@ class CommunityViewModel @Inject constructor(
 
     fun onEvent(event: CommunityScreenEvent){
         when(event){
-            is CommunityScreenEvent.CreateBoardStateChanged -> {
+            is CommunityScreenEvent.CreatePostStateChanged -> {
                 _state.value = _state.value.copy(
-                    showCreateBoardDialog = event.isOn
+                    showCreatePostDialog = event.isOn
                 )
             }
             is CommunityScreenEvent.SearchButtonClicked -> {

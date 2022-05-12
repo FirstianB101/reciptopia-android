@@ -113,8 +113,8 @@ fun CommunityScreen(
                             starFilled = state.value.like[idx],
                             onStarClick = {
                             },
-                            onBoardClick = {
-                                startBoardActivity(context)
+                            onPostClick = {
+                                startPostActivity(context, state.value.posts[idx].id!!)
                             }
                         )
                     }
@@ -126,7 +126,7 @@ fun CommunityScreen(
                     .size(48.dp)
                     .align(Alignment.BottomEnd)
                     .offset(x = (-16).dp, y = (-16).dp),
-                onClick = { viewModel.onEvent(CommunityScreenEvent.CreateBoardStateChanged(true)) },
+                onClick = { viewModel.onEvent(CommunityScreenEvent.CreatePostStateChanged(true)) },
                 backgroundColor = colorResource(id = R.color.main_color),
                 contentColor = Color.White
             ) {
@@ -138,14 +138,16 @@ fun CommunityScreen(
         }
     }
 
-    CreateBoardDialog(
-        showDialog = state.value.showCreateBoardDialog
+    CreatePostDialog(
+        showDialog = state.value.showCreatePostDialog
     ) {
-        viewModel.onEvent(CommunityScreenEvent.CreateBoardStateChanged(false))
+        viewModel.onEvent(CommunityScreenEvent.CreatePostStateChanged(false))
     }
 }
 
-private fun startBoardActivity(context: Context){
-    val intent = Intent(context, PostActivity::class.java)
+private fun startPostActivity(context: Context, postId: Long){
+    val intent = Intent(context, PostActivity::class.java).apply {
+        putExtra("selectedPostId",postId)
+    }
     context.startActivity(intent)
 }

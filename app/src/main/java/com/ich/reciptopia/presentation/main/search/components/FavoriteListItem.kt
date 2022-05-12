@@ -33,7 +33,7 @@ fun FavoriteListItem(
         Spacer(modifier = Modifier.width(12.dp))
 
         Text(
-            text = "Board",
+            text = "Post",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

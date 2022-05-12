@@ -34,7 +34,7 @@
     <string name="comment_input_comment">댓글을 작성해보세요.</string>
     <string name="comment_input_title">제목을 입력하세요.</string>
     <string name="comment_input_content">내용을 입력하세요.</string>
-    <string name="title_activity_board">BoardActivity</string>
+    <string name="title_activity_post">PostActivity</string>
     <string name="comment_require_login">로그인이 필요합니다.</string>
     <string name="comment_email_already_exist">이미 가입되어 있는 이메일입니다.</string>
     <string name="comment_wrong_password_format">비밀번호는 8~15자리의 영문 대소문자, 기호, 숫자를 포함합니다.</string>

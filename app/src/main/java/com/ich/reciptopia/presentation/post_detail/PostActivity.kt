@@ -11,9 +11,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class PostActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val selectedPostId = intent.getLongExtra("selectedPostId",-1L)
         setContent {
             ReciptopiaTheme {
-                PostScreen()
+                PostScreen(selectedPostId)
             }
         }
     }

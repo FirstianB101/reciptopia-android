@@ -11,7 +11,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.ich.reciptopia.presentation.community.components.BoardListScreen
 import com.ich.reciptopia.presentation.main.MainScreenEvent
 import com.ich.reciptopia.presentation.main.MainViewModel
 import com.ich.reciptopia.presentation.main.analyze_ingredient.components.AnalyzeIngredientScreen
@@ -90,8 +89,7 @@ fun MainNavigation(
                     }
                 )
             }
-            composable(route = MainScreenUI.BoardListScreen.route) {
-                BoardListScreen()
+            composable(route = MainScreenUI.PostListScreen.route) {
             }
         }
     }

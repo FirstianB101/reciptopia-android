@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 
 @Composable
-fun CreateBoardImageItem(
+fun CreatePostImageItem(
     modifier: Modifier = Modifier,
     bitmap: ImageBitmap,
     imageSize: Dp,
@@ -34,7 +34,7 @@ fun CreateBoardImageItem(
             modifier = Modifier.size(imageSize),
             bitmap = bitmap,
             contentScale = ContentScale.Crop,
-            contentDescription = "Create Board Image Item"
+            contentDescription = "Create Post Image Item"
         )
 
         IconButton(
@@ -48,7 +48,7 @@ fun CreateBoardImageItem(
         ) {
             Icon(
                 imageVector = Icons.Default.Clear,
-                contentDescription = "Create Board Image Item Delete Icon",
+                contentDescription = "Create Post Image Item Delete Icon",
                 tint = Color.White
             )
         }

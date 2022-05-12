@@ -1,7 +1,7 @@
 package com.ich.reciptopia.presentation.community
 
 sealed class CommunityScreenEvent{
-    data class CreateBoardStateChanged(val isOn: Boolean): CommunityScreenEvent()
+    data class CreatePostStateChanged(val isOn: Boolean): CommunityScreenEvent()
     data class SearchQueryChanged(val query: String): CommunityScreenEvent()
     data class SortOptionChanged(val option: String): CommunityScreenEvent()
     object SearchModeOff: CommunityScreenEvent()

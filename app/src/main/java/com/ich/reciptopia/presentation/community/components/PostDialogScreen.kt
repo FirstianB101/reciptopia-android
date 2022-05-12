@@ -149,7 +149,7 @@ fun PostDialogScreen(
             items(images.size){ idx ->
                 Spacer(modifier = Modifier.width(8.dp))
 
-                CreateBoardImageItem(
+                CreatePostImageItem(
                     modifier = Modifier.size(100.dp),
                     bitmap = images[idx].asImageBitmap(),
                     imageSize = 98.dp

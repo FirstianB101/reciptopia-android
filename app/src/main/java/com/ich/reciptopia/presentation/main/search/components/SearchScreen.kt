@@ -95,8 +95,8 @@ fun SearchScreen(
                                     .padding(24.dp),
                                 items = history.ingredients,
                                 onItemClicked = {
-                                    navController.navigate(MainScreenUI.BoardListScreen.route) {
-                                        popUpTo(MainScreenUI.BoardListScreen.route) {
+                                    navController.navigate(MainScreenUI.PostListScreen.route) {
+                                        popUpTo(MainScreenUI.PostListScreen.route) {
                                             inclusive = true
                                         }
                                         launchSingleTop = true
@@ -135,7 +135,7 @@ fun SearchScreen(
                         SearchHistoryEntity(ingredients = chipStates.map { s -> s.toChipInfo() })
                     )
                 )
-                navController.navigate(MainScreenUI.BoardListScreen.route)
+                navController.navigate(MainScreenUI.PostListScreen.route)
                 onChipReset()
             },
             backgroundColor = colorResource(id = R.color.main_color),

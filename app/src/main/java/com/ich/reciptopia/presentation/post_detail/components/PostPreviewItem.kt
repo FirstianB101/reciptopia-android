@@ -31,10 +31,10 @@ fun PostPreviewItem(
     post: Post,
     starFilled: Boolean,
     onStarClick: () -> Unit,
-    onBoardClick: () -> Unit
+    onPostClick: () -> Unit
 ){
     Column(
-        modifier = modifier.clickable { onBoardClick() }
+        modifier = modifier.clickable { onPostClick() }
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
