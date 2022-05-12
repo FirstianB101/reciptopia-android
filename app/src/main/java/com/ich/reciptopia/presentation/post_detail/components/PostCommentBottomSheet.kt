@@ -21,15 +21,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
 import com.ich.reciptopia.presentation.main.search.components.CustomTextField
+import com.ich.reciptopia.presentation.post_detail.PostDetailEvent
+import com.ich.reciptopia.presentation.post_detail.PostDetailViewModel
 
 @Composable
 fun PostCommentBottomSheet(
-    modifier: Modifier = Modifier
+    postId: Long,
+    modifier: Modifier = Modifier,
+    viewModel: PostDetailViewModel = hiltViewModel()
 ){
-    var commentText by remember{ mutableStateOf("") }
-    val interactionSource = remember { MutableInteractionSource() }
+    val state = viewModel.state.collectAsState()
 
     Column(
         modifier = modifier,
@@ -65,12 +69,12 @@ fun PostCommentBottomSheet(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0x55EEEEEE))
-                .padding(8.dp),
+                .padding(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             CustomTextField(
-                value = commentText,
-                onValueChange = {commentText = it},
+                value = state.value.commentText,
+                onValueChange = { viewModel.onEvent(PostDetailEvent.CommentTextChanged(it)) },
                 modifier = Modifier
                     .background(
                         Color(0xDDDDDDDD),
@@ -81,14 +85,18 @@ fun PostCommentBottomSheet(
                     .weight(1f),
                 fontSize = 16.sp,
                 placeholderText = stringResource(id = R.string.comment_input_comment),
-                interactionSource = interactionSource
+                interactionSource =  MutableInteractionSource()
             )
+            
+            Spacer(modifier = Modifier.width(6.dp))
 
             IconButton(
-                onClick = {  },
+                onClick = {
+                    viewModel.onEvent(PostDetailEvent.CreateComment(postId))
+                },
                 modifier = Modifier
                     .size(40.dp)
-                    .padding(2.dp)
+                    .padding(4.dp)
                     .clip(CircleShape)
                     .background(colorResource(id = R.color.main_color))
             ) {

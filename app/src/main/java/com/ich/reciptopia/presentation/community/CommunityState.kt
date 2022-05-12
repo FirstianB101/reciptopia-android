@@ -1,6 +1,5 @@
 package com.ich.reciptopia.presentation.community
 
-import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
 
@@ -13,5 +12,4 @@ data class CommunityState(
     val posts: List<Post> = emptyList(),
     val likeTags: List<PostLikeTag> = emptyList(),
     val like: List<Boolean> = emptyList(),
-    val postOwner: Account? = null
 )

@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
 import com.ich.reciptopia.presentation.post_detail.PostActivity
-import com.ich.reciptopia.presentation.post_detail.components.PostPreviewItem
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 import com.ich.reciptopia.presentation.community.CommunityViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -105,16 +105,17 @@ fun CommunityScreen(
                 LazyColumn(
                     modifier = Modifier.fillMaxWidth()
                 ){
-                    items(state.value.posts.size){ idx ->
+                    itemsIndexed(state.value.posts){ idx, post ->
                         Divider()
                         PostPreviewItem(
                             modifier = Modifier.fillMaxWidth(),
-                            post = state.value.posts[idx],
-                            starFilled = state.value.like[idx],
+                            post = post,
+                            owner = post.owner!!,
+                            starFilled = false,
                             onStarClick = {
                             },
                             onPostClick = {
-                                startPostActivity(context, state.value.posts[idx].id!!)
+                                startPostActivity(context, post.id!!)
                             }
                         )
                     }

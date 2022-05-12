@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
+import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
@@ -74,26 +75,11 @@ class CommunityViewModel @Inject constructor(
                     else -> throw Exception("sort exception")
                 }
                 job.invokeOnCompletion {
-                    getPostLikeTags().invokeOnCompletion {
-                        val tags = _state.value.likeTags
-                        val posts = _state.value.posts
-                        val likes = MutableList(posts.size){false}
-                        for(i in posts.indices){
-                            for(j in tags.indices){
-                                if(posts[i].id == tags[j].postId && user?.id == tags[j].ownerId){
-                                    likes[i] = true
-                                    break
-                                }
-                            }
-                        }
-                        _state.value = _state.value.copy(
-                            like = likes
-                        )
+                    getPostLikeTags()
+                    _state.value.posts.forEachIndexed{ i, post ->
+                        getOwnerOfPost(i, post.ownerId!!)
                     }
                 }
-            }
-            is CommunityScreenEvent.GetOwnerAccount -> {
-                getOwnerOfPost(event.accountId)
             }
         }
     }
@@ -217,12 +203,15 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun getOwnerOfPost(accountId: Long) = viewModelScope.launch {
+    // call after get Posts
+    private fun getOwnerOfPost(postIdx: Int, accountId: Long) = viewModelScope.launch {
         useCases.getOwnerOfPost(accountId).collect{ result ->
             when(result){
                 is Resource.Success -> {
+                    val posts = _state.value.posts
+                    posts[postIdx].owner = result.data
                     _state.value = _state.value.copy(
-                        postOwner = result.data!!,
+                        posts = posts,
                         isLoading = false
                     )
                 }

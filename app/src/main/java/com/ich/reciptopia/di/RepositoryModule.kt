@@ -43,4 +43,10 @@ object RepositoryModule {
     fun provideCommunityRepository(api: ReciptopiaApi): CommunityRepository{
         return CommunityRepositoryImpl(api)
     }
+
+    @Provides
+    @Singleton
+    fun providePostDetailRepository(api: ReciptopiaApi): PostDetailRepository{
+        return PostDetailRepositoryImpl(api)
+    }
 }

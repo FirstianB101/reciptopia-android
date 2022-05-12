@@ -1,0 +1,15 @@
+package com.ich.reciptopia.presentation.post_detail
+
+import com.ich.reciptopia.domain.model.MainIngredient
+import com.ich.reciptopia.domain.model.Post
+import com.ich.reciptopia.domain.model.SubIngredient
+
+data class PostDetailState(
+    val isLoading: Boolean = false,
+    val isFavorite: Boolean = false,
+    val isLike: Boolean = false,
+    val commentText: String = "",
+    val curPost: Post? = null,
+    val mainIngredients: List<MainIngredient> = listOf(MainIngredient(null,"메인재료","20g")),
+    val subIngredients: List<SubIngredient> = listOf(SubIngredient(null,"서브재료","50g"))
+)

@@ -7,6 +7,8 @@ import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
+import com.ich.reciptopia.domain.use_case.post_detail.GetPostInfoUseCase
+import com.ich.reciptopia.domain.use_case.post_detail.PostDetailUseCases
 import com.ich.reciptopia.domain.use_case.search_history.AddSearchHistory
 import com.ich.reciptopia.domain.use_case.search_history.DeleteSearchHistory
 import com.ich.reciptopia.domain.use_case.search_history.GetSearchHistoriesInDB
@@ -62,6 +64,14 @@ object UseCaseModule {
             getPostLikeTags = GetPostLikeTagsUseCase(repository),
             postLike = PostLikeUseCase(repository),
             getOwnerOfPost = GetOwnerOfPostUseCase(repository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providePostDetailUseCases(repository: PostDetailRepository): PostDetailUseCases{
+        return PostDetailUseCases(
+            getPostInfo = GetPostInfoUseCase(repository)
         )
     }
 }
