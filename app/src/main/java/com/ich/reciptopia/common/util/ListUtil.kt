@@ -28,3 +28,15 @@ fun List<ChipState>.getRemovedList(chipState: ChipState): List<ChipState>{
         it.remove(chipState)
     }
 }
+
+fun List<String>.getAddedList(uri: String): List<String>{
+    return this.toMutableList().also{
+        it.add(uri)
+    }
+}
+
+fun List<String>.getRemovedList(idx: Int): List<String>{
+    return this.toMutableList().also{
+        it.removeAt(idx)
+    }
+}

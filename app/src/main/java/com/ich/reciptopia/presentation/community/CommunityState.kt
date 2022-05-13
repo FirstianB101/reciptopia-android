@@ -11,5 +11,7 @@ data class CommunityState(
     val sortOption: String = "최신순",
     val posts: List<Post> = emptyList(),
     val likeTags: List<PostLikeTag> = emptyList(),
-    val like: List<Boolean> = emptyList(),
+    val newPostTitle: String = "",
+    val newPostContent: String = "",
+    val newPictureUrls: List<String> = emptyList()
 )

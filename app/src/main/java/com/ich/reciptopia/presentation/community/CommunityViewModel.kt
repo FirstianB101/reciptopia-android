@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
+import com.ich.reciptopia.common.util.getAddedList
+import com.ich.reciptopia.common.util.getRemovedList
 import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
@@ -68,6 +70,26 @@ class CommunityViewModel @Inject constructor(
                 )
                 onEvent(CommunityScreenEvent.GetPosts)
             }
+            is CommunityScreenEvent.CreatePostTitleChanged -> {
+                _state.value = _state.value.copy(
+                    newPostTitle = event.title
+                )
+            }
+            is CommunityScreenEvent.CreatePostContentChanged -> {
+                _state.value = _state.value.copy(
+                    newPostContent = event.content
+                )
+            }
+            is CommunityScreenEvent.CreatePostAddImage -> {
+                _state.value = _state.value.copy(
+                    newPictureUrls = _state.value.newPictureUrls.getAddedList(event.uri)
+                )
+            }
+            is CommunityScreenEvent.CreatePostRemoveImage -> {
+                _state.value = _state.value.copy(
+                    newPictureUrls = _state.value.newPictureUrls.getRemovedList(event.idx)
+                )
+            }
             is CommunityScreenEvent.GetPosts -> {
                 val job = when(_state.value.sortOption){
                     "최신순" -> getPostsByTime()
@@ -80,6 +102,17 @@ class CommunityViewModel @Inject constructor(
                         getOwnerOfPost(i, post.ownerId!!)
                     }
                 }
+            }
+            is CommunityScreenEvent.CreatePost -> {
+                val newPost = Post(
+                    ownerId = user?.id,
+                    title = _state.value.newPostTitle,
+                    content = _state.value.newPostContent,
+                    pictureUrls = _state.value.newPictureUrls,
+                    views = 0L
+                )
+                createPost(newPost)
+                    .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
             }
         }
     }
@@ -140,6 +173,7 @@ class CommunityViewModel @Inject constructor(
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("게시글을 생성했습니다"))
+                    _eventFlow.emit(UiEvent.SuccessCreatePost)
                 }
                 is Resource.Loading -> {
                     _state.value = _state.value.copy(
@@ -231,5 +265,6 @@ class CommunityViewModel @Inject constructor(
 
     sealed class UiEvent{
         data class ShowToast(val message: String): UiEvent()
+        object SuccessCreatePost: UiEvent()
     }
 }

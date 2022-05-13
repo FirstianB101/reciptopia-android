@@ -30,22 +30,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.Constants
+import com.ich.reciptopia.presentation.community.CommunityScreenEvent
+import com.ich.reciptopia.presentation.community.CommunityViewModel
 
 @Composable
 fun PostDialogScreen(
-
+    viewModel: CommunityViewModel = hiltViewModel()
 ){
+    val state = viewModel.state.collectAsState()
     val context = LocalContext.current
-    var titleText by remember { mutableStateOf("") }
-    var contentText by remember { mutableStateOf("") }
     val images = remember { mutableStateListOf<Bitmap>() }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         if (uri != null) {
+            viewModel.onEvent(CommunityScreenEvent.CreatePostAddImage(uri.toString()))
             val bitmap: Bitmap? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
             } else {
@@ -75,7 +78,9 @@ fun PostDialogScreen(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(16.dp),
-                onClick = {  },
+                onClick = {
+                    viewModel.onEvent(CommunityScreenEvent.CreatePost)
+                },
                 shape = RoundedCornerShape(50)
             ) {
                 Text(
@@ -89,15 +94,15 @@ fun PostDialogScreen(
 
         BasicTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = titleText,
-            onValueChange = { titleText = it },
+            value = state.value.newPostTitle,
+            onValueChange = { viewModel.onEvent(CommunityScreenEvent.CreatePostTitleChanged(it)) },
             decorationBox = { innerTextField ->
                 Row(
                     Modifier
                         .padding(16.dp)
                 ) {
 
-                    if (titleText.isEmpty()) {
+                    if (state.value.newPostTitle.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.comment_input_title),
                             color = Color.LightGray
@@ -125,9 +130,9 @@ fun PostDialogScreen(
                             shape = RoundedCornerShape(10)
                         )
                         .clickable {
-                            if(images.size < Constants.MAX_IMAGE_CNT) {
+                            if (images.size < Constants.MAX_IMAGE_CNT) {
                                 galleryLauncher.launch("image/*")
-                            }else{
+                            } else {
                                 Toast.makeText(context, "이미지는 최대 10장까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
                             }
                         },
@@ -155,6 +160,7 @@ fun PostDialogScreen(
                     imageSize = 98.dp
                 ) {
                     images.removeAt(idx)
+                    viewModel.onEvent(CommunityScreenEvent.CreatePostRemoveImage(idx))
                 }
             }
         }
@@ -165,14 +171,14 @@ fun PostDialogScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
-            value = contentText,
-            onValueChange = { contentText = it },
+            value = state.value.newPostContent,
+            onValueChange = { viewModel.onEvent(CommunityScreenEvent.CreatePostContentChanged(it)) },
             decorationBox = { innerTextField ->
                 Row(
                     Modifier.padding(16.dp)
                 ) {
 
-                    if (contentText.isEmpty()) {
+                    if (state.value.newPostContent.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.comment_input_content),
                             color = Color.LightGray

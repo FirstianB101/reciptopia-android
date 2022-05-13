@@ -10,6 +10,6 @@
     <color name="main_color">#5F8FED</color>
     <color name="sub_ingredient">#5F8FED</color>
     <color name="main_ingredient">#EAAD11</color>
-    <color name="light_blue">#bebef0</color>
+    <color name="light_blue">#ffd8e6ff</color>
     <color name="new_notification_background">#ECF2FF</color>
 </resources>

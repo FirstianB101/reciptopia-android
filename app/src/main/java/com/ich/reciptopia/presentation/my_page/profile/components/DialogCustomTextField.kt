@@ -10,8 +10,10 @@ import androidx.compose.material.icons.outlined.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.ich.reciptopia.R
 
 @Composable
 fun DialogCustomTextField(
@@ -20,9 +22,10 @@ fun DialogCustomTextField(
     value: String,
     onValueChange: (String) -> Unit
 ){
-    Column {
+    Column (
+        modifier = modifier
+    ){
         val maxLength = 50
-        val lightBlue = Color(0xffd8e6ff)
         val blue = Color(0xff76a9ff)
         Text(
             text = caption,
@@ -36,9 +39,9 @@ fun DialogCustomTextField(
             modifier = Modifier.fillMaxWidth(),
             value = value,
             colors = TextFieldDefaults.textFieldColors(
-                backgroundColor = lightBlue,
+                backgroundColor = colorResource(id = R.color.light_blue),
                 cursorColor = Color.Black,
-                disabledLabelColor = lightBlue,
+                disabledLabelColor = colorResource(id = R.color.light_blue),
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent
             ),

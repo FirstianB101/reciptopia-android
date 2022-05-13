@@ -46,6 +46,9 @@ fun CommunityScreen(
                 is CommunityViewModel.UiEvent.ShowToast -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
+                is CommunityViewModel.UiEvent.SuccessCreatePost -> {
+                    viewModel.onEvent(CommunityScreenEvent.CreatePostStateChanged(false))
+                }
             }
         }
     }
@@ -140,7 +143,7 @@ fun CommunityScreen(
     }
 
     CreatePostDialog(
-        showDialog = state.value.showCreatePostDialog
+        showDialog = state.value.showCreatePostDialog,
     ) {
         viewModel.onEvent(CommunityScreenEvent.CreatePostStateChanged(false))
     }
