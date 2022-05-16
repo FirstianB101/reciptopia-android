@@ -1,6 +1,6 @@
 package com.ich.reciptopia.domain.model
 
 data class User(
-    var token: String? = null,
-    var account: Account? = null
+    val token: String? = null,
+    val account: Account? = null
 )

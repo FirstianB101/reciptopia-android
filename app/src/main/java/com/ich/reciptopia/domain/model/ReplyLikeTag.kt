@@ -1,8 +1,7 @@
 package com.ich.reciptopia.domain.model
 
 data class ReplyLikeTag(
-    var ownerId: Long? = null,
-    var replyId: Long? = null
-){
-    var id: Long? = null
-}
+    val id: Long? = null,
+    val ownerId: Long? = null,
+    val replyId: Long? = null
+)

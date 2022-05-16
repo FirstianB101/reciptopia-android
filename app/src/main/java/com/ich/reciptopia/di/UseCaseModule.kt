@@ -62,7 +62,9 @@ object UseCaseModule {
             getPostsByViews = GetPostsByViewsUseCase(repository),
             getPostLikeTags = GetPostLikeTagsUseCase(repository),
             postLike = PostLikeUseCase(repository),
-            getOwnerOfPost = GetOwnerOfPostUseCase(repository)
+            getOwnerOfPost = GetOwnerOfPostUseCase(repository),
+            favoritePostNotLogin = FavoritePostNotLoginUseCase(repository),
+            getFavoriteEntities = GetFavoriteEntitiesUseCase(repository)
         )
     }
 

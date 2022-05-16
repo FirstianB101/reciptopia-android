@@ -1,9 +1,8 @@
 package com.ich.reciptopia.domain.model
 
 data class Reply(
-    var ownerId: Long? = null,
-    var commentId: Long? = null,
-    var content: String? = null
-){
-    var id: Long? = null
-}
+    val id: Long? = null,
+    val ownerId: Long? = null,
+    val commentId: Long? = null,
+    val content: String? = null
+)

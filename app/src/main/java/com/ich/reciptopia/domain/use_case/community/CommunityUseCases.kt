@@ -6,5 +6,7 @@ data class CommunityUseCases(
     val getPostsByViews: GetPostsByViewsUseCase,
     val getPostLikeTags: GetPostLikeTagsUseCase,
     val postLike: PostLikeUseCase,
-    val getOwnerOfPost: GetOwnerOfPostUseCase
+    val getOwnerOfPost: GetOwnerOfPostUseCase,
+    val favoritePostNotLogin: FavoritePostNotLoginUseCase,
+    val getFavoriteEntities: GetFavoriteEntitiesUseCase
 )

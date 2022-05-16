@@ -11,10 +11,7 @@ import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
@@ -237,13 +234,33 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
+    private fun getDbFavoritesForFillingStar(){
+        viewModelScope.launch {
+            val favoriteEntities = useCases.getFavoriteEntities().first()
+            val map = mutableMapOf<Long,Boolean>()
+
+            for(entity in favoriteEntities){
+                map[entity.post.id!!] = true
+            }
+
+            for(post in _state.value.posts){
+                if(map[post.id] == true){
+
+                }
+            }
+        }
+    }
+
     // call after get Posts
     private fun getOwnerOfPost(postIdx: Int, accountId: Long) = viewModelScope.launch {
         useCases.getOwnerOfPost(accountId).collect{ result ->
             when(result){
                 is Resource.Success -> {
-                    val posts = _state.value.posts
-                    posts[postIdx].owner = result.data
+                    val posts = _state.value.posts.toMutableList()
+                    val postWithAccount = posts[postIdx].copy(
+                        owner = result.data
+                    )
+                    posts[postIdx] = postWithAccount
                     _state.value = _state.value.copy(
                         posts = posts,
                         isLoading = false

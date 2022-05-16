@@ -11,10 +11,11 @@ class LoginRepositoryImpl(
 ): LoginRepository {
     override suspend fun loginUser(auth: Auth): User {
         val testUser = Account(
+            id = 1L,
             email = auth.email,
             nickname = "moNickname",
             profilePictureUrl = null
-        ).also { it.id = 1}
+        )
         return User("token", testUser)
     }
 }

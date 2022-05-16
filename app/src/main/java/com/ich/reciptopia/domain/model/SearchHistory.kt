@@ -1,8 +1,7 @@
 package com.ich.reciptopia.domain.model
 
 data class SearchHistory(
-    var ownerId: Long? = null,
-    var ingredientNames: List<String?> = emptyList()
-){
-    var id: Long? = null
-}
+    val id: Long? = null,
+    val ownerId: Long? = null,
+    val ingredientNames: List<String?> = emptyList()
+)

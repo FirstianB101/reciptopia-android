@@ -1,8 +1,7 @@
 package com.ich.reciptopia.domain.model
 
 data class CommentLikeTag(
-    var ownerId: Long? = null,
-    var commentId: Long? = null
-){
-    var id: Long? = null
-}
+    val id: Long? = null,
+    val ownerId: Long? = null,
+    val commentId: Long? = null
+)

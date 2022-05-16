@@ -1,9 +1,8 @@
 package com.ich.reciptopia.domain.model
 
 data class Step(
-    var recipeId: Long,
-    var description: String? = null,
-    var pictureUrl: String? = null
-){
-    var id: Long? = null
-}
+    val id: Long? = null,
+    val recipeId: Long,
+    val description: String? = null,
+    val pictureUrl: String? = null
+)

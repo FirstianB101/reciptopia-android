@@ -1,60 +1,76 @@
 package com.ich.reciptopia.data.repository
 
+import com.ich.reciptopia.data.data_source.SearchDao
 import com.ich.reciptopia.data.remote.ReciptopiaApi
 import com.ich.reciptopia.domain.model.Account
+import com.ich.reciptopia.domain.model.FavoriteEntity
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.repository.CommunityRepository
+import kotlinx.coroutines.flow.Flow
 
 class CommunityRepositoryImpl(
-    private val api: ReciptopiaApi
+    private val api: ReciptopiaApi,
+    private val dao: SearchDao
 ): CommunityRepository {
 
     private var nextPostId = 4L
     private var nextTagId = 4L
     private val testPosts = mutableListOf(
         Post(
+            id = 1L,
             ownerId = 1L,
             title = "포스트1",
             content = "포스트 1의 내용",
             pictureUrls = listOf("https://i.imgur.com/JOKsNeT.jpg","https://avatars.githubusercontent.com/u/77564110?s=200&v=4"),
             views = 10L
-        ).also { it.id = 1L },
+        ),
         Post(
+            id = 2L,
             ownerId = 1L,
             title = "포스트2",
             content = "포스트 2의 내용",
             pictureUrls = listOf("https://i.imgur.com/JOKsNeT.jpg","https://avatars.githubusercontent.com/u/77564110?s=200&v=4"),
             views = 15L
-        ).also { it.id = 2L },
+        ),
         Post(
+            id = 3L,
             ownerId = 2L,
             title = "포스트3",
             content = "포스트 3의 내용",
             pictureUrls = listOf("https://i.imgur.com/JOKsNeT.jpg","https://i.imgur.com/JOKsNeT.jpg","https://i.imgur.com/JOKsNeT.jpg",
                 "https://i.imgur.com/JOKsNeT.jpg","https://i.imgur.com/JOKsNeT.jpg","https://i.imgur.com/JOKsNeT.jpg"),
             views = 120L
-        ).also { it.id = 3L }
+        )
     )
 
     private val testPostLikeTags = mutableListOf(
         PostLikeTag(
+            id = 1L,
             ownerId = 1L,
             postId = 1L
-        ).also { it.id = 1L },
+        ),
         PostLikeTag(
+            id = 2L,
             ownerId = 1L,
             postId = 2L
-        ).also { it.id = 1L },
+        ),
         PostLikeTag(
+            id = 1L,
             ownerId = 2L,
             postId = 3L
-        ).also { it.id = 1L }
+        )
     )
 
     private val testOwner = mutableListOf(
-        Account(nickname = "momomomo").also { it.id = 1L },
-        Account(nickname = "balbalbal").also { it.id = 2L },
+        Account(
+            id = 1L,
+            nickname = "momomomo"
+        ),
+        Account(
+            id = 2L,
+            nickname = "balbalbal"
+        ),
     )
 
     override suspend fun getOwnerOfPost(accountId: Long): Account {
@@ -62,7 +78,11 @@ class CommunityRepositoryImpl(
     }
 
     override suspend fun postLike(postLikeTag: PostLikeTag): PostLikeTag {
-        testPostLikeTags.add(postLikeTag.also{it.id = nextTagId++})
+        testPostLikeTags.add(
+            postLikeTag.copy(
+                id = nextTagId++
+            )
+        )
         return postLikeTag
     }
 
@@ -79,7 +99,19 @@ class CommunityRepositoryImpl(
     }
 
     override suspend fun createPost(post: Post): Post {
-        testPosts.add(post.also{it.id = nextPostId++})
+        testPosts.add(
+            post.copy(
+                id = nextPostId++
+            )
+        )
         return post
+    }
+
+    override suspend fun favoritePost(post: Post) {
+        dao.insertFavorite(FavoriteEntity(post = post))
+    }
+
+    override suspend fun getFavoriteEntities(): Flow<List<FavoriteEntity>> {
+        return dao.getFavorites()
     }
 }

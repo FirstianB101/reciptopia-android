@@ -10,6 +10,6 @@ data class PostDetailState(
     val isLike: Boolean = false,
     val commentText: String = "",
     val curPost: Post? = null,
-    val mainIngredients: List<MainIngredient> = listOf(MainIngredient(null,"메인재료","20g")),
-    val subIngredients: List<SubIngredient> = listOf(SubIngredient(null,"서브재료","50g"))
+    val mainIngredients: List<MainIngredient> = listOf(MainIngredient(null,null,"메인재료","20g")),
+    val subIngredients: List<SubIngredient> = listOf(SubIngredient(null,null,"서브재료","50g"))
 )

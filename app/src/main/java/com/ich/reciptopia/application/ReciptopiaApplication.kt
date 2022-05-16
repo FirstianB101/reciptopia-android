@@ -22,7 +22,11 @@ class ReciptopiaApplication: Application(){
     }
 
     fun editAccount(account: Account){
-        user?.account = account
+        if(user?.account != null){
+            user = user?.copy(
+                account = account
+            )
+        }
     }
 
     fun getCurrentUser() = user

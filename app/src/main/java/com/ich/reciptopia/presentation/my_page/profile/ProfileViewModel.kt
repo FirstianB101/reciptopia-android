@@ -42,7 +42,9 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun changeNickname(newNickname: String) = viewModelScope.launch {
-        val edited = app.getCurrentUser()?.account?.also { it.nickname = newNickname }!!
+        val edited = app.getCurrentUser()?.account?.copy(
+            nickname = newNickname
+        )!!
         useCase(edited).collect{ result ->
             when(result){
                 is Resource.Success -> {

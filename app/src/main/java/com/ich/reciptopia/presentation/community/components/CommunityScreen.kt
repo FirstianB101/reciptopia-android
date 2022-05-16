@@ -116,6 +116,7 @@ fun CommunityScreen(
                             owner = post.owner!!,
                             starFilled = false,
                             onStarClick = {
+
                             },
                             onPostClick = {
                                 startPostActivity(context, post.id!!)

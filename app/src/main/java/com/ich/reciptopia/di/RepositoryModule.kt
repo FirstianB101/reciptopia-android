@@ -40,8 +40,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCommunityRepository(api: ReciptopiaApi): CommunityRepository{
-        return CommunityRepositoryImpl(api)
+    fun provideCommunityRepository(api: ReciptopiaApi, db: SearchDatabase): CommunityRepository{
+        return CommunityRepositoryImpl(api, db.searchDao)
     }
 
     @Provides

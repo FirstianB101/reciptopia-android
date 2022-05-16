@@ -1,9 +1,8 @@
 package com.ich.reciptopia.domain.model
 
 data class Comment(
-    var ownerId: Long? = null,
-    var postId: Long? = null,
-    var content: String? = null
-){
-    var id: Long? = null
-}
+    val id: Long? = null,
+    val ownerId: Long? = null,
+    val postId: Long? = null,
+    val content: String? = null
+)
