@@ -9,10 +9,7 @@ import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
 import com.ich.reciptopia.domain.use_case.post_detail.GetPostInfoUseCase
 import com.ich.reciptopia.domain.use_case.post_detail.PostDetailUseCases
-import com.ich.reciptopia.domain.use_case.search_history.AddSearchHistory
-import com.ich.reciptopia.domain.use_case.search_history.DeleteSearchHistory
-import com.ich.reciptopia.domain.use_case.search_history.GetSearchHistoriesInDB
-import com.ich.reciptopia.domain.use_case.search_history.SearchHistoryUseCases
+import com.ich.reciptopia.domain.use_case.search.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,11 +22,13 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideSearchHistoryUseCases(repository: SearchHistoryRepository): SearchHistoryUseCases{
-        return SearchHistoryUseCases(
-            getSearchHistories = GetSearchHistoriesInDB(repository),
-            addSearchHistory = AddSearchHistory(repository),
-            deleteSearchHistory = DeleteSearchHistory(repository)
+    fun provideSearchHistoryUseCases(repository: SearchRepository): SearchUseCases{
+        return SearchUseCases(
+            getSearchHistoryEntities = GetSearchHistoryEntities(repository),
+            addSearchHistoryEntity = AddSearchHistoryEntity(repository),
+            deleteSearchHistoryEntity = DeleteSearchHistoryEntity(repository),
+            getFavoriteEntities = GetFavoriteEntities(repository),
+            deleteFavoriteEntity = DeleteFavoriteEntity(repository)
         )
     }
 

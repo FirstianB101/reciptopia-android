@@ -1,4 +1,4 @@
-package com.ich.reciptopia.domain.use_case.search_history
+package com.ich.reciptopia.domain.use_case.search
 
 import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.main.search.util.ChipInfo
@@ -8,20 +8,23 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
-class AddSearchHistoryEntityTest {
+class GetSearchHistoryEntitiesTest{
 
-    private lateinit var addSearchHistory: AddSearchHistory
+    private lateinit var getSearchHistoryEntities: GetSearchHistoryEntities
     private lateinit var fakeRepository: FakeSearchHistoryRepository
+    private val testHistories = mutableListOf<SearchHistoryEntity>()
 
     @Before
     fun setUp() {
         fakeRepository = FakeSearchHistoryRepository()
-        addSearchHistory = AddSearchHistory(fakeRepository)
+        getSearchHistoryEntities = GetSearchHistoryEntities(fakeRepository)
     }
 
     @Test
-    fun `add search history test`() = runBlocking {
-        val testHistories = mutableListOf<SearchHistoryEntity>()
+    fun `get search history test`() = runBlocking {
+        var data = getSearchHistoryEntities().first()
+        assert(data.isEmpty())
+
         for(i in 1..5){
             testHistories.add(
                 SearchHistoryEntity(
@@ -32,15 +35,16 @@ class AddSearchHistoryEntityTest {
                 )
             )
         }
-        testHistories.forEach { addSearchHistory(it) }
+        runBlocking {
+            testHistories.forEach { fakeRepository.insertSearchHistory(it) }
+        }
 
-        val data = fakeRepository.getSearchHistories().first()
+        data = getSearchHistoryEntities().first()
+        assert(data.size == testHistories.size)
 
         for(i in data.indices){
-            assert("ingredient${i+1}" == data[i].ingredients[0].text)
-            assert(!data[i].ingredients[0].isSubIngredient)
-            assert("ingredient${i+2}" == data[i].ingredients[1].text)
-            assert(data[i].ingredients[1].isSubIngredient)
+            assert(data[i].ingredients[0].text == "ingredient${i+1}")
+            assert(data[i].ingredients[1].text == "ingredient${i+2}")
         }
     }
 }

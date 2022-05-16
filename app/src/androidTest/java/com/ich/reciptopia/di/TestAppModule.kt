@@ -5,12 +5,12 @@ import androidx.room.Room
 import com.google.gson.Gson
 import com.ich.reciptopia.common.util.ChipInfoListTypeConverter
 import com.ich.reciptopia.data.data_source.SearchHistoryDatabase
-import com.ich.reciptopia.data.repository.SearchHistoryRepositoryImpl
+import com.ich.reciptopia.data.repository.SearchRepositoryImpl
 import com.ich.reciptopia.domain.repository.SearchHistoryRepository
-import com.ich.reciptopia.domain.use_case.search_history.AddSearchHistory
-import com.ich.reciptopia.domain.use_case.search_history.DeleteSearchHistory
-import com.ich.reciptopia.domain.use_case.search_history.GetSearchHistoriesInDB
-import com.ich.reciptopia.domain.use_case.search_history.SearchHistoryUseCases
+import com.ich.reciptopia.domain.use_case.search.AddSearchHistoryEntity
+import com.ich.reciptopia.domain.use_case.search.DeleteSearchHistoryEntity
+import com.ich.reciptopia.domain.use_case.search.GetSearchHistoryEntities
+import com.ich.reciptopia.domain.use_case.search.SearchUseCases
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,16 +39,16 @@ object TestAppModule {
     @Provides
     @Singleton
     fun provideSearchHistoryRepository(db: SearchHistoryDatabase): SearchHistoryRepository {
-        return SearchHistoryRepositoryImpl(db.searchHistoryDao)
+        return SearchRepositoryImpl(db.searchHistoryDao)
     }
 
     @Provides
     @Singleton
-    fun provideSearchHistoryUseCases(repository: SearchHistoryRepository): SearchHistoryUseCases {
-        return SearchHistoryUseCases(
-            getSearchHistories = GetSearchHistoriesInDB(repository),
-            addSearchHistory = AddSearchHistory(repository),
-            deleteSearchHistory = DeleteSearchHistory(repository)
+    fun provideSearchHistoryUseCases(repository: SearchHistoryRepository): SearchUseCases {
+        return SearchUseCases(
+            getSearchHistoryEntities = GetSearchHistoryEntities(repository),
+            addSearchHistoryEntity = AddSearchHistoryEntity(repository),
+            deleteSearchHistoryEntity = DeleteSearchHistoryEntity(repository)
         )
     }
 }

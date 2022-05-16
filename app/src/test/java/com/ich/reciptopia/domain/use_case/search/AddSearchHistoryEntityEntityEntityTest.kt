@@ -1,4 +1,4 @@
-package com.ich.reciptopia.domain.use_case.search_history
+package com.ich.reciptopia.domain.use_case.search
 
 import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.main.search.util.ChipInfo
@@ -8,23 +8,20 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
-class GetSearchHistoriesInDBTest{
+class AddSearchHistoryEntityEntityEntityTest {
 
-    private lateinit var getSearchHistoriesInDB: GetSearchHistoriesInDB
+    private lateinit var addSearchHistoryEntity: AddSearchHistoryEntity
     private lateinit var fakeRepository: FakeSearchHistoryRepository
-    private val testHistories = mutableListOf<SearchHistoryEntity>()
 
     @Before
     fun setUp() {
         fakeRepository = FakeSearchHistoryRepository()
-        getSearchHistoriesInDB = GetSearchHistoriesInDB(fakeRepository)
+        addSearchHistoryEntity = AddSearchHistoryEntity(fakeRepository)
     }
 
     @Test
-    fun `get search history test`() = runBlocking {
-        var data = getSearchHistoriesInDB().first()
-        assert(data.isEmpty())
-
+    fun `add search history test`() = runBlocking {
+        val testHistories = mutableListOf<SearchHistoryEntity>()
         for(i in 1..5){
             testHistories.add(
                 SearchHistoryEntity(
@@ -35,16 +32,15 @@ class GetSearchHistoriesInDBTest{
                 )
             )
         }
-        runBlocking {
-            testHistories.forEach { fakeRepository.insertSearchHistory(it) }
-        }
+        testHistories.forEach { addSearchHistoryEntity(it) }
 
-        data = getSearchHistoriesInDB().first()
-        assert(data.size == testHistories.size)
+        val data = fakeRepository.getSearchHistoryEntities().first()
 
         for(i in data.indices){
-            assert(data[i].ingredients[0].text == "ingredient${i+1}")
-            assert(data[i].ingredients[1].text == "ingredient${i+2}")
+            assert("ingredient${i+1}" == data[i].ingredients[0].text)
+            assert(!data[i].ingredients[0].isSubIngredient)
+            assert("ingredient${i+2}" == data[i].ingredients[1].text)
+            assert(data[i].ingredients[1].isSubIngredient)
         }
     }
 }

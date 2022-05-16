@@ -6,7 +6,8 @@ import com.google.gson.Gson
 import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.ChipInfoListTypeConverter
 import com.ich.reciptopia.common.util.Constants
-import com.ich.reciptopia.data.data_source.SearchHistoryDatabase
+import com.ich.reciptopia.common.util.FavoritePostTypeConverter
+import com.ich.reciptopia.data.data_source.SearchDatabase
 import com.ich.reciptopia.data.remote.AuthenticationInterceptor
 import com.ich.reciptopia.data.remote.ReciptopiaApi
 import dagger.Module
@@ -61,10 +62,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSearchHistoryDatabase(app: Application, gson: Gson): SearchHistoryDatabase{
+    fun provideSearchHistoryDatabase(app: Application, gson: Gson): SearchDatabase {
         return Room
-            .databaseBuilder(app, SearchHistoryDatabase::class.java, SearchHistoryDatabase.DATABASE_NAME)
+            .databaseBuilder(app, SearchDatabase::class.java, SearchDatabase.DATABASE_NAME)
             .addTypeConverter(ChipInfoListTypeConverter(gson))
+            .addTypeConverter(FavoritePostTypeConverter(gson))
             .build()
     }
 }

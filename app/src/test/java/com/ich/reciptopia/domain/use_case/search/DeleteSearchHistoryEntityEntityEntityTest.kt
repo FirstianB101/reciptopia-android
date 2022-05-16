@@ -1,4 +1,4 @@
-package com.ich.reciptopia.domain.use_case.search_history
+package com.ich.reciptopia.domain.use_case.search
 
 import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.main.search.util.ChipInfo
@@ -9,16 +9,16 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Test
 
-class DeleteSearchHistoryEntityTest {
+class DeleteSearchHistoryEntityEntityEntityTest {
 
-    private lateinit var deleteSearchHistory: DeleteSearchHistory
+    private lateinit var deleteSearchHistoryEntity: DeleteSearchHistoryEntity
     private lateinit var fakeRepository: FakeSearchHistoryRepository
     private val testHistories = mutableListOf<SearchHistoryEntity>()
 
     @Before
     fun setUp() {
         fakeRepository = FakeSearchHistoryRepository()
-        deleteSearchHistory = DeleteSearchHistory(fakeRepository)
+        deleteSearchHistoryEntity = DeleteSearchHistoryEntity(fakeRepository)
 
         for(i in 1..5){
             testHistories.add(
@@ -38,8 +38,8 @@ class DeleteSearchHistoryEntityTest {
     @Test
     fun `delete search history test`() = runBlocking {
         // 1번과 3번 기록 삭제
-        deleteSearchHistory(testHistories[1])
-        deleteSearchHistory(testHistories[3])
+        deleteSearchHistoryEntity(testHistories[1])
+        deleteSearchHistoryEntity(testHistories[3])
 
         val data = fakeRepository.getSearchHistories().first()
 

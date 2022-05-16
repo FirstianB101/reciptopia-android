@@ -1,33 +1,31 @@
-package com.ich.reciptopia.repository
+package com.ich.reciptopia.data.repository
 
+import com.ich.reciptopia.data.data_source.SearchDao
 import com.ich.reciptopia.domain.model.FavoriteEntity
 import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
-class FakeSearchHistoryRepository: SearchRepository {
-
-    private val histories = mutableListOf<SearchHistoryEntity>()
-    private val favorites = mutableListOf<FavoriteEntity>()
-
+class SearchRepositoryImpl(
+    private val dao: SearchDao
+): SearchRepository {
     override fun getSearchHistoryEntities(): Flow<List<SearchHistoryEntity>> {
-        return flow { emit(histories) }
+        return dao.getSearchHistories()
     }
 
     override suspend fun insertSearchHistoryEntity(historyEntity: SearchHistoryEntity) {
-        histories.add(historyEntity)
+        dao.insertSearchHistory(historyEntity)
     }
 
     override suspend fun deleteSearchHistoryEntity(historyEntity: SearchHistoryEntity) {
-        histories.remove(historyEntity)
+        dao.deleteSearchHistory(historyEntity)
     }
 
     override fun getFavoriteEntities(): Flow<List<FavoriteEntity>> {
-        return flow { emit(favorites) }
+        return dao.getFavorites()
     }
 
     override suspend fun deleteFavoriteEntity(favoriteEntity: FavoriteEntity) {
-        favorites.remove(favoriteEntity)
+        dao.deleteFavorite(favoriteEntity)
     }
 }

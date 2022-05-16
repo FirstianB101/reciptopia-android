@@ -1,6 +1,6 @@
 package com.ich.reciptopia.di
 
-import com.ich.reciptopia.data.data_source.SearchHistoryDatabase
+import com.ich.reciptopia.data.data_source.SearchDatabase
 import com.ich.reciptopia.data.remote.ReciptopiaApi
 import com.ich.reciptopia.data.repository.*
 import com.ich.reciptopia.domain.repository.*
@@ -16,8 +16,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideSearchHistoryRepository(db: SearchHistoryDatabase): SearchHistoryRepository{
-        return SearchHistoryRepositoryImpl(db.searchHistoryDao)
+    fun provideSearchHistoryRepository(db: SearchDatabase): SearchRepository{
+        return SearchRepositoryImpl(db.searchDao)
     }
 
     @Provides

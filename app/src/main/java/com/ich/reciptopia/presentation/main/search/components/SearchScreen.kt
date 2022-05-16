@@ -1,5 +1,6 @@
 package com.ich.reciptopia.presentation.main.search.components
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -19,10 +20,12 @@ import androidx.navigation.NavController
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.TestTags
 import com.ich.reciptopia.domain.model.SearchHistoryEntity
+import com.ich.reciptopia.presentation.community.components.PostPreviewItem
 import com.ich.reciptopia.presentation.main.components.MainScreenUI
 import com.ich.reciptopia.presentation.main.search.SearchScreenEvent
 import com.ich.reciptopia.presentation.main.search.SearchViewModel
 import com.ich.reciptopia.presentation.main.search.util.ChipState
+import com.ich.reciptopia.presentation.post_detail.PostActivity
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -103,21 +106,28 @@ fun SearchScreen(
                                     }
                                 },
                                 onDeleteItem = {
-                                    viewModel.onEvent(SearchScreenEvent.DeleteSearchHistory(history))
+                                    viewModel.onEvent(SearchScreenEvent.DeleteSearchHistoryEntity(history))
                                 }
                             )
                             Divider()
                         }
                     }
                     1 -> {
-                        for (i in 0..4) {
-                            FavoriteListItem(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(24.dp)
+                        state.value.favoriteEntities.forEachIndexed { index, favoriteEntity ->
+                            PostPreviewItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                post = favoriteEntity.post,
+                                owner = favoriteEntity.post.owner!!,
+                                starFilled = false,
+                                onStarClick = {
+                                    viewModel.onEvent(SearchScreenEvent.DeleteFavoriteEntity(favoriteEntity))
+                                },
+                                onPostClick = {
+                                    startPostActivity(context, favoriteEntity.post.id!!)
+                                }
                             )
-                            Divider()
                         }
+                        Divider()
                     }
                 }
             }
@@ -131,7 +141,7 @@ fun SearchScreen(
                 .testTag(TestTags.SEARCH_SCREEN_SEARCH_BUTTON),
             onClick = {
                 viewModel.onEvent(
-                    SearchScreenEvent.AddSearchHistory(
+                    SearchScreenEvent.AddSearchHistoryEntity(
                         SearchHistoryEntity(ingredients = chipStates.map { s -> s.toChipInfo() })
                     )
                 )
@@ -147,4 +157,11 @@ fun SearchScreen(
             )
         }
     }
+}
+
+private fun startPostActivity(context: Context, postId: Long){
+    val intent = PostActivity.getPostIntent(context).apply {
+        putExtra("selectedPostId", postId)
+    }
+    context.startActivity(intent)
 }
