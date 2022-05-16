@@ -8,6 +8,7 @@ import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.repository.CommunityRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 
 class CommunityRepositoryImpl(
     private val api: ReciptopiaApi,
@@ -107,8 +108,16 @@ class CommunityRepositoryImpl(
         return post
     }
 
-    override suspend fun favoritePost(post: Post) {
+    override suspend fun favoritePostNotLogin(post: Post) {
         dao.insertFavorite(FavoriteEntity(post = post))
+    }
+
+    override suspend fun unFavoritePostNotLogin(post: Post) {
+        val entities = dao.getFavorites().first()
+        val entity = entities.find{ it.post.id == post.id}
+        if (entity != null) {
+            dao.deleteFavorite(entity)
+        }
     }
 
     override suspend fun getFavoriteEntities(): Flow<List<FavoriteEntity>> {

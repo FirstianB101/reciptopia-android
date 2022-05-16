@@ -20,7 +20,7 @@ import com.ich.reciptopia.presentation.community.components.CommunityScreen
 import com.ich.reciptopia.presentation.notification.components.NotificationDialog
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
 

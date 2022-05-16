@@ -3,6 +3,8 @@ package com.ich.reciptopia.presentation.main.search.components
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Search
@@ -47,9 +49,9 @@ fun SearchScreen(
         stringResource(id = R.string.favorite)
     )
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.eventFlow.collectLatest { event ->
-            when(event){
+            when (event) {
                 is SearchViewModel.UiEvent.ShowToast -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
@@ -89,45 +91,63 @@ fun SearchScreen(
                         )
                     }
                 }
+
+
                 when (tabIndex) {
                     0 -> {
-                        state.value.searchHistoryEntities.forEachIndexed { index, history ->
-                            SearchHistoryListItem(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(24.dp),
-                                items = history.ingredients,
-                                onItemClicked = {
-                                    navController.navigate(MainScreenUI.PostListScreen.route) {
-                                        popUpTo(MainScreenUI.PostListScreen.route) {
-                                            inclusive = true
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            itemsIndexed(state.value.searchHistoryEntities) { index, history ->
+                                SearchHistoryListItem(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(24.dp),
+                                    items = history.ingredients,
+                                    onItemClicked = {
+                                        navController.navigate(MainScreenUI.PostListScreen.route) {
+                                            popUpTo(MainScreenUI.PostListScreen.route) {
+                                                inclusive = true
+                                            }
+                                            launchSingleTop = true
                                         }
-                                        launchSingleTop = true
+                                    },
+                                    onDeleteItem = {
+                                        viewModel.onEvent(
+                                            SearchScreenEvent.DeleteSearchHistoryEntity(
+                                                history
+                                            )
+                                        )
                                     }
-                                },
-                                onDeleteItem = {
-                                    viewModel.onEvent(SearchScreenEvent.DeleteSearchHistoryEntity(history))
-                                }
-                            )
-                            Divider()
+                                )
+                                Divider()
+                            }
                         }
                     }
                     1 -> {
-                        state.value.favoriteEntities.forEachIndexed { index, favoriteEntity ->
-                            PostPreviewItem(
-                                modifier = Modifier.fillMaxWidth(),
-                                post = favoriteEntity.post,
-                                owner = favoriteEntity.post.owner!!,
-                                starFilled = false,
-                                onStarClick = {
-                                    viewModel.onEvent(SearchScreenEvent.DeleteFavoriteEntity(favoriteEntity))
-                                },
-                                onPostClick = {
-                                    startPostActivity(context, favoriteEntity.post.id!!)
-                                }
-                            )
+                        LazyColumn(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            itemsIndexed(state.value.favoriteEntities) { index, favoriteEntity ->
+                                PostPreviewItem(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    post = favoriteEntity.post,
+                                    owner = favoriteEntity.post.owner!!,
+                                    starFilled = true,
+                                    onStarClick = {
+                                        viewModel.onEvent(
+                                            SearchScreenEvent.DeleteFavoriteEntity(
+                                                favoriteEntity
+                                            )
+                                        )
+                                    },
+                                    onPostClick = {
+                                        startPostActivity(context, favoriteEntity.post.id!!)
+                                    }
+                                )
+                                Divider()
+                            }
                         }
-                        Divider()
                     }
                 }
             }
@@ -159,7 +179,7 @@ fun SearchScreen(
     }
 }
 
-private fun startPostActivity(context: Context, postId: Long){
+private fun startPostActivity(context: Context, postId: Long) {
     val intent = PostActivity.getPostIntent(context).apply {
         putExtra("selectedPostId", postId)
     }

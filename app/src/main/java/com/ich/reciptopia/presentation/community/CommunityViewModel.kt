@@ -1,5 +1,6 @@
 package com.ich.reciptopia.presentation.community
 
+import android.database.sqlite.SQLiteException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
@@ -7,6 +8,7 @@ import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.common.util.getAddedList
 import com.ich.reciptopia.common.util.getRemovedList
 import com.ich.reciptopia.domain.model.Account
+import com.ich.reciptopia.domain.model.FavoriteEntity
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
@@ -20,7 +22,7 @@ import javax.inject.Inject
 class CommunityViewModel @Inject constructor(
     private val useCases: CommunityUseCases,
     private val app: ReciptopiaApplication
-): ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(CommunityState())
     val state = _state.asStateFlow()
@@ -28,14 +30,14 @@ class CommunityViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private val user by lazy {app.getCurrentUser()?.account}
+    private val user by lazy { app.getCurrentUser()?.account }
 
-    init{
+    init {
         onEvent(CommunityScreenEvent.GetPosts)
     }
 
-    fun onEvent(event: CommunityScreenEvent){
-        when(event){
+    fun onEvent(event: CommunityScreenEvent) {
+        when (event) {
             is CommunityScreenEvent.CreatePostStateChanged -> {
                 _state.value = _state.value.copy(
                     showCreatePostDialog = event.isOn
@@ -43,9 +45,9 @@ class CommunityViewModel @Inject constructor(
             }
             is CommunityScreenEvent.SearchButtonClicked -> {
                 val searchModeIsOn = _state.value.searchMode
-                if(searchModeIsOn){
+                if (searchModeIsOn) {
                     // 검색 시작
-                }else{
+                } else {
                     _state.value = _state.value.copy(
                         searchMode = true
                     )
@@ -88,14 +90,15 @@ class CommunityViewModel @Inject constructor(
                 )
             }
             is CommunityScreenEvent.GetPosts -> {
-                val job = when(_state.value.sortOption){
+                val job = when (_state.value.sortOption) {
                     "최신순" -> getPostsByTime()
                     "조회순" -> getPostsByViews()
                     else -> throw Exception("sort exception")
                 }
                 job.invokeOnCompletion {
+                    getDbFavoritesForFillingStar()
                     getPostLikeTags()
-                    _state.value.posts.forEachIndexed{ i, post ->
+                    _state.value.posts.forEachIndexed { i, post ->
                         getOwnerOfPost(i, post.ownerId!!)
                     }
                 }
@@ -111,12 +114,21 @@ class CommunityViewModel @Inject constructor(
                 createPost(newPost)
                     .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
             }
+            is CommunityScreenEvent.FavoriteButtonClicked -> {
+                if (event.post.favoriteNotLogin) {
+                    unFavoritePostNotLogin(event.post)
+                        .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
+                } else {
+                    favoritePostNotLogin(event.post)
+                        .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
+                }
+            }
         }
     }
 
     private fun getPostsByTime() = viewModelScope.launch {
-        useCases.getPostsByTime().collect{ result ->
-            when(result){
+        useCases.getPostsByTime().collect { result ->
+            when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
                         posts = result.data!!,
@@ -139,8 +151,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun getPostsByViews() = viewModelScope.launch {
-        useCases.getPostsByViews().collect{ result ->
-            when(result){
+        useCases.getPostsByViews().collect { result ->
+            when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
                         posts = result.data!!,
@@ -163,8 +175,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun createPost(post: Post) = viewModelScope.launch {
-        useCases.createPost(post).collect{ result ->
-            when(result){
+        useCases.createPost(post).collect { result ->
+            when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
                         isLoading = false
@@ -188,8 +200,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun getPostLikeTags() = viewModelScope.launch {
-        useCases.getPostLikeTags().collect{ result ->
-            when(result){
+        useCases.getPostLikeTags().collect { result ->
+            when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
                         likeTags = result.data!!,
@@ -211,8 +223,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun postLike(postLikeTag: PostLikeTag) = viewModelScope.launch {
-        useCases.postLike(postLikeTag).collect{ result ->
-            when(result){
+        useCases.postLike(postLikeTag).collect { result ->
+            when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
                         isLoading = false
@@ -234,27 +246,49 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun getDbFavoritesForFillingStar(){
-        viewModelScope.launch {
-            val favoriteEntities = useCases.getFavoriteEntities().first()
-            val map = mutableMapOf<Long,Boolean>()
+    private fun getDbFavoritesForFillingStar() = viewModelScope.launch {
+        useCases.getFavoriteEntities().collect { entities ->
+            val map = mutableMapOf<Long, FavoriteEntity>()
 
-            for(entity in favoriteEntities){
-                map[entity.post.id!!] = true
+            for (entity in entities) {
+                map[entity.post.id!!] = entity
             }
 
-            for(post in _state.value.posts){
-                if(map[post.id] == true){
-
+            val posts = _state.value.posts.toMutableList()
+            posts.forEachIndexed { index, post ->
+                if (map[post.id] != null) {
+                    posts[index] = post.copy(
+                        favoriteNotLogin = true
+                    )
                 }
             }
+
+            _state.value = _state.value.copy(
+                posts = posts
+            )
+        }
+    }
+
+    private fun favoritePostNotLogin(post: Post) = viewModelScope.launch {
+        try {
+            useCases.favoritePostNotLogin(post)
+        } catch (e: SQLiteException) {
+            _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 등록에 실패했습니다"))
+        }
+    }
+
+    private fun unFavoritePostNotLogin(post: Post) = viewModelScope.launch {
+        try {
+            useCases.unFavoritePostNotLogin(post)
+        } catch (e: SQLiteException) {
+            _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 제거에 실패했습니다"))
         }
     }
 
     // call after get Posts
     private fun getOwnerOfPost(postIdx: Int, accountId: Long) = viewModelScope.launch {
-        useCases.getOwnerOfPost(accountId).collect{ result ->
-            when(result){
+        useCases.getOwnerOfPost(accountId).collect { result ->
+            when (result) {
                 is Resource.Success -> {
                     val posts = _state.value.posts.toMutableList()
                     val postWithAccount = posts[postIdx].copy(
@@ -280,8 +314,8 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    sealed class UiEvent{
-        data class ShowToast(val message: String): UiEvent()
-        object SuccessCreatePost: UiEvent()
+    sealed class UiEvent {
+        data class ShowToast(val message: String) : UiEvent()
+        object SuccessCreatePost : UiEvent()
     }
 }

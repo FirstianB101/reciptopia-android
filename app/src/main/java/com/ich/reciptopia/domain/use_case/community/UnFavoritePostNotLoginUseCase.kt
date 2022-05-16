@@ -5,12 +5,12 @@ import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.repository.CommunityRepository
 import javax.inject.Inject
 
-class FavoritePostNotLoginUseCase  @Inject constructor(
+class UnFavoritePostNotLoginUseCase  @Inject constructor(
     private val repository: CommunityRepository
 ){
     suspend operator fun invoke(post: Post){
         try{
-            repository.favoritePostNotLogin(post)
+            repository.unFavoritePostNotLogin(post)
         }catch(e: SQLiteException){
             e.printStackTrace()
         }

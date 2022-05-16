@@ -1,5 +1,6 @@
 package com.ich.reciptopia.domain.use_case.search
 
+import android.database.sqlite.SQLiteException
 import com.ich.reciptopia.domain.model.FavoriteEntity
 import com.ich.reciptopia.domain.repository.SearchRepository
 
@@ -8,6 +9,10 @@ class DeleteFavoriteEntity(
 ) {
 
     suspend operator fun invoke(favoriteEntity: FavoriteEntity) {
-        repository.deleteFavoriteEntity(favoriteEntity)
+        try{
+            repository.deleteFavoriteEntity(favoriteEntity)
+        }catch(e: SQLiteException){
+            e.printStackTrace()
+        }
     }
 }

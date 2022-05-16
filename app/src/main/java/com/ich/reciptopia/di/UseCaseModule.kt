@@ -64,7 +64,8 @@ object UseCaseModule {
             postLike = PostLikeUseCase(repository),
             getOwnerOfPost = GetOwnerOfPostUseCase(repository),
             favoritePostNotLogin = FavoritePostNotLoginUseCase(repository),
-            getFavoriteEntities = GetFavoriteEntitiesUseCase(repository)
+            getFavoriteEntities = GetFavoriteEntitiesUseCase(repository),
+            unFavoritePostNotLogin = UnFavoritePostNotLoginUseCase(repository)
         )
     }
 

@@ -114,9 +114,9 @@ fun CommunityScreen(
                             modifier = Modifier.fillMaxWidth(),
                             post = post,
                             owner = post.owner!!,
-                            starFilled = false,
+                            starFilled = post.favoriteNotLogin,
                             onStarClick = {
-
+                                viewModel.onEvent(CommunityScreenEvent.FavoriteButtonClicked(post))
                             },
                             onPostClick = {
                                 startPostActivity(context, post.id!!)
