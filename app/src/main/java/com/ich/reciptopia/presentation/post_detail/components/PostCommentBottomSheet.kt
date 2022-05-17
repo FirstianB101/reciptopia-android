@@ -92,7 +92,7 @@ fun PostCommentBottomSheet(
 
             IconButton(
                 onClick = {
-                    viewModel.onEvent(PostDetailEvent.CreateComment(postId))
+                    viewModel.onEvent(PostDetailEvent.CreateComment)
                 },
                 modifier = Modifier
                     .size(40.dp)

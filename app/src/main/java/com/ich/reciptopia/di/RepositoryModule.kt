@@ -46,7 +46,7 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePostDetailRepository(api: ReciptopiaApi): PostDetailRepository{
-        return PostDetailRepositoryImpl(api)
+    fun providePostDetailRepository(api: ReciptopiaApi, db: SearchDatabase): PostDetailRepository{
+        return PostDetailRepositoryImpl(api, db.searchDao)
     }
 }

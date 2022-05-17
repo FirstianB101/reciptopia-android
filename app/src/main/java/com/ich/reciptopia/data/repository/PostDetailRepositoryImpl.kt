@@ -1,11 +1,18 @@
 package com.ich.reciptopia.data.repository
 
+import com.ich.reciptopia.data.data_source.SearchDao
 import com.ich.reciptopia.data.remote.ReciptopiaApi
+import com.ich.reciptopia.domain.model.Account
+import com.ich.reciptopia.domain.model.FavoriteEntity
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.repository.PostDetailRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 
 class PostDetailRepositoryImpl(
-    private val api: ReciptopiaApi
+    private val api: ReciptopiaApi,
+    private val dao: SearchDao
 ): PostDetailRepository {
     private val testPosts = mutableListOf(
         Post(
@@ -35,7 +42,38 @@ class PostDetailRepositoryImpl(
         )
     )
 
+    private val testOwner = mutableListOf(
+        Account(
+            id = 1L,
+            nickname = "momomomo"
+        ),
+        Account(
+            id = 2L,
+            nickname = "balbalbal"
+        ),
+    )
+
     override suspend fun getPost(postId: Long): Post {
         return testPosts.find { it.id == postId }!!
+    }
+
+    override suspend fun getOwnerOfPost(accountId: Long): Account {
+        return testOwner.find { it.id == accountId }!!
+    }
+
+    override suspend fun favoritePostNotLogin(post: Post) {
+        dao.insertFavorite(FavoriteEntity(post = post))
+    }
+
+    override suspend fun unFavoritePostNotLogin(post: Post) {
+        val entities = dao.getFavorites().first()
+        val entity = entities.find{ it.post.id == post.id }
+        if (entity != null) {
+            dao.deleteFavorite(entity)
+        }
+    }
+
+    override suspend fun getFavoriteEntities(): Flow<List<FavoriteEntity>> {
+        return dao.getFavorites()
     }
 }

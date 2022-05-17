@@ -6,8 +6,6 @@ import com.ich.reciptopia.domain.model.SubIngredient
 
 data class PostDetailState(
     val isLoading: Boolean = false,
-    val isFavorite: Boolean = false,
-    val isLike: Boolean = false,
     val commentText: String = "",
     val curPost: Post? = null,
     val mainIngredients: List<MainIngredient> = listOf(MainIngredient(null,null,"메인재료","20g")),

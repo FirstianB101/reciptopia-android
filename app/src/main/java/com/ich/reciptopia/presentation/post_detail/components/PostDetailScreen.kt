@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.ich.reciptopia.R
+import com.ich.reciptopia.presentation.post_detail.PostDetailEvent
 import com.ich.reciptopia.presentation.post_detail.PostDetailViewModel
 
 @Composable
@@ -56,13 +57,17 @@ fun PostDetailScreen(
 
             IconButton(
                 modifier = Modifier.padding(top = 8.dp, end = 8.dp),
-                onClick = {}
+                onClick = {
+                    viewModel.onEvent(PostDetailEvent.ClickFavorite)
+                }
             ) {
                 Icon(
                     modifier = Modifier.size(32.dp),
-                    imageVector = if(state.value.isFavorite) Icons.Filled.Star else Icons.Outlined.StarBorder,
+                    imageVector = if(state.value.curPost?.favoriteNotLogin == true)
+                        Icons.Filled.Star else Icons.Outlined.StarBorder,
                     contentDescription = "Star Icon",
-                    tint = if(state.value.isFavorite) Color.Yellow else Color.Gray
+                    tint = if(state.value.curPost?.favoriteNotLogin == true)
+                        Color.Yellow else Color.Gray
                 )
             }
         }
@@ -84,7 +89,7 @@ fun PostDetailScreen(
                 Spacer(modifier = Modifier.width(4.dp))
 
                 Text(
-                    text = "username",
+                    text = state.value.curPost?.owner?.nickname ?: "",
                     color = Color.Black
                 )
             }
