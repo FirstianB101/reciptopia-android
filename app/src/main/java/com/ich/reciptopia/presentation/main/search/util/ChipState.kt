@@ -25,3 +25,13 @@ fun List<ChipInfo>.getTextsWithComma(): String {
             sb.delete(sb.length - 2, sb.length)
     }.toString()
 }
+
+fun List<String?>.linkStringsWithComma(): String{
+    return StringBuilder().also { sb ->
+        for(name in this){
+            sb.append("${name}, ")
+        }
+        if(this.isNotEmpty())
+            sb.delete(sb.length - 2, sb.length)
+    }.toString()
+}

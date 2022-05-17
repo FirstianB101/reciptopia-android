@@ -1,29 +1,29 @@
 package com.ich.reciptopia.data.data_source
 
 import androidx.room.*
-import com.ich.reciptopia.domain.model.FavoriteEntity
-import com.ich.reciptopia.domain.model.SearchHistoryEntity
+import com.ich.reciptopia.domain.model.Favorite
+import com.ich.reciptopia.domain.model.SearchHistory
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface SearchDao {
 
-    @Query("SELECT * FROM searchhistoryentity ORDER BY id DESC")
-    fun getSearchHistories(): Flow<List<SearchHistoryEntity>>
+    @Query("SELECT * FROM searchhistory ORDER BY id DESC")
+    fun getSearchHistories(): Flow<List<SearchHistory>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSearchHistory(historyEntity: SearchHistoryEntity)
+    suspend fun insertSearchHistory(historyEntity: SearchHistory)
 
     @Delete
-    suspend fun deleteSearchHistory(historyEntity: SearchHistoryEntity)
+    suspend fun deleteSearchHistory(historyEntity: SearchHistory)
 
 
-    @Query("SELECT * FROM favoriteentity ORDER BY id DESC")
-    fun getFavorites(): Flow<List<FavoriteEntity>>
+    @Query("SELECT * FROM favorite ORDER BY id DESC")
+    fun getFavorites(): Flow<List<Favorite>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavorite(favoriteEntity: FavoriteEntity)
+    suspend fun insertFavorite(favoriteEntity: Favorite)
 
     @Delete
-    suspend fun deleteFavorite(favoriteEntity: FavoriteEntity)
+    suspend fun deleteFavorite(favoriteEntity: Favorite)
 }

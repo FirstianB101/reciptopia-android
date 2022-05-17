@@ -13,23 +13,18 @@ import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.ich.reciptopia.R
-import com.ich.reciptopia.presentation.main.search.util.ChipInfo
-import com.ich.reciptopia.presentation.main.search.util.getTextsWithComma
+import com.ich.reciptopia.presentation.main.search.util.linkStringsWithComma
 
 @Composable
 fun SearchHistoryListItem(
     modifier: Modifier = Modifier,
-    items: List<ChipInfo>?,
+    items: List<String?>,
     onItemClicked: () -> Unit,
     onDeleteItem: () -> Unit
 ){
@@ -58,7 +53,7 @@ fun SearchHistoryListItem(
 
         Text(
             modifier = Modifier.weight(1f),
-            text = items?.getTextsWithComma() ?: "",
+            text = items.linkStringsWithComma(),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -73,6 +68,5 @@ fun SearchHistoryListItem(
                 tint = colorResource(id = R.color.main_color)
             )
         }
-
     }
 }

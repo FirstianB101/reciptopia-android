@@ -1,13 +1,13 @@
 package com.ich.reciptopia.domain.use_case.search
 
-import com.ich.reciptopia.domain.model.SearchHistoryEntity
+import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
 
-class GetSearchHistoryEntities(
+class GetSearchHistoriesFromDBUseCase(
     private val repository: SearchRepository
 ){
-    operator fun invoke(): Flow<List<SearchHistoryEntity>>{
-        return repository.getSearchHistoryEntities()
+    operator fun invoke(): Flow<List<SearchHistory>>{
+        return repository.getSearchHistoriesFromDB()
     }
 }

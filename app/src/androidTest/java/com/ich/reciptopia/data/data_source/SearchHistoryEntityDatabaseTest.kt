@@ -3,7 +3,6 @@ package com.ich.reciptopia.data.data_source
 import com.ich.reciptopia.di.AppModule
 import com.ich.reciptopia.di.RepositoryModule
 import com.ich.reciptopia.di.UseCaseModule
-import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.main.search.util.ChipInfo
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest

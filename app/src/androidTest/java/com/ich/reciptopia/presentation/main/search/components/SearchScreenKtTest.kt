@@ -10,7 +10,6 @@ import com.ich.reciptopia.common.util.TestTags
 import com.ich.reciptopia.di.AppModule
 import com.ich.reciptopia.di.RepositoryModule
 import com.ich.reciptopia.di.UseCaseModule
-import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.main.components.MainNavigation
 import com.ich.reciptopia.presentation.main.search.util.ChipInfo
 import com.ich.reciptopia.ui.theme.ReciptopiaTheme

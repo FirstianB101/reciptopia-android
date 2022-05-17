@@ -34,9 +34,9 @@ import com.ich.reciptopia.presentation.community.CommunityViewModel
 @Composable
 fun PostPreviewItem(
     modifier: Modifier = Modifier,
-    post: Post,
+    post: Post?,
     starFilled: Boolean,
-    owner: Account,
+    owner: Account?,
     onStarClick: () -> Unit,
     onPostClick: () -> Unit,
     onLikeClick: () -> Unit
@@ -52,7 +52,7 @@ fun PostPreviewItem(
                 modifier = Modifier
                     .weight(1f)
                     .padding(top = 8.dp, start = 16.dp),
-                text = post.title ?: "",
+                text = post?.title ?: "",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -84,7 +84,7 @@ fun PostPreviewItem(
             Spacer(modifier = Modifier.width(4.dp))
             
             Text(
-                text = owner.nickname ?: "",
+                text = owner?.nickname ?: "",
                 color = Color.Black
             )
         }
@@ -93,7 +93,7 @@ fun PostPreviewItem(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp),
-            text = post.content ?: "",
+            text = post?.content ?: "",
             color = Color.Gray
         )
 
@@ -102,12 +102,14 @@ fun PostPreviewItem(
                 .fillMaxWidth()
                 .padding(8.dp)
         ){
-            items(post.pictureUrls.size){ idx ->
-                Image(
-                    modifier = Modifier.size(200.dp),
-                    painter = rememberImagePainter(post.pictureUrls[idx]),
-                    contentDescription = ""
-                )
+            if(post?.pictureUrls?.size != null) {
+                items(post.pictureUrls.size) { idx ->
+                    Image(
+                        modifier = Modifier.size(200.dp),
+                        painter = rememberImagePainter(post.pictureUrls[idx]),
+                        contentDescription = ""
+                    )
+                }
             }
         }
         
@@ -119,7 +121,7 @@ fun PostPreviewItem(
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
-                text = "조회수 ${post.views ?: 0}",
+                text = "조회수 ${post?.views ?: 0}",
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.width(12.dp))

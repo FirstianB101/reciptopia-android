@@ -5,5 +5,6 @@ data class PostDetailUseCases(
     val getOwnerOfPost: GetOwnerOfPostDetailUseCase,
     val favoritePostNotLogin: FavoritePostDetailNotLoginUseCase,
     val unFavoritePostNotLogin: UnFavoritePostDetailNotLoginUseCase,
-    val getFavoritePosts: GetFavoriteEntitiesUseCase
+    val getFavoritesFromDB: GetFavoritesFromDBUseCase,
+    val getFavorites: GetFavoritesUseCase
 )

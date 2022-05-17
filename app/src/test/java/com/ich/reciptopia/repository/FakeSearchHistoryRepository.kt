@@ -1,7 +1,5 @@
 package com.ich.reciptopia.repository
 
-import com.ich.reciptopia.domain.model.FavoriteEntity
-import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

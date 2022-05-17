@@ -1,18 +1,28 @@
 package com.ich.reciptopia.domain.repository
 
-import com.ich.reciptopia.domain.model.FavoriteEntity
-import com.ich.reciptopia.domain.model.SearchHistoryEntity
+import com.ich.reciptopia.domain.model.Account
+import com.ich.reciptopia.domain.model.Favorite
+import com.ich.reciptopia.domain.model.Post
+import com.ich.reciptopia.domain.model.SearchHistory
 import kotlinx.coroutines.flow.Flow
+import retrofit2.Response
 
 interface SearchRepository {
 
-    fun getSearchHistoryEntities(): Flow<List<SearchHistoryEntity>>
+    fun getSearchHistoriesFromDB(): Flow<List<SearchHistory>>
+    suspend fun insertSearchHistoryInDB(history: SearchHistory)
+    suspend fun deleteSearchHistoryFromDB(history: SearchHistory)
 
-    suspend fun insertSearchHistoryEntity(historyEntity: SearchHistoryEntity)
+    fun getFavoritesFromDB(): Flow<List<Favorite>>
+    suspend fun deleteFavoriteFromDB(favorite: Favorite)
 
-    suspend fun deleteSearchHistoryEntity(historyEntity: SearchHistoryEntity)
+    suspend fun getFavorites(): List<Favorite>
+    suspend fun deleteFavorite(postId: Long): Response<Unit>
 
-    fun getFavoriteEntities(): Flow<List<FavoriteEntity>>
+    suspend fun getSearchHistories(userId: Long): List<SearchHistory>
+    suspend fun addSearchHistory(history: SearchHistory): SearchHistory
+    suspend fun deleteSearchHistory(historyId: Long): Response<Unit>
 
-    suspend fun deleteFavoriteEntity(favoriteEntity: FavoriteEntity)
+    suspend fun getPost(postId: Long): Post
+    suspend fun getOwnerOfPost(accountId: Long): Account
 }

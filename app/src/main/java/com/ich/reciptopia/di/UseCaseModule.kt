@@ -2,7 +2,7 @@ package com.ich.reciptopia.di
 
 import com.ich.reciptopia.domain.repository.*
 import com.ich.reciptopia.domain.use_case.community.*
-import com.ich.reciptopia.domain.use_case.community.GetFavoriteEntitiesUseCase
+import com.ich.reciptopia.domain.use_case.community.GetFavoritesFromDBUseCase
 import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
 import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
@@ -10,6 +10,7 @@ import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
 import com.ich.reciptopia.domain.use_case.post_detail.*
 import com.ich.reciptopia.domain.use_case.search.*
+import com.ich.reciptopia.domain.use_case.search.GetOwnerOfPostUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,11 +25,16 @@ object UseCaseModule {
     @Singleton
     fun provideSearchHistoryUseCases(repository: SearchRepository): SearchUseCases{
         return SearchUseCases(
-            getSearchHistoryEntities = GetSearchHistoryEntities(repository),
-            addSearchHistoryEntity = AddSearchHistoryEntity(repository),
-            deleteSearchHistoryEntity = DeleteSearchHistoryEntity(repository),
-            getFavoriteEntities = GetFavoriteEntities(repository),
-            deleteFavoriteEntity = DeleteFavoriteEntity(repository)
+            getSearchHistoriesFromDB = GetSearchHistoriesFromDBUseCase(repository),
+            addSearchHistoryInDB = AddSearchHistoryInDBUseCase(repository),
+            deleteSearchHistoryFromDB = DeleteSearchHistoryFromDBUseCase(repository),
+            getFavoritesFromDB = com.ich.reciptopia.domain.use_case.search.GetFavoritesFromDBUseCase(repository),
+            deleteFavoriteFromDB = DeleteFavoriteFromDBUseCase(repository),
+            getSearchHistories = GetSearchHistoriesUseCase(repository),
+            addSearchHistory = AddSearchHistoryUseCase(repository),
+            deleteSearchHistory = DeleteSearchHistoryUseCase(repository),
+            getPost = GetPostUseCase(repository),
+            getOwner = GetOwnerOfPostUseCase(repository)
         )
     }
 
@@ -62,9 +68,9 @@ object UseCaseModule {
             getPostsByViews = GetPostsByViewsUseCase(repository),
             getPostLikeTags = GetPostLikeTagsUseCase(repository),
             postLike = PostLikeUseCase(repository),
-            getOwnerOfPost = GetOwnerOfPostUseCase(repository),
+            getOwnerOfPost = com.ich.reciptopia.domain.use_case.community.GetOwnerOfPostUseCase(repository),
             favoritePostNotLogin = FavoritePostNotLoginUseCase(repository),
-            getFavoriteEntities = GetFavoriteEntitiesUseCase(repository),
+            getFavoritesFromDB = GetFavoritesFromDBUseCase(repository),
             unFavoritePostNotLogin = UnFavoritePostNotLoginUseCase(repository)
         )
     }
@@ -77,7 +83,8 @@ object UseCaseModule {
             getOwnerOfPost = GetOwnerOfPostDetailUseCase(repository),
             favoritePostNotLogin = FavoritePostDetailNotLoginUseCase(repository),
             unFavoritePostNotLogin = UnFavoritePostDetailNotLoginUseCase(repository),
-            getFavoritePosts = com.ich.reciptopia.domain.use_case.post_detail.GetFavoriteEntitiesUseCase(repository)
+            getFavoritesFromDB = com.ich.reciptopia.domain.use_case.post_detail.GetFavoritesFromDBUseCase(repository),
+            getFavorites = GetFavoritesUseCase(repository)
         )
     }
 }

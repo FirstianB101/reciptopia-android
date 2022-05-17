@@ -3,19 +3,19 @@ package com.ich.reciptopia.data.data_source
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.ich.reciptopia.common.util.ChipInfoListTypeConverter
-import com.ich.reciptopia.common.util.FavoritePostTypeConverter
-import com.ich.reciptopia.domain.model.FavoriteEntity
-import com.ich.reciptopia.domain.model.SearchHistoryEntity
+import com.ich.reciptopia.common.util.FavoriteTypeConverter
+import com.ich.reciptopia.common.util.SearchHistoryTypeConverter
+import com.ich.reciptopia.domain.model.Favorite
+import com.ich.reciptopia.domain.model.SearchHistory
 
 @Database(
-    entities = [SearchHistoryEntity::class, FavoriteEntity::class],
+    entities = [SearchHistory::class, Favorite::class],
     version = 1
 )
 @TypeConverters(
     value = [
-        ChipInfoListTypeConverter::class,
-        FavoritePostTypeConverter::class
+        SearchHistoryTypeConverter::class,
+        FavoriteTypeConverter::class
     ]
 )
 abstract class SearchDatabase: RoomDatabase() {

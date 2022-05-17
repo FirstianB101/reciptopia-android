@@ -7,12 +7,16 @@ import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.common.util.getAddedList
 import com.ich.reciptopia.common.util.getRemovedList
-import com.ich.reciptopia.domain.model.*
+import com.ich.reciptopia.domain.model.Favorite
+import com.ich.reciptopia.domain.model.Post
+import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -119,10 +123,10 @@ class CommunityViewModel @Inject constructor(
             }
             is CommunityScreenEvent.FavoriteButtonClicked -> {
                 if (event.post.favoriteNotLogin) {
-                    unFavoritePostNotLogin(event.post)
+                    unFavoritePostNotLogin(event.post.id!!)
                         .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
                 } else {
-                    favoritePostNotLogin(event.post)
+                    favoritePostNotLogin(event.post.id!!)
                         .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
                 }
             }
@@ -258,11 +262,11 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun getDbFavoritesForFillingStar() = viewModelScope.launch {
-        useCases.getFavoriteEntities().collect { entities ->
-            val map = mutableMapOf<Long, FavoriteEntity>()
+        useCases.getFavoritesFromDB().collect { favorites ->
+            val map = mutableMapOf<Long, Favorite>()
 
-            for (entity in entities) {
-                map[entity.post.id!!] = entity
+            for (favorite in favorites) {
+                map[favorite.postId!!] = favorite
             }
 
             val posts = _state.value.posts.toMutableList()
@@ -280,17 +284,17 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun favoritePostNotLogin(post: Post) = viewModelScope.launch {
+    private fun favoritePostNotLogin(postId: Long) = viewModelScope.launch {
         try {
-            useCases.favoritePostNotLogin(post)
+            useCases.favoritePostNotLogin(postId)
         } catch (e: SQLiteException) {
             _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 등록에 실패했습니다"))
         }
     }
 
-    private fun unFavoritePostNotLogin(post: Post) = viewModelScope.launch {
+    private fun unFavoritePostNotLogin(postId: Long) = viewModelScope.launch {
         try {
-            useCases.unFavoritePostNotLogin(post)
+            useCases.unFavoritePostNotLogin(postId)
         } catch (e: SQLiteException) {
             _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 제거에 실패했습니다"))
         }

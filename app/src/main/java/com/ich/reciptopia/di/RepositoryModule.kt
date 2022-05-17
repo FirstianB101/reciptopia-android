@@ -16,8 +16,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideSearchHistoryRepository(db: SearchDatabase): SearchRepository{
-        return SearchRepositoryImpl(db.searchDao)
+    fun provideSearchHistoryRepository(api: ReciptopiaApi, db: SearchDatabase): SearchRepository{
+        return SearchRepositoryImpl(api, db.searchDao)
     }
 
     @Provides

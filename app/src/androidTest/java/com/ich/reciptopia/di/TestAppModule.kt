@@ -7,9 +7,9 @@ import com.ich.reciptopia.common.util.ChipInfoListTypeConverter
 import com.ich.reciptopia.data.data_source.SearchHistoryDatabase
 import com.ich.reciptopia.data.repository.SearchRepositoryImpl
 import com.ich.reciptopia.domain.repository.SearchHistoryRepository
-import com.ich.reciptopia.domain.use_case.search.AddSearchHistoryEntity
-import com.ich.reciptopia.domain.use_case.search.DeleteSearchHistoryEntity
-import com.ich.reciptopia.domain.use_case.search.GetSearchHistoryEntities
+import com.ich.reciptopia.domain.use_case.search.AddSearchHistoryInDBUseCase
+import com.ich.reciptopia.domain.use_case.search.DeleteSearchHistoryFromDBUseCase
+import com.ich.reciptopia.domain.use_case.search.GetSearchHistoriesFromDBUseCase
 import com.ich.reciptopia.domain.use_case.search.SearchUseCases
 import dagger.Module
 import dagger.Provides
@@ -46,9 +46,9 @@ object TestAppModule {
     @Singleton
     fun provideSearchHistoryUseCases(repository: SearchHistoryRepository): SearchUseCases {
         return SearchUseCases(
-            getSearchHistoryEntities = GetSearchHistoryEntities(repository),
-            addSearchHistoryEntity = AddSearchHistoryEntity(repository),
-            deleteSearchHistoryEntity = DeleteSearchHistoryEntity(repository)
+            getSearchHistoriesFromDB = GetSearchHistoriesFromDBUseCase(repository),
+            addSearchHistoryInDB = AddSearchHistoryInDBUseCase(repository),
+            deleteSearchHistoryFromDB = DeleteSearchHistoryFromDBUseCase(repository)
         )
     }
 }

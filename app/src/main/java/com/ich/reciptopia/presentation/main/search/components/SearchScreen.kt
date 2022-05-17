@@ -21,7 +21,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.TestTags
-import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.presentation.community.components.PostPreviewItem
 import com.ich.reciptopia.presentation.main.components.MainScreenUI
 import com.ich.reciptopia.presentation.main.search.SearchScreenEvent
@@ -86,7 +85,11 @@ fun SearchScreen(
                     tabTitles.forEachIndexed { index, title ->
                         Tab(
                             selected = tabIndex == index,
-                            onClick = { tabIndex = index },
+                            onClick = {
+                                tabIndex = index
+                                if(tabIndex == 0) viewModel.onEvent(SearchScreenEvent.GetSearchHistories)
+                                else viewModel.onEvent(SearchScreenEvent.GetFavoritePosts)
+                            },
                             text = { Text(text = title, maxLines = 1, softWrap = false) },
                         )
                     }
@@ -98,12 +101,12 @@ fun SearchScreen(
                         LazyColumn(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            itemsIndexed(state.value.searchHistoryEntities) { index, history ->
+                            itemsIndexed(state.value.searchHistories) { index, history ->
                                 SearchHistoryListItem(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(24.dp),
-                                    items = history.ingredients,
+                                    items = history.ingredientNames,
                                     onItemClicked = {
                                         navController.navigate(MainScreenUI.PostListScreen.route) {
                                             popUpTo(MainScreenUI.PostListScreen.route) {
@@ -113,11 +116,7 @@ fun SearchScreen(
                                         }
                                     },
                                     onDeleteItem = {
-                                        viewModel.onEvent(
-                                            SearchScreenEvent.DeleteSearchHistoryEntity(
-                                                history
-                                            )
-                                        )
+                                        viewModel.onEvent(SearchScreenEvent.DeleteSearchHistory(history))
                                     }
                                 )
                                 Divider()
@@ -128,21 +127,17 @@ fun SearchScreen(
                         LazyColumn(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            itemsIndexed(state.value.favoriteEntities) { index, favoriteEntity ->
+                            itemsIndexed(state.value.favorites) { index, favorite ->
                                 PostPreviewItem(
                                     modifier = Modifier.fillMaxWidth(),
-                                    post = favoriteEntity.post,
-                                    owner = favoriteEntity.post.owner!!,
+                                    post = favorite.post,
+                                    owner = favorite.post?.owner,
                                     starFilled = true,
                                     onStarClick = {
-                                        viewModel.onEvent(
-                                            SearchScreenEvent.DeleteFavoriteEntity(
-                                                favoriteEntity
-                                            )
-                                        )
+                                        viewModel.onEvent(SearchScreenEvent.DeleteFavorite(favorite))
                                     },
                                     onPostClick = {
-                                        startPostActivity(context, favoriteEntity.post.id!!)
+                                        startPostActivity(context, favorite.post?.id!!)
                                     },
                                     onLikeClick = {
 
@@ -164,8 +159,9 @@ fun SearchScreen(
                 .testTag(TestTags.SEARCH_SCREEN_SEARCH_BUTTON),
             onClick = {
                 viewModel.onEvent(
-                    SearchScreenEvent.AddSearchHistoryEntity(
-                        SearchHistoryEntity(ingredients = chipStates.map { s -> s.toChipInfo() })
+                    SearchScreenEvent.AddSearchHistory(
+                        //SearchHistory(ingredients = chipStates.map { s -> s.toChipInfo() })
+                        ingredientNames = chipStates.map {s -> s.text}
                     )
                 )
                 navController.navigate(MainScreenUI.PostListScreen.route)
@@ -182,7 +178,7 @@ fun SearchScreen(
     }
 }
 
-private fun startPostActivity(context: Context, postId: Long) {
+private fun startPostActivity(context: Context, postId: Long?) {
     val intent = PostActivity.getPostIntent(context).apply {
         putExtra("selectedPostId", postId)
     }

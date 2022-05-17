@@ -1,16 +1,15 @@
 package com.ich.reciptopia.domain.use_case.search
 
 import android.database.sqlite.SQLiteException
-import com.ich.reciptopia.domain.model.FavoriteEntity
+import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.domain.repository.SearchRepository
 
-class DeleteFavoriteEntity(
+class DeleteSearchHistoryFromDBUseCase(
     private val repository: SearchRepository
 ) {
-
-    suspend operator fun invoke(favoriteEntity: FavoriteEntity) {
+    suspend operator fun invoke(history: SearchHistory) {
         try{
-            repository.deleteFavoriteEntity(favoriteEntity)
+            repository.deleteSearchHistoryFromDB(history)
         }catch(e: SQLiteException){
             e.printStackTrace()
         }
