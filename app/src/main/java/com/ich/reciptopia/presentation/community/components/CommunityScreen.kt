@@ -120,6 +120,9 @@ fun CommunityScreen(
                             },
                             onPostClick = {
                                 startPostActivity(context, post.id!!)
+                            },
+                            onLikeClick = {
+
                             }
                         )
                     }

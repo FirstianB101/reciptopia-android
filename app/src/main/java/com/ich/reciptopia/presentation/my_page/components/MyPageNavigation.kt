@@ -1,6 +1,7 @@
 package com.ich.reciptopia.presentation.my_page.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,11 +19,11 @@ fun MyPageNavigation(
 
 ){
     val navController = rememberNavController()
-    val login = ReciptopiaApplication.instance?.getCurrentUser() != null
+    val loginUserState = ReciptopiaApplication.instance?.user?.collectAsState()
 
     NavHost(
         navController = navController,
-        startDestination = if(login) MyPageScreens.MyPageWithLogin.route
+        startDestination = if(loginUserState?.value != null) MyPageScreens.MyPageWithLogin.route
                            else MyPageScreens.MyPageWithoutLogin.route
     ){
         composable(route = MyPageScreens.LoginScreen.route){

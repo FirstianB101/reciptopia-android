@@ -38,7 +38,8 @@ fun PostPreviewItem(
     starFilled: Boolean,
     owner: Account,
     onStarClick: () -> Unit,
-    onPostClick: () -> Unit
+    onPostClick: () -> Unit,
+    onLikeClick: () -> Unit
 ){
     Column(
         modifier = modifier.clickable { onPostClick() }
@@ -123,12 +124,18 @@ fun PostPreviewItem(
             )
             Spacer(modifier = Modifier.width(12.dp))
 
-            Icon(
+            IconButton(
                 modifier = Modifier.size(16.dp),
-                imageVector = Icons.Filled.ThumbUp,
-                contentDescription = "",
-                tint = Color.Gray
-            )
+                onClick = onLikeClick
+            ) {
+                Icon(
+                    modifier = Modifier.size(16.dp),
+                    imageVector = Icons.Filled.ThumbUp,
+                    contentDescription = "",
+                    tint = Color.Gray
+                )
+            }
+
             Spacer(modifier = Modifier.width(4.dp))
         }
     }

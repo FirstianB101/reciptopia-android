@@ -2,6 +2,7 @@ package com.ich.reciptopia.presentation.community
 
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
+import com.ich.reciptopia.domain.model.User
 
 data class CommunityState(
     val isLoading: Boolean = false,
@@ -13,5 +14,6 @@ data class CommunityState(
     val likeTags: List<PostLikeTag> = emptyList(),
     val newPostTitle: String = "",
     val newPostContent: String = "",
-    val newPictureUrls: List<String> = emptyList()
+    val newPictureUrls: List<String> = emptyList(),
+    val currentUser: User? = null
 )

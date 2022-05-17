@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
+import com.ich.reciptopia.domain.model.User
 import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,14 +20,17 @@ class ProfileViewModel @Inject constructor(
     private val app: ReciptopiaApplication
 ): ViewModel() {
 
-    private val _state = MutableStateFlow(ProfileState(
-        nickname = app.getCurrentUser()?.account?.nickname ?: "",
-        email = app.getCurrentUser()?.account?.email ?: ""
-    ))
+    private val _state = MutableStateFlow(ProfileState())
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    private var curUser: User? = null
+
+    init {
+        observeUserChanged()
+    }
 
     fun onEvent(event: ProfileScreenEvent){
         when(event){
@@ -41,8 +45,21 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun observeUserChanged(){
+        viewModelScope.launch {
+            app.user.collect { user ->
+                curUser = user
+
+                _state.value = _state.value.copy(
+                    email = user?.account?.email ?: "",
+                    nickname = user?.account?.nickname ?: ""
+                )
+            }
+        }
+    }
+
     private fun changeNickname(newNickname: String) = viewModelScope.launch {
-        val edited = app.getCurrentUser()?.account?.copy(
+        val edited = curUser?.account?.copy(
             nickname = newNickname
         )!!
         useCase(edited).collect{ result ->

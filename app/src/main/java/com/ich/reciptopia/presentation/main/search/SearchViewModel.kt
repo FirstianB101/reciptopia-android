@@ -2,6 +2,7 @@ package com.ich.reciptopia.presentation.main.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.domain.model.FavoriteEntity
 import com.ich.reciptopia.domain.model.SearchHistoryEntity
 import com.ich.reciptopia.domain.use_case.search.SearchUseCases
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val useCases: SearchUseCases
+    private val useCases: SearchUseCases,
+    private val app: ReciptopiaApplication
 ) : ViewModel() {
     private val _state = MutableStateFlow(SearchState())
     val state: StateFlow<SearchState> = _state
@@ -21,6 +23,7 @@ class SearchViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
+        observeUserChanged()
         getSearchHistories()
         getFavoriteEntities()
     }
@@ -36,6 +39,14 @@ class SearchViewModel @Inject constructor(
             is SearchScreenEvent.DeleteFavoriteEntity -> {
                 deleteFavoriteEntity(event.favoriteEntity)
             }
+        }
+    }
+
+    private fun observeUserChanged() = viewModelScope.launch {
+        app.user.collect{ user ->
+            _state.value = _state.value.copy(
+                currentUser = user
+            )
         }
     }
 

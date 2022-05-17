@@ -143,6 +143,9 @@ fun SearchScreen(
                                     },
                                     onPostClick = {
                                         startPostActivity(context, favoriteEntity.post.id!!)
+                                    },
+                                    onLikeClick = {
+
                                     }
                                 )
                                 Divider()

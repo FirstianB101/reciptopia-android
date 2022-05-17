@@ -7,10 +7,7 @@ import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.common.util.getAddedList
 import com.ich.reciptopia.common.util.getRemovedList
-import com.ich.reciptopia.domain.model.Account
-import com.ich.reciptopia.domain.model.FavoriteEntity
-import com.ich.reciptopia.domain.model.Post
-import com.ich.reciptopia.domain.model.PostLikeTag
+import com.ich.reciptopia.domain.model.*
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -30,18 +27,23 @@ class CommunityViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private val user by lazy { app.getCurrentUser()?.account }
-
     init {
+        observeUserChanged()
         onEvent(CommunityScreenEvent.GetPosts)
     }
 
     fun onEvent(event: CommunityScreenEvent) {
         when (event) {
             is CommunityScreenEvent.CreatePostStateChanged -> {
-                _state.value = _state.value.copy(
-                    showCreatePostDialog = event.isOn
-                )
+                if(_state.value.currentUser != null) {
+                    _state.value = _state.value.copy(
+                        showCreatePostDialog = event.isOn
+                    )
+                }else{
+                    viewModelScope.launch { 
+                        _eventFlow.emit(UiEvent.ShowToast("글 작성에는 로그인이 필요합니다"))
+                    }
+                }
             }
             is CommunityScreenEvent.SearchButtonClicked -> {
                 val searchModeIsOn = _state.value.searchMode
@@ -96,7 +98,9 @@ class CommunityViewModel @Inject constructor(
                     else -> throw Exception("sort exception")
                 }
                 job.invokeOnCompletion {
-                    getDbFavoritesForFillingStar()
+                    if(_state.value.currentUser == null) {
+                        getDbFavoritesForFillingStar()
+                    }
                     getPostLikeTags()
                     _state.value.posts.forEachIndexed { i, post ->
                         getOwnerOfPost(i, post.ownerId!!)
@@ -105,14 +109,13 @@ class CommunityViewModel @Inject constructor(
             }
             is CommunityScreenEvent.CreatePost -> {
                 val newPost = Post(
-                    ownerId = user?.id,
+                    ownerId = _state.value.currentUser?.account?.id,
                     title = _state.value.newPostTitle,
                     content = _state.value.newPostContent,
                     pictureUrls = _state.value.newPictureUrls,
                     views = 0L
                 )
                 createPost(newPost)
-                    .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
             }
             is CommunityScreenEvent.FavoriteButtonClicked -> {
                 if (event.post.favoriteNotLogin) {
@@ -123,6 +126,14 @@ class CommunityViewModel @Inject constructor(
                         .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
                 }
             }
+        }
+    }
+
+    private fun observeUserChanged() = viewModelScope.launch {
+        app.user.collect{ user ->
+            _state.value = _state.value.copy(
+                currentUser = user
+            )
         }
     }
 
