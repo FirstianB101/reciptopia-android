@@ -10,16 +10,16 @@ import retrofit2.Response
 interface SearchRepository {
 
     fun getSearchHistoriesFromDB(): Flow<List<SearchHistory>>
-    suspend fun insertSearchHistoryInDB(history: SearchHistory)
-    suspend fun deleteSearchHistoryFromDB(history: SearchHistory)
+    suspend fun insertSearchHistoryInDB(history: SearchHistory): SearchHistory
+    suspend fun deleteSearchHistoryFromDB(historyId: Long)
 
     fun getFavoritesFromDB(): Flow<List<Favorite>>
-    suspend fun deleteFavoriteFromDB(favorite: Favorite)
+    suspend fun deleteFavoriteFromDB(postId: Long)
 
-    suspend fun getFavorites(): List<Favorite>
+    suspend fun getFavorites(userId: Long?): List<Favorite>
     suspend fun deleteFavorite(postId: Long): Response<Unit>
 
-    suspend fun getSearchHistories(userId: Long): List<SearchHistory>
+    suspend fun getSearchHistories(userId: Long?): List<SearchHistory>
     suspend fun addSearchHistory(history: SearchHistory): SearchHistory
     suspend fun deleteSearchHistory(historyId: Long): Response<Unit>
 

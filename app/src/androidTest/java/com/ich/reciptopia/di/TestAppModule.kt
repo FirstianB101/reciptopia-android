@@ -7,9 +7,6 @@ import com.ich.reciptopia.common.util.ChipInfoListTypeConverter
 import com.ich.reciptopia.data.data_source.SearchHistoryDatabase
 import com.ich.reciptopia.data.repository.SearchRepositoryImpl
 import com.ich.reciptopia.domain.repository.SearchHistoryRepository
-import com.ich.reciptopia.domain.use_case.search.AddSearchHistoryInDBUseCase
-import com.ich.reciptopia.domain.use_case.search.DeleteSearchHistoryFromDBUseCase
-import com.ich.reciptopia.domain.use_case.search.GetSearchHistoriesFromDBUseCase
 import com.ich.reciptopia.domain.use_case.search.SearchUseCases
 import dagger.Module
 import dagger.Provides

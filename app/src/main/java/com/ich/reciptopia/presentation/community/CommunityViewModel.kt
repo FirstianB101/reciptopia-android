@@ -138,6 +138,7 @@ class CommunityViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 currentUser = user
             )
+            onEvent(CommunityScreenEvent.GetPosts)
         }
     }
 

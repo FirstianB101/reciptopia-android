@@ -17,6 +17,9 @@ interface SearchDao {
     @Delete
     suspend fun deleteSearchHistory(historyEntity: SearchHistory)
 
+    @Query("DELETE FROM searchhistory WHERE id = :historyId")
+    suspend fun deleteSearchHistory(historyId: Long)
+
 
     @Query("SELECT * FROM favorite ORDER BY id DESC")
     fun getFavorites(): Flow<List<Favorite>>
@@ -26,4 +29,7 @@ interface SearchDao {
 
     @Delete
     suspend fun deleteFavorite(favoriteEntity: Favorite)
+
+    @Query("DELETE FROM favorite WHERE postId = :postId")
+    suspend fun deleteFavorite(postId: Long)
 }

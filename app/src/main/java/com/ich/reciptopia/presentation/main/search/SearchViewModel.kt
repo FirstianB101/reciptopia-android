@@ -36,17 +36,17 @@ class SearchViewModel @Inject constructor(
                     ownerId = _state.value.currentUser?.account?.id,
                     ingredientNames = event.ingredientNames
                 )
-                addSearchHistoryInDB(newHistory)
+                addSearchHistory(newHistory)
             }
             is SearchScreenEvent.DeleteSearchHistory -> {
-                deleteSearchHistoryFromDB(event.history)
+                deleteSearchHistory(event.history.id!!)
             }
             is SearchScreenEvent.DeleteFavorite -> {
-                deleteFavoriteFromDB(event.favorite)
+                deleteFavorite(event.favorite.postId!!)
                     .invokeOnCompletion { getFavoritePosts() }
             }
             is SearchScreenEvent.GetSearchHistories -> {
-                getSearchHistoriesFromDB()
+                getSearchHistories()
             }
             is SearchScreenEvent.GetFavoritePosts -> {
                 getFavoritePosts()
@@ -54,8 +54,8 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun getFavoritePosts(){
-        getFavoritesFromDB().invokeOnCompletion {
+    private fun getFavoritePosts() {
+        getFavorites().invokeOnCompletion {
             _state.value.favorites.forEachIndexed { index, favorite ->
                 getPostsFromFavoritesFromDB(index, favorite)
                     .invokeOnCompletion {
@@ -70,68 +70,39 @@ class SearchViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 currentUser = user
             )
+            getSearchHistories()
+            getFavoritePosts()
         }
-    }
-
-    private fun getSearchHistoriesFromDB() = viewModelScope.launch {
-        useCases.getSearchHistoriesFromDB().collect { result ->
-            _state.value = _state.value.copy(
-                searchHistories = result
-            )
-        }
-    }
-
-    private fun addSearchHistoryInDB(history: SearchHistory) = viewModelScope.launch {
-        useCases.addSearchHistoryInDB(history)
-        _eventFlow.emit(UiEvent.ShowToast("검색 기록이 추가되었습니다"))
-    }
-
-
-    private fun deleteSearchHistoryFromDB(history: SearchHistory) = viewModelScope.launch {
-        useCases.deleteSearchHistoryFromDB(history)
-        _eventFlow.emit(UiEvent.ShowToast("검색 기록이 삭제되었습니다"))
-    }
-
-    private fun getFavoritesFromDB() = viewModelScope.launch {
-        _state.value = _state.value.copy(
-            favorites = useCases.getFavoritesFromDB().first()
-        )
-    }
-
-    private fun deleteFavoriteFromDB(favorite: Favorite) = viewModelScope.launch {
-        useCases.deleteFavoriteFromDB(favorite)
-        _eventFlow.emit(UiEvent.ShowToast("즐겨찾기가 삭제되었습니다"))
     }
 
     private fun getSearchHistories() = viewModelScope.launch {
-        val userAccount = _state.value.currentUser?.account
-        if (userAccount != null) {
-            useCases.getSearchHistories(userAccount.id!!).collect { result ->
-                when (result) {
-                    is Resource.Success -> {
-                        _state.value = _state.value.copy(
-                            searchHistories = result.data!!,
-                            isLoading = false
-                        )
-                    }
-                    is Resource.Loading -> {
-                        _state.value = _state.value.copy(
-                            isLoading = true
-                        )
-                    }
-                    is Resource.Error -> {
-                        _state.value = _state.value.copy(
-                            isLoading = false
-                        )
-                        _eventFlow.emit(UiEvent.ShowToast("검색 기록을 불러오지 못했습니다(${result.message})"))
-                    }
+        val user = _state.value.currentUser
+        useCases.getSearchHistories(user?.account?.id).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        searchHistories = result.data!!,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("검색 기록을 불러오지 못했습니다(${result.message})"))
                 }
             }
         }
     }
 
     private fun addSearchHistory(searchHistory: SearchHistory) = viewModelScope.launch {
-        useCases.addSearchHistory(searchHistory).collect { result ->
+        val login = _state.value.currentUser != null
+        useCases.addSearchHistory(searchHistory, login).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -154,7 +125,8 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun deleteSearchHistory(historyId: Long) = viewModelScope.launch {
-        useCases.deleteSearchHistory(historyId).collect { result ->
+        val login = _state.value.currentUser != null
+        useCases.deleteSearchHistory(historyId, login).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -172,6 +144,56 @@ class SearchViewModel @Inject constructor(
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("검색 기록을 삭제하지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun getFavorites() = viewModelScope.launch {
+        val user = _state.value.currentUser
+        useCases.getFavorites(user?.account?.id).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        favorites = result.data!!,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 목록을 불러오지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun deleteFavorite(postId: Long) = viewModelScope.launch {
+        val login = _state.value.currentUser != null
+        useCases.deleteFavorite(postId, login).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기가 삭제되었습니다"))
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 삭제하지 못했습니다 (${result.message})"))
                 }
             }
         }
@@ -208,7 +230,7 @@ class SearchViewModel @Inject constructor(
     private fun getPostOwner(idx: Int, post: Post?) = viewModelScope.launch {
         val accountId = post?.ownerId!!
         useCases.getOwner(accountId).collect { result ->
-            when(result){
+            when (result) {
                 is Resource.Success -> {
                     val postWithAccount = post.copy(owner = result.data)
                     val favorites = _state.value.favorites.toMutableList()

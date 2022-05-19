@@ -9,6 +9,7 @@ import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
 import com.ich.reciptopia.domain.use_case.post_detail.*
+import com.ich.reciptopia.domain.use_case.post_detail.GetFavoritesUseCase
 import com.ich.reciptopia.domain.use_case.search.*
 import com.ich.reciptopia.domain.use_case.search.GetOwnerOfPostUseCase
 import dagger.Module
@@ -25,11 +26,8 @@ object UseCaseModule {
     @Singleton
     fun provideSearchHistoryUseCases(repository: SearchRepository): SearchUseCases{
         return SearchUseCases(
-            getSearchHistoriesFromDB = GetSearchHistoriesFromDBUseCase(repository),
-            addSearchHistoryInDB = AddSearchHistoryInDBUseCase(repository),
-            deleteSearchHistoryFromDB = DeleteSearchHistoryFromDBUseCase(repository),
-            getFavoritesFromDB = com.ich.reciptopia.domain.use_case.search.GetFavoritesFromDBUseCase(repository),
-            deleteFavoriteFromDB = DeleteFavoriteFromDBUseCase(repository),
+            getFavorites = com.ich.reciptopia.domain.use_case.search.GetFavoritesUseCase(repository),
+            deleteFavorite = DeleteFavoriteUseCase(repository),
             getSearchHistories = GetSearchHistoriesUseCase(repository),
             addSearchHistory = AddSearchHistoryUseCase(repository),
             deleteSearchHistory = DeleteSearchHistoryUseCase(repository),

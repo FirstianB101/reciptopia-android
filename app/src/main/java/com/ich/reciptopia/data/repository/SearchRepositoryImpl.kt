@@ -21,24 +21,25 @@ class SearchRepositoryImpl(
         return dao.getSearchHistories()
     }
 
-    override suspend fun insertSearchHistoryInDB(history: SearchHistory) {
+    override suspend fun insertSearchHistoryInDB(history: SearchHistory): SearchHistory {
         dao.insertSearchHistory(history)
+        return history
     }
 
-    override suspend fun deleteSearchHistoryFromDB(history: SearchHistory) {
-        dao.deleteSearchHistory(history)
+    override suspend fun deleteSearchHistoryFromDB(historyId: Long) {
+        dao.deleteSearchHistory(historyId)
     }
 
     override fun getFavoritesFromDB(): Flow<List<Favorite>> {
         return dao.getFavorites()
     }
 
-    override suspend fun deleteFavoriteFromDB(favorite: Favorite) {
-        dao.deleteFavorite(favorite)
+    override suspend fun deleteFavoriteFromDB(postId: Long) {
+        dao.deleteFavorite(postId)
     }
 
-    override suspend fun getFavorites(): List<Favorite> {
-        return utils.testFavorites
+    override suspend fun getFavorites(userId: Long?): List<Favorite> {
+        return utils.testFavorites.filter{ it.ownerId == userId }
     }
 
     override suspend fun deleteFavorite(postId: Long): Response<Unit> {
@@ -51,7 +52,7 @@ class SearchRepositoryImpl(
         return Response.success(Unit)
     }
 
-    override suspend fun getSearchHistories(userId: Long): List<SearchHistory> {
+    override suspend fun getSearchHistories(userId: Long?): List<SearchHistory> {
         return utils.testHistories.filter { it.ownerId == userId }
     }
 
