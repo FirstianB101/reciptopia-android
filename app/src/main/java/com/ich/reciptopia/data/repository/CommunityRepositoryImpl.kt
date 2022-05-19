@@ -19,14 +19,12 @@ class CommunityRepositoryImpl(
     private var nextTagId = 4L
     private var nextFavoriteId = 0L
 
-    val utils = RepositoryTestUtils()
-
     override suspend fun getOwnerOfPost(accountId: Long): Account {
-        return utils.testOwner.find{it.id == accountId}!!
+        return RepositoryTestUtils.testOwner.find{it.id == accountId}!!
     }
 
     override suspend fun postLike(postLikeTag: PostLikeTag): PostLikeTag {
-        utils.testPostLikeTags.add(
+        RepositoryTestUtils.testPostLikeTags.add(
             postLikeTag.copy(
                 id = nextTagId++
             )
@@ -35,19 +33,19 @@ class CommunityRepositoryImpl(
     }
 
     override suspend fun getPostLikeTags(): List<PostLikeTag> {
-        return utils.testPostLikeTags
+        return RepositoryTestUtils.testPostLikeTags
     }
 
     override suspend fun getPostsByTime(): List<Post> {
-        return utils.testPosts
+        return RepositoryTestUtils.testPosts
     }
 
     override suspend fun getPostsByViews(): List<Post> {
-        return utils.testPosts.reversed()
+        return RepositoryTestUtils.testPosts.reversed()
     }
 
     override suspend fun createPost(post: Post): Post {
-        utils.testPosts.add(
+        RepositoryTestUtils.testPosts.add(
             post.copy(
                 id = nextPostId++
             )
@@ -55,8 +53,30 @@ class CommunityRepositoryImpl(
         return post
     }
 
-    override suspend fun favoritePostNotLogin(postId: Long) {
-        dao.insertFavorite(Favorite(id = nextFavoriteId++, postId = postId))
+    override suspend fun favoritePostLogin(ownerId: Long?, postId: Long?) {
+        val favorite = Favorite(
+            id = RepositoryTestUtils.nextFavoriteId++,
+            ownerId = ownerId,
+            postId = postId
+        )
+        RepositoryTestUtils.testFavorites.add(favorite)
+    }
+
+    override suspend fun unFavoritePostLogin(ownerId: Long?, postId: Long?) {
+        for(i in RepositoryTestUtils.testFavorites.indices){
+            if(RepositoryTestUtils.testFavorites[i].ownerId == ownerId && RepositoryTestUtils.testFavorites[i].postId == postId){
+                RepositoryTestUtils.testFavorites.removeAt(i)
+                break
+            }
+        }
+    }
+
+    override suspend fun favoritePostNotLogin(ownerId: Long?, postId: Long?) {
+        dao.insertFavorite(Favorite(
+            id = nextFavoriteId++,
+            postId = postId,
+            ownerId = ownerId
+        ))
     }
 
     override suspend fun unFavoritePostNotLogin(postId: Long) {
@@ -72,6 +92,6 @@ class CommunityRepositoryImpl(
     }
 
     override suspend fun getFavorites(userId: Long): List<Favorite> {
-        return utils.testFavorites.filter{ it.ownerId == userId }
+        return RepositoryTestUtils.testFavorites.filter{ it.ownerId == userId }
     }
 }

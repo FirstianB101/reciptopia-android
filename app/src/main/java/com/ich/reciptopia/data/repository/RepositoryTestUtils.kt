@@ -2,13 +2,19 @@ package com.ich.reciptopia.data.repository
 
 import com.ich.reciptopia.domain.model.*
 
-class RepositoryTestUtils {
+object RepositoryTestUtils {
 
     // Post id 1~3
     // owner id 1~2
-    // favorite id 1~3
+    // favorite id 1~2
     // like tag id 1~3
     // history id 1~4
+    var nextPostId = 4L
+    var nextOwnerId = 3L
+    var nextFavoriteId = 3L
+    var nextLikeTagId = 4L
+    var nextHistoryId = 5L
+
     val testPosts = mutableListOf(
         Post(
             id = 1L,
@@ -76,11 +82,6 @@ class RepositoryTestUtils {
             id = 2L,
             ownerId = 1L,
             postId = 2L
-        ),
-        Favorite(
-            id = 3L,
-            ownerId = 1L,
-            postId = 3L
         )
     )
 

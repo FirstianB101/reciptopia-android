@@ -15,8 +15,6 @@ class SearchRepositoryImpl(
     private val dao: SearchDao
 ): SearchRepository {
 
-    val utils = RepositoryTestUtils()
-
     override fun getSearchHistoriesFromDB(): Flow<List<SearchHistory>> {
         return dao.getSearchHistories()
     }
@@ -39,13 +37,13 @@ class SearchRepositoryImpl(
     }
 
     override suspend fun getFavorites(userId: Long?): List<Favorite> {
-        return utils.testFavorites.filter{ it.ownerId == userId }
+        return RepositoryTestUtils.testFavorites.filter{ it.ownerId == userId }
     }
 
     override suspend fun deleteFavorite(postId: Long): Response<Unit> {
-        for(i in utils.testFavorites.indices){
-            if(utils.testFavorites[i].id == postId) {
-                utils.testFavorites.removeAt(i)
+        for(i in RepositoryTestUtils.testFavorites.indices){
+            if(RepositoryTestUtils.testFavorites[i].id == postId) {
+                RepositoryTestUtils.testFavorites.removeAt(i)
                 break
             }
         }
@@ -53,18 +51,18 @@ class SearchRepositoryImpl(
     }
 
     override suspend fun getSearchHistories(userId: Long?): List<SearchHistory> {
-        return utils.testHistories.filter { it.ownerId == userId }
+        return RepositoryTestUtils.testHistories.filter { it.ownerId == userId }
     }
 
     override suspend fun addSearchHistory(history: SearchHistory): SearchHistory {
-        utils.testHistories.add(history)
+        RepositoryTestUtils.testHistories.add(history)
         return history
     }
 
     override suspend fun deleteSearchHistory(historyId: Long): Response<Unit> {
-        for(i in utils.testHistories.indices){
-            if(utils.testHistories[i].id == historyId) {
-                utils.testHistories.removeAt(i)
+        for(i in RepositoryTestUtils.testHistories.indices){
+            if(RepositoryTestUtils.testHistories[i].id == historyId) {
+                RepositoryTestUtils.testHistories.removeAt(i)
                 break
             }
         }
@@ -72,10 +70,10 @@ class SearchRepositoryImpl(
     }
 
     override suspend fun getPost(postId: Long): Post {
-        return utils.testPosts.find{ it.id == postId }!!
+        return RepositoryTestUtils.testPosts.find{ it.id == postId }!!
     }
 
     override suspend fun getOwnerOfPost(accountId: Long): Account {
-        return utils.testOwner.find{it.id == accountId}!!
+        return RepositoryTestUtils.testOwner.find{it.id == accountId}!!
     }
 }

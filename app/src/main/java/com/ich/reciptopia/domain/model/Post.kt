@@ -8,6 +8,5 @@ data class Post(
     val pictureUrls: List<String?> = emptyList(),
     val views: Long? = null,
     val owner: Account? = null,
-    val favoriteNotLogin: Boolean = false,
-    val favoriteLogin: Boolean = false
+    val isFavorite: Boolean = false
 )

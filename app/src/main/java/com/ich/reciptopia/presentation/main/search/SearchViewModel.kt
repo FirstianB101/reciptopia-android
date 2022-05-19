@@ -40,6 +40,7 @@ class SearchViewModel @Inject constructor(
             }
             is SearchScreenEvent.DeleteSearchHistory -> {
                 deleteSearchHistory(event.history.id!!)
+                    .invokeOnCompletion { getSearchHistories() }
             }
             is SearchScreenEvent.DeleteFavorite -> {
                 deleteFavorite(event.favorite.postId!!)

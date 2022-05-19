@@ -1,6 +1,5 @@
 package com.ich.reciptopia.presentation.community
 
-import android.database.sqlite.SQLiteException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
@@ -102,9 +101,7 @@ class CommunityViewModel @Inject constructor(
                     else -> throw Exception("sort exception")
                 }
                 job.invokeOnCompletion {
-                    if(_state.value.currentUser == null) {
-                        getDbFavoritesForFillingStar()
-                    }
+                    getFavoritesForFillingStar()
                     getPostLikeTags()
                     _state.value.posts.forEachIndexed { i, post ->
                         getOwnerOfPost(i, post.ownerId!!)
@@ -122,11 +119,11 @@ class CommunityViewModel @Inject constructor(
                 createPost(newPost)
             }
             is CommunityScreenEvent.FavoriteButtonClicked -> {
-                if (event.post.favoriteNotLogin) {
-                    unFavoritePostNotLogin(event.post.id!!)
+                if (event.post.isFavorite) {
+                    unFavoritePost(event.post.id!!)
                         .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
                 } else {
-                    favoritePostNotLogin(event.post.id!!)
+                    favoritePost(event.post.id!!)
                         .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
                 }
             }
@@ -262,42 +259,93 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun getDbFavoritesForFillingStar() = viewModelScope.launch {
-        useCases.getFavoritesFromDB().collect { favorites ->
-            val map = mutableMapOf<Long, Favorite>()
+    private fun getFavoritesForFillingStar() = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id
+        useCases.getFavorites(userId).collect { result ->
+            when(result){
+                is Resource.Success -> {
+                    val map = mutableMapOf<Long, Favorite>()
 
-            for (favorite in favorites) {
-                map[favorite.postId!!] = favorite
-            }
+                    for (favorite in result.data!!) {
+                        map[favorite.postId!!] = favorite
+                    }
 
-            val posts = _state.value.posts.toMutableList()
-            posts.forEachIndexed { index, post ->
-                if (map[post.id] != null) {
-                    posts[index] = post.copy(
-                        favoriteNotLogin = true
+                    val posts = _state.value.posts.toMutableList()
+                    posts.forEachIndexed { index, post ->
+                        if (map[post.id] != null) {
+                            posts[index] = post.copy(
+                                isFavorite = true
+                            )
+                        }
+                    }
+
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        posts = posts
                     )
                 }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 정보를 불러오지 못했습니다 (${result.message})"))
+                }
             }
-
-            _state.value = _state.value.copy(
-                posts = posts
-            )
         }
     }
 
-    private fun favoritePostNotLogin(postId: Long) = viewModelScope.launch {
-        try {
-            useCases.favoritePostNotLogin(postId)
-        } catch (e: SQLiteException) {
-            _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 등록에 실패했습니다"))
+    private fun favoritePost(postId: Long) = viewModelScope.launch {
+        val ownerId = _state.value.currentUser?.account?.id
+        useCases.favoritePost(ownerId, postId, ownerId != null).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 추가했습니다"))
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 추가하지 못했습니다 (${result.message})"))
+                }
+            }
         }
     }
 
-    private fun unFavoritePostNotLogin(postId: Long) = viewModelScope.launch {
-        try {
-            useCases.unFavoritePostNotLogin(postId)
-        } catch (e: SQLiteException) {
-            _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 제거에 실패했습니다"))
+    private fun unFavoritePost(postId: Long) = viewModelScope.launch {
+        val ownerId = _state.value.currentUser?.account?.id
+        useCases.unFavoritePost(ownerId, postId, ownerId != null).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 제거했습니다"))
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 제거하지 못했습니다 (${result.message})"))
+                }
+            }
         }
     }
 

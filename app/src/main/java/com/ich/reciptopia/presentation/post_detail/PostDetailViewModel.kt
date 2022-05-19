@@ -42,7 +42,7 @@ class PostDetailViewModel @Inject constructor(
             is PostDetailEvent.ClickFavorite -> {
                 val post = _state.value.curPost!!
                 if(post.id != null) {
-                    if (post.favoriteNotLogin) {
+                    if (post.isFavorite) {
                         unFavoritePostNotLogin(post.id)
                             .invokeOnCompletion { getPostInfo().invokeOnCompletion { getOwnerOfPost() } }
                     } else {
@@ -121,7 +121,7 @@ class PostDetailViewModel @Inject constructor(
             for(favorite in result){
                 if(favorite.postId == _state.value.curPost?.id){
                     val post = _state.value.curPost?.copy(
-                        favoriteNotLogin = true
+                        isFavorite = true
                     )
                     _state.value = _state.value.copy(
                         curPost = post

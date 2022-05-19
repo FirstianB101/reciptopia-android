@@ -1,13 +1,9 @@
 package com.ich.reciptopia.presentation.post_detail.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -63,10 +59,10 @@ fun PostDetailScreen(
             ) {
                 Icon(
                     modifier = Modifier.size(32.dp),
-                    imageVector = if(state.value.curPost?.favoriteNotLogin == true)
+                    imageVector = if(state.value.curPost?.isFavorite == true)
                         Icons.Filled.Star else Icons.Outlined.StarBorder,
                     contentDescription = "Star Icon",
-                    tint = if(state.value.curPost?.favoriteNotLogin == true)
+                    tint = if(state.value.curPost?.isFavorite == true)
                         Color.Yellow else Color.Gray
                 )
             }

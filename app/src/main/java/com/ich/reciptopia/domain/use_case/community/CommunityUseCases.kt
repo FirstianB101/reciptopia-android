@@ -7,7 +7,7 @@ data class CommunityUseCases(
     val getPostLikeTags: GetPostLikeTagsUseCase,
     val postLike: PostLikeUseCase,
     val getOwnerOfPost: GetOwnerOfPostUseCase,
-    val favoritePostNotLogin: FavoritePostNotLoginUseCase,
-    val unFavoritePostNotLogin: UnFavoritePostNotLoginUseCase,
-    val getFavoritesFromDB: GetFavoritesFromDBUseCase
+    val favoritePost: FavoritePostUseCase,
+    val unFavoritePost: UnFavoritePostUseCase,
+    val getFavorites: GetFavoritesUseCase
 )

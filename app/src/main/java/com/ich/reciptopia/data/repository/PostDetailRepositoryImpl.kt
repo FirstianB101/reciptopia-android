@@ -14,14 +14,12 @@ class PostDetailRepositoryImpl(
     private val dao: SearchDao
 ): PostDetailRepository {
 
-    val utils = RepositoryTestUtils()
-
     override suspend fun getPost(postId: Long): Post {
-        return utils.testPosts.find { it.id == postId }!!
+        return RepositoryTestUtils.testPosts.find { it.id == postId }!!
     }
 
     override suspend fun getOwnerOfPost(accountId: Long): Account {
-        return utils.testOwner.find { it.id == accountId }!!
+        return RepositoryTestUtils.testOwner.find { it.id == accountId }!!
     }
 
     override suspend fun favoritePostNotLogin(postId: Long) {
@@ -41,6 +39,6 @@ class PostDetailRepositoryImpl(
     }
 
     override suspend fun getFavorites(userId: Long): List<Favorite> {
-        return utils.testFavorites.filter {it.ownerId == userId}
+        return RepositoryTestUtils.testFavorites.filter {it.ownerId == userId}
     }
 }

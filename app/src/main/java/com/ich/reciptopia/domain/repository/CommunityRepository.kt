@@ -14,8 +14,10 @@ interface CommunityRepository {
     suspend fun getPostLikeTags(): List<PostLikeTag>
     suspend fun postLike(postLikeTag: PostLikeTag): PostLikeTag
 
-    suspend fun favoritePostNotLogin(postId: Long)
+    suspend fun favoritePostNotLogin(ownerId: Long?, postId: Long?)
+    suspend fun favoritePostLogin(ownerId: Long?, postId: Long?)
     suspend fun unFavoritePostNotLogin(postId: Long)
+    suspend fun unFavoritePostLogin(ownerId: Long?, postId: Long?)
     suspend fun getFavoritesFromDB(): Flow<List<Favorite>>
     suspend fun getFavorites(userId: Long): List<Favorite>
 }

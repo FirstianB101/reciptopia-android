@@ -2,14 +2,12 @@ package com.ich.reciptopia.di
 
 import com.ich.reciptopia.domain.repository.*
 import com.ich.reciptopia.domain.use_case.community.*
-import com.ich.reciptopia.domain.use_case.community.GetFavoritesFromDBUseCase
 import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
 import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
 import com.ich.reciptopia.domain.use_case.post_detail.*
-import com.ich.reciptopia.domain.use_case.post_detail.GetFavoritesUseCase
 import com.ich.reciptopia.domain.use_case.search.*
 import com.ich.reciptopia.domain.use_case.search.GetOwnerOfPostUseCase
 import dagger.Module
@@ -67,9 +65,9 @@ object UseCaseModule {
             getPostLikeTags = GetPostLikeTagsUseCase(repository),
             postLike = PostLikeUseCase(repository),
             getOwnerOfPost = com.ich.reciptopia.domain.use_case.community.GetOwnerOfPostUseCase(repository),
-            favoritePostNotLogin = FavoritePostNotLoginUseCase(repository),
-            getFavoritesFromDB = GetFavoritesFromDBUseCase(repository),
-            unFavoritePostNotLogin = UnFavoritePostNotLoginUseCase(repository)
+            favoritePost = FavoritePostUseCase(repository),
+            getFavorites = com.ich.reciptopia.domain.use_case.community.GetFavoritesUseCase(repository),
+            unFavoritePost = UnFavoritePostUseCase(repository)
         )
     }
 
@@ -81,8 +79,10 @@ object UseCaseModule {
             getOwnerOfPost = GetOwnerOfPostDetailUseCase(repository),
             favoritePostNotLogin = FavoritePostDetailNotLoginUseCase(repository),
             unFavoritePostNotLogin = UnFavoritePostDetailNotLoginUseCase(repository),
-            getFavoritesFromDB = com.ich.reciptopia.domain.use_case.post_detail.GetFavoritesFromDBUseCase(repository),
-            getFavorites = GetFavoritesUseCase(repository)
+            getFavoritesFromDB = GetFavoritesFromDBUseCase(repository),
+            getFavorites = com.ich.reciptopia.domain.use_case.post_detail.GetFavoritesUseCase(
+                repository
+            )
         )
     }
 }

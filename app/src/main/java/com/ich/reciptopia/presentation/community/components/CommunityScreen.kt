@@ -1,7 +1,6 @@
 package com.ich.reciptopia.presentation.community.components
 
 import android.content.Context
-import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
@@ -113,8 +112,8 @@ fun CommunityScreen(
                         PostPreviewItem(
                             modifier = Modifier.fillMaxWidth(),
                             post = post,
-                            owner = post.owner!!,
-                            starFilled = post.favoriteNotLogin,
+                            owner = post.owner,
+                            starFilled = post.isFavorite,
                             onStarClick = {
                                 viewModel.onEvent(CommunityScreenEvent.FavoriteButtonClicked(post))
                             },
