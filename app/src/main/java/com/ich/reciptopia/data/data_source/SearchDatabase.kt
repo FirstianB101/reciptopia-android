@@ -6,6 +6,7 @@ import androidx.room.TypeConverters
 import com.ich.reciptopia.common.util.FavoriteTypeConverter
 import com.ich.reciptopia.common.util.SearchHistoryTypeConverter
 import com.ich.reciptopia.domain.model.Favorite
+import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.model.SearchHistory
 
 @Database(

@@ -2,6 +2,11 @@ package com.ich.reciptopia.data.repository
 
 import com.ich.reciptopia.data.data_source.SearchDao
 import com.ich.reciptopia.data.remote.ReciptopiaApi
+import com.ich.reciptopia.data.repository.RepositoryTestUtils.nextFavoriteId
+import com.ich.reciptopia.data.repository.RepositoryTestUtils.nextLikeTagId
+import com.ich.reciptopia.data.repository.RepositoryTestUtils.nextPostId
+import com.ich.reciptopia.data.repository.RepositoryTestUtils.testFavorites
+import com.ich.reciptopia.data.repository.RepositoryTestUtils.testPostLikeTags
 import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.Post
@@ -15,25 +20,8 @@ class CommunityRepositoryImpl(
     private val dao: SearchDao
 ): CommunityRepository {
 
-    private var nextPostId = 4L
-    private var nextTagId = 4L
-    private var nextFavoriteId = 0L
-
     override suspend fun getOwnerOfPost(accountId: Long): Account {
         return RepositoryTestUtils.testOwner.find{it.id == accountId}!!
-    }
-
-    override suspend fun postLike(postLikeTag: PostLikeTag): PostLikeTag {
-        RepositoryTestUtils.testPostLikeTags.add(
-            postLikeTag.copy(
-                id = nextTagId++
-            )
-        )
-        return postLikeTag
-    }
-
-    override suspend fun getPostLikeTags(): List<PostLikeTag> {
-        return RepositoryTestUtils.testPostLikeTags
     }
 
     override suspend fun getPostsByTime(): List<Post> {
@@ -55,17 +43,17 @@ class CommunityRepositoryImpl(
 
     override suspend fun favoritePostLogin(ownerId: Long?, postId: Long?) {
         val favorite = Favorite(
-            id = RepositoryTestUtils.nextFavoriteId++,
+            id = nextFavoriteId++,
             ownerId = ownerId,
             postId = postId
         )
-        RepositoryTestUtils.testFavorites.add(favorite)
+        testFavorites.add(favorite)
     }
 
     override suspend fun unFavoritePostLogin(ownerId: Long?, postId: Long?) {
-        for(i in RepositoryTestUtils.testFavorites.indices){
-            if(RepositoryTestUtils.testFavorites[i].ownerId == ownerId && RepositoryTestUtils.testFavorites[i].postId == postId){
-                RepositoryTestUtils.testFavorites.removeAt(i)
+        for(i in testFavorites.indices){
+            if(testFavorites[i].ownerId == ownerId && testFavorites[i].postId == postId){
+                testFavorites.removeAt(i)
                 break
             }
         }
@@ -92,6 +80,28 @@ class CommunityRepositoryImpl(
     }
 
     override suspend fun getFavorites(userId: Long): List<Favorite> {
-        return RepositoryTestUtils.testFavorites.filter{ it.ownerId == userId }
+        return testFavorites.filter{ it.ownerId == userId }
+    }
+
+    override suspend fun likePost(ownerId: Long?, postId: Long?) {
+        testPostLikeTags.add(PostLikeTag(
+            id = nextPostId++,
+            ownerId = ownerId,
+            postId = postId
+        ))
+    }
+
+    override suspend fun unLikePost(ownerId: Long?, postId: Long?) {
+        for(i in testPostLikeTags.indices){
+            if(testPostLikeTags[i].ownerId == ownerId && testPostLikeTags[i].postId == postId){
+                testPostLikeTags.removeAt(i)
+                break
+            }
+        }
+    }
+
+
+    override suspend fun getLikeTags(userId: Long): List<PostLikeTag> {
+        return testPostLikeTags.filter{ it.ownerId == userId }
     }
 }

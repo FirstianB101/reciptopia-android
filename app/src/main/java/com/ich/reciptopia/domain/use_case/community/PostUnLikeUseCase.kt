@@ -10,14 +10,15 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class PostLikeUseCase @Inject constructor(
+class PostUnLikeUseCase @Inject constructor(
     private val repository: CommunityRepository
 ) {
-    operator fun invoke(ownerId: Long, postId: Long): Flow<Resource<Unit>> = flow{
+    operator fun invoke(ownerId: Long, postId: Long,): Flow<Resource<Unit>> = flow{
         try{
             emit(Resource.Loading<Unit>())
 
-            repository.likePost(ownerId, postId)
+            repository.unLikePost(ownerId, postId)
+
             emit(Resource.Success<Unit>(null))
         }catch (e: HttpException){
             emit(Resource.Error<Unit>(e.localizedMessage ?: Constants.HTTP_EXCEPTION_COMMENT))

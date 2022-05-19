@@ -11,8 +11,6 @@ interface CommunityRepository {
     suspend fun getPostsByTime(): List<Post>
     suspend fun getPostsByViews(): List<Post>
     suspend fun createPost(post: Post): Post
-    suspend fun getPostLikeTags(): List<PostLikeTag>
-    suspend fun postLike(postLikeTag: PostLikeTag): PostLikeTag
 
     suspend fun favoritePostNotLogin(ownerId: Long?, postId: Long?)
     suspend fun favoritePostLogin(ownerId: Long?, postId: Long?)
@@ -20,4 +18,8 @@ interface CommunityRepository {
     suspend fun unFavoritePostLogin(ownerId: Long?, postId: Long?)
     suspend fun getFavoritesFromDB(): Flow<List<Favorite>>
     suspend fun getFavorites(userId: Long): List<Favorite>
+
+    suspend fun likePost(ownerId: Long?, postId: Long?)
+    suspend fun unLikePost(ownerId: Long?, postId: Long?)
+    suspend fun getLikeTags(userId: Long): List<PostLikeTag>
 }

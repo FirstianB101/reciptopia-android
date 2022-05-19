@@ -121,7 +121,7 @@ fun CommunityScreen(
                                 startPostActivity(context, post.id!!)
                             },
                             onLikeClick = {
-
+                                viewModel.onEvent(CommunityScreenEvent.LikebuttonClicked(post))
                             }
                         )
                     }
@@ -149,6 +149,15 @@ fun CommunityScreen(
         showDialog = state.value.showCreatePostDialog,
     ) {
         viewModel.onEvent(CommunityScreenEvent.CreatePostStateChanged(false))
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        if(state.value.isLoading){
+            CircularProgressIndicator()
+        }
     }
 }
 

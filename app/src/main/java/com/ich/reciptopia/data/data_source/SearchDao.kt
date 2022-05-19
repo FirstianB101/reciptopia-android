@@ -2,6 +2,7 @@ package com.ich.reciptopia.data.data_source
 
 import androidx.room.*
 import com.ich.reciptopia.domain.model.Favorite
+import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.model.SearchHistory
 import kotlinx.coroutines.flow.Flow
 

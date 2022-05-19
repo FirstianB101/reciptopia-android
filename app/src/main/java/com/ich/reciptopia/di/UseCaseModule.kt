@@ -70,11 +70,12 @@ object UseCaseModule {
             getPostsByTime = GetPostsByTimeUseCase(repository),
             getPostsByViews = GetPostsByViewsUseCase(repository),
             getPostLikeTags = GetPostLikeTagsUseCase(repository),
-            postLike = PostLikeUseCase(repository),
             getOwnerOfPost = com.ich.reciptopia.domain.use_case.community.GetOwnerOfPostUseCase(repository),
             favoritePost = com.ich.reciptopia.domain.use_case.community.FavoritePostUseCase(repository),
             getFavorites = com.ich.reciptopia.domain.use_case.community.GetFavoritesUseCase(repository),
-            unFavoritePost = com.ich.reciptopia.domain.use_case.community.UnFavoritePostUseCase(repository)
+            unFavoritePost = com.ich.reciptopia.domain.use_case.community.UnFavoritePostUseCase(repository),
+            likePost = PostLikeUseCase(repository),
+            unlikePost = PostUnLikeUseCase(repository)
         )
     }
 

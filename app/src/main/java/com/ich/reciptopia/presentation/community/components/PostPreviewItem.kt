@@ -134,7 +134,7 @@ fun PostPreviewItem(
                     modifier = Modifier.size(16.dp),
                     imageVector = Icons.Filled.ThumbUp,
                     contentDescription = "",
-                    tint = Color.Gray
+                    tint = if(post?.like == true) colorResource(id = R.color.main_color) else Color.Gray
                 )
             }
 

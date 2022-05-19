@@ -127,6 +127,21 @@ class CommunityViewModel @Inject constructor(
                         .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
                 }
             }
+            is CommunityScreenEvent.LikebuttonClicked -> {
+                if(_state.value.currentUser != null) {
+                    if (event.post.like) {
+                        unlikePost(event.post.id!!)
+                            .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
+                    } else {
+                        likePost(event.post.id!!)
+                            .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
+                    }
+                }else{
+                    viewModelScope.launch {
+                        _eventFlow.emit(UiEvent.ShowToast("좋아요를 표시하려면 로그인 해주세요"))
+                    }
+                }
+            }
         }
     }
 
@@ -213,36 +228,59 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun getPostLikeTags() = viewModelScope.launch {
-        useCases.getPostLikeTags().collect { result ->
-            when (result) {
-                is Resource.Success -> {
-                    _state.value = _state.value.copy(
-                        likeTags = result.data!!,
-                        isLoading = false
-                    )
-                }
-                is Resource.Loading -> {
-                    _state.value = _state.value.copy(
-                        isLoading = true
-                    )
-                }
-                is Resource.Error -> {
-                    _state.value = _state.value.copy(
-                        isLoading = false
-                    )
+        val userId = _state.value.currentUser?.account?.id
+        if(userId != null) {
+            useCases.getPostLikeTags(userId).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _state.value = _state.value.copy(
+                            likeTags = result.data!!,
+                            isLoading = false
+                        )
+
+                        val map = mutableMapOf<Long, PostLikeTag>()
+
+                        for (tag in result.data) {
+                            map[tag.postId!!] = tag
+                        }
+
+                        val posts = _state.value.posts.toMutableList()
+                        posts.forEachIndexed { index, post ->
+                            if (map[post.id] != null) {
+                                posts[index] = post.copy(
+                                    like = true
+                                )
+                            }
+                        }
+
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            posts = posts
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = _state.value.copy(
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
     }
 
-    private fun postLike(postLikeTag: PostLikeTag) = viewModelScope.launch {
-        useCases.postLike(postLikeTag).collect { result ->
+    private fun likePost(postId: Long) = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id!!
+        useCases.likePost(userId, postId).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
                         isLoading = false
                     )
-                    _eventFlow.emit(UiEvent.ShowToast("좋아요를 눌렀습니다"))
                 }
                 is Resource.Loading -> {
                     _state.value = _state.value.copy(
@@ -253,7 +291,31 @@ class CommunityViewModel @Inject constructor(
                     _state.value = _state.value.copy(
                         isLoading = false
                     )
-                    _eventFlow.emit(UiEvent.ShowToast("(${result.message})"))
+                    _eventFlow.emit(UiEvent.ShowToast("좋아요를 표시하지 못했습니다(${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun unlikePost(postId: Long) = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id!!
+        useCases.unlikePost(userId, postId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("좋아요를 취소하지 못했습니다(${result.message})"))
                 }
             }
         }
