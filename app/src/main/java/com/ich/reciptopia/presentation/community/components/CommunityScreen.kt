@@ -152,7 +152,7 @@ fun CommunityScreen(
     }
 }
 
-private fun startPostActivity(context: Context, postId: Long){
+fun startPostActivity(context: Context, postId: Long){
     val intent = PostActivity.getPostIntent(context).apply {
         putExtra("selectedPostId",postId)
     }

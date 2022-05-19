@@ -15,7 +15,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.ich.reciptopia.presentation.main.MainScreenEvent
 import com.ich.reciptopia.presentation.main.MainViewModel
 import com.ich.reciptopia.presentation.main.analyze_ingredient.components.AnalyzeIngredientScreen
+import com.ich.reciptopia.presentation.main.search.SearchViewModel
 import com.ich.reciptopia.presentation.main.search.components.SearchScreen
+import com.ich.reciptopia.presentation.main.search_result.components.SearchResultScreen
 
 @Composable
 fun MainNavigation(
@@ -29,6 +31,7 @@ fun MainNavigation(
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val searchViewModel: SearchViewModel = hiltViewModel()
 
     val searchSource = remember { MutableInteractionSource() }
 
@@ -87,11 +90,12 @@ fun MainNavigation(
                     },
                     onChipReset = {
                         viewModel.onEvent(MainScreenEvent.ResetChips)
-                    }
+                    },
+                    viewModel = searchViewModel
                 )
             }
             composable(route = MainScreenUI.PostListScreen.route) {
-                Text("Post List Screen")
+                SearchResultScreen(searchViewModel)
             }
         }
     }

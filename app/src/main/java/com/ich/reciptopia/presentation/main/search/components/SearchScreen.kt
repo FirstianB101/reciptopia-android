@@ -54,6 +54,15 @@ fun SearchScreen(
                 is SearchViewModel.UiEvent.ShowToast -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
+                is SearchViewModel.UiEvent.NavigateToSearchResultScreen -> {
+                    navController.navigate(MainScreenUI.PostListScreen.route) {
+                        popUpTo(MainScreenUI.PostListScreen.route) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
+                    onChipReset()
+                }
             }
         }
     }
@@ -108,12 +117,7 @@ fun SearchScreen(
                                         .padding(24.dp),
                                     items = history.ingredientNames,
                                     onItemClicked = {
-                                        navController.navigate(MainScreenUI.PostListScreen.route) {
-                                            popUpTo(MainScreenUI.PostListScreen.route) {
-                                                inclusive = true
-                                            }
-                                            launchSingleTop = true
-                                        }
+                                        viewModel.onEvent(SearchScreenEvent.ClickHistory(history))
                                     },
                                     onDeleteItem = {
                                         viewModel.onEvent(SearchScreenEvent.DeleteSearchHistory(history))
@@ -159,13 +163,11 @@ fun SearchScreen(
                 .testTag(TestTags.SEARCH_SCREEN_SEARCH_BUTTON),
             onClick = {
                 viewModel.onEvent(
-                    SearchScreenEvent.AddSearchHistory(
+                    SearchScreenEvent.DoSearch(
                         //SearchHistory(ingredients = chipStates.map { s -> s.toChipInfo() })
                         ingredientNames = chipStates.map {s -> s.text}
                     )
                 )
-                navController.navigate(MainScreenUI.PostListScreen.route)
-                onChipReset()
             },
             backgroundColor = colorResource(id = R.color.main_color),
             contentColor = Color.White

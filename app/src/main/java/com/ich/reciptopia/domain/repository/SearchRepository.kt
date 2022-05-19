@@ -23,6 +23,13 @@ interface SearchRepository {
     suspend fun addSearchHistory(history: SearchHistory): SearchHistory
     suspend fun deleteSearchHistory(historyId: Long): Response<Unit>
 
+    suspend fun getSearchedPosts(): List<Post>
+    suspend fun favoritePostNotLogin(ownerId: Long?, postId: Long?)
+    suspend fun favoritePostLogin(ownerId: Long?, postId: Long?)
+    suspend fun unFavoritePostNotLogin(postId: Long)
+    suspend fun unFavoritePostLogin(ownerId: Long?, postId: Long?)
+    suspend fun getFavorites(userId: Long): List<Favorite>
+
     suspend fun getPost(postId: Long): Post
     suspend fun getOwnerOfPost(accountId: Long): Account
 }

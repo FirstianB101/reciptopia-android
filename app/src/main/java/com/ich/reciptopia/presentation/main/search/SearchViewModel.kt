@@ -9,7 +9,10 @@ import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.domain.use_case.search.SearchUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,12 +34,25 @@ class SearchViewModel @Inject constructor(
 
     fun onEvent(event: SearchScreenEvent) {
         when (event) {
-            is SearchScreenEvent.AddSearchHistory -> {
+            is SearchScreenEvent.DoSearch -> {
+                getSearchedPostsWithFavorite()
                 val newHistory = SearchHistory(
                     ownerId = _state.value.currentUser?.account?.id,
                     ingredientNames = event.ingredientNames
                 )
                 addSearchHistory(newHistory)
+                    .invokeOnCompletion { getSearchHistories() }
+
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.NavigateToSearchResultScreen)
+                }
+            }
+            is SearchScreenEvent.ClickHistory -> {
+                getSearchedPostsWithFavorite()
+
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.NavigateToSearchResultScreen)
+                }
             }
             is SearchScreenEvent.DeleteSearchHistory -> {
                 deleteSearchHistory(event.history.id!!)
@@ -52,13 +68,31 @@ class SearchViewModel @Inject constructor(
             is SearchScreenEvent.GetFavoritePosts -> {
                 getFavoritePosts()
             }
+            is SearchScreenEvent.FavoriteButtonClicked -> {
+                if (event.post.isFavorite) {
+                    unFavoritePost(event.post.id!!)
+                        .invokeOnCompletion { getSearchedPostsWithFavorite() }
+                } else {
+                    favoritePost(event.post.id!!)
+                        .invokeOnCompletion { getSearchedPostsWithFavorite() }
+                }
+            }
+        }
+    }
+
+    private fun getSearchedPostsWithFavorite(){
+        getSearchedPosts().invokeOnCompletion {
+            getFavoritesForFillingStar()
+            _state.value.posts.forEachIndexed { i, post ->
+                getOwnerOfPost(i, post.ownerId!!)
+            }
         }
     }
 
     private fun getFavoritePosts() {
         getFavorites().invokeOnCompletion {
             _state.value.favorites.forEachIndexed { index, favorite ->
-                getPostsFromFavoritesFromDB(index, favorite)
+                getPostsWithFavoritesFromDB(index, favorite)
                     .invokeOnCompletion {
                         getPostOwner(index, _state.value.favorites[index].post)
                     }
@@ -200,7 +234,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun getPostsFromFavoritesFromDB(idx: Int, favorite: Favorite) = viewModelScope.launch {
+    private fun getPostsWithFavoritesFromDB(idx: Int, favorite: Favorite) = viewModelScope.launch {
         val postId = _state.value.favorites[idx].postId!!
         useCases.getPost(postId).collect { result ->
             when (result) {
@@ -257,7 +291,150 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    private fun getSearchedPosts() = viewModelScope.launch {
+        useCases.getSearchedPosts().collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        posts = result.data!!,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("검색 결과를 불러오지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun favoritePost(postId: Long) = viewModelScope.launch {
+        val ownerId = _state.value.currentUser?.account?.id
+        useCases.favoritePost(ownerId, postId, ownerId != null).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 추가했습니다"))
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 추가하지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun unFavoritePost(postId: Long) = viewModelScope.launch {
+        val ownerId = _state.value.currentUser?.account?.id
+        useCases.unFavoritePost(ownerId, postId, ownerId != null).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 제거했습니다"))
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 제거하지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun getFavoritesForFillingStar() = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id
+        useCases.getFavorites(userId).collect { result ->
+            when(result){
+                is Resource.Success -> {
+                    val map = mutableMapOf<Long, Favorite>()
+
+                    for (favorite in result.data!!) {
+                        map[favorite.postId!!] = favorite
+                    }
+
+                    val posts = _state.value.posts.toMutableList()
+                    posts.forEachIndexed { index, post ->
+                        if (map[post.id] != null) {
+                            posts[index] = post.copy(
+                                isFavorite = true
+                            )
+                        }
+                    }
+
+                    _state.value = _state.value.copy(
+                        isLoading = false,
+                        posts = posts
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    // call after get Posts
+    private fun getOwnerOfPost(postIdx: Int, accountId: Long) = viewModelScope.launch {
+        useCases.getOwner(accountId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val posts = _state.value.posts.toMutableList()
+                    val postWithAccount = posts[postIdx].copy(
+                        owner = result.data
+                    )
+                    posts[postIdx] = postWithAccount
+                    _state.value = _state.value.copy(
+                        posts = posts,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
     sealed class UiEvent {
         data class ShowToast(val message: String) : UiEvent()
+        object NavigateToSearchResultScreen: UiEvent()
     }
 }

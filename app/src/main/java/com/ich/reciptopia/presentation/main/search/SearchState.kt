@@ -1,15 +1,14 @@
 package com.ich.reciptopia.presentation.main.search
 
-import com.ich.reciptopia.domain.model.Favorite
-import com.ich.reciptopia.domain.model.Post
-import com.ich.reciptopia.domain.model.SearchHistory
-import com.ich.reciptopia.domain.model.User
+import com.ich.reciptopia.domain.model.*
 import com.ich.reciptopia.presentation.main.search.util.ChipInfo
 
 data class SearchState(
+    val isLoading: Boolean = false,
     val searchHistories: List<SearchHistory> = emptyList(),
     val favorites: List<Favorite> = emptyList(),
-    val isLoading: Boolean = false,
     val chipInfosForSearch: List<ChipInfo>? = null,
+    val posts: List<Post> = emptyList(),
+    val likeTags: List<PostLikeTag> = emptyList(),
     val currentUser: User? = null
 )

@@ -3,7 +3,7 @@ package com.ich.reciptopia.domain.use_case.search
 import com.ich.reciptopia.repository.FakeSearchHistoryRepository
 import org.junit.Before
 
-class AddSearchHistoryUseCaseEntityEntityInDBTest {
+class DoSearchUseCaseEntityEntityInDBTest {
 
     private lateinit var addSearchHistoryInDBUseCase: AddSearchHistoryInDBUseCase
     private lateinit var fakeRepository: FakeSearchHistoryRepository
