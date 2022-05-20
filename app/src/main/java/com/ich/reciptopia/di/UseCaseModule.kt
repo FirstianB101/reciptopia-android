@@ -10,9 +10,9 @@ import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
-import com.ich.reciptopia.domain.use_case.post_detail.*
+import com.ich.reciptopia.domain.use_case.post_detail.GetPostInfoUseCase
+import com.ich.reciptopia.domain.use_case.post_detail.PostDetailUseCases
 import com.ich.reciptopia.domain.use_case.post_list.*
-import com.ich.reciptopia.domain.use_case.post_list.GetFavoritesUseCase
 import com.ich.reciptopia.domain.use_case.search.*
 import dagger.Module
 import dagger.Provides
@@ -84,14 +84,13 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun providePostDetailUseCases(repository: PostDetailRepository): PostDetailUseCases{
+    fun providePostDetailUseCases(postDetailRepository: PostDetailRepository, postListRepository: PostListRepository): PostDetailUseCases{
         return PostDetailUseCases(
-            getPostInfo = GetPostInfoUseCase(repository),
-            getOwnerOfPost = GetOwnerOfPostDetailUseCase(repository),
-            favoritePostNotLogin = FavoritePostDetailNotLoginUseCase(repository),
-            unFavoritePostNotLogin = UnFavoritePostDetailNotLoginUseCase(repository),
-            getFavoritesFromDB = GetFavoritesFromDBUseCase(repository),
-            getFavorites = com.ich.reciptopia.domain.use_case.post_detail.GetFavoritesUseCase(repository)
+            getPostInfo = GetPostInfoUseCase(postDetailRepository),
+            getOwnerOfPost = GetOwnerOfPostUseCase(postListRepository),
+            favoritePost = FavoritePostUseCase(postListRepository),
+            unFavoritePost = UnFavoritePostUseCase(postListRepository),
+            getFavorites = GetFavoritesUseCase(postListRepository)
         )
     }
 }

@@ -1,8 +1,8 @@
 package com.ich.reciptopia.presentation.post_detail
 
-import android.database.sqlite.SQLiteException
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.domain.use_case.post_detail.PostDetailUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostDetailViewModel @Inject constructor(
-    private val useCases: PostDetailUseCases
+    private val useCases: PostDetailUseCases,
+    private val app: ReciptopiaApplication
 ): ViewModel() {
 
     private val _state = MutableStateFlow(PostDetailState())
@@ -28,10 +29,8 @@ class PostDetailViewModel @Inject constructor(
 
     fun initialize(postId: Long){
         this.postId = postId
-        getPostInfo().invokeOnCompletion {
-            getOwnerOfPost()
-            getFavoritePostsForFillingStar()
-        }
+        getPost()
+        observeUserChanged()
     }
 
     fun onEvent(event: PostDetailEvent){
@@ -43,10 +42,10 @@ class PostDetailViewModel @Inject constructor(
                 val post = _state.value.curPost!!
                 if(post.id != null) {
                     if (post.isFavorite) {
-                        unFavoritePostNotLogin(post.id)
+                        unFavoritePost(post.id)
                             .invokeOnCompletion { getPostInfo().invokeOnCompletion { getOwnerOfPost() } }
                     } else {
-                        favoritePostNotLogin(post.id)
+                        favoritePost(post.id)
                             .invokeOnCompletion { getPostInfo().invokeOnCompletion { getOwnerOfPost() } }
                     }
                 }
@@ -59,6 +58,22 @@ class PostDetailViewModel @Inject constructor(
             is PostDetailEvent.CreateComment -> {
 
             }
+        }
+    }
+
+    private fun observeUserChanged() = viewModelScope.launch {
+        app.user.collect{ user ->
+            _state.value = _state.value.copy(
+                currentUser = user
+            )
+            getPost()
+        }
+    }
+
+    private fun getPost(){
+        getPostInfo().invokeOnCompletion {
+            getOwnerOfPost()
+            getFavoritePostsForFillingStar()
         }
     }
 
@@ -100,33 +115,86 @@ class PostDetailViewModel @Inject constructor(
         }
     }
 
-    private fun favoritePostNotLogin(postId: Long) = viewModelScope.launch {
-        try {
-            useCases.favoritePostNotLogin(postId)
-        } catch (e: SQLiteException) {
-            _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 등록에 실패했습니다"))
+    private fun favoritePost(postId: Long) = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id
+        useCases.favoritePost(userId, postId, userId != null).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기에 추가되었습니다"))
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기에 추가하지 못했습니다 (${result.message})"))
+                }
+            }
         }
     }
 
-    private fun unFavoritePostNotLogin(postId: Long) = viewModelScope.launch {
-        try {
-            useCases.unFavoritePostNotLogin(postId)
-        } catch (e: SQLiteException) {
-            _eventFlow.emit(UiEvent.ShowToast("즐겨찾기 제거에 실패했습니다"))
+    private fun unFavoritePost(postId: Long) = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id
+        useCases.unFavoritePost(userId, postId, userId != null).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기가 제거되었습니다"))
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 제거하지 못했습니다 (${result.message})"))
+                }
+            }
         }
     }
 
     private fun getFavoritePostsForFillingStar() = viewModelScope.launch {
-        useCases.getFavoritesFromDB().collect { result ->
-            for(favorite in result){
-                if(favorite.postId == _state.value.curPost?.id){
-                    val post = _state.value.curPost?.copy(
-                        isFavorite = true
-                    )
+        val userId = _state.value.currentUser?.account?.id
+        useCases.getFavorites(userId).collect { result ->
+            when(result){
+                is Resource.Success -> {
                     _state.value = _state.value.copy(
-                        curPost = post
+                        isLoading = false
                     )
-                    break
+
+                    for(favorite in result.data!!){
+                        if(favorite.postId == _state.value.curPost?.id){
+                            val post = _state.value.curPost?.copy(
+                                isFavorite = true
+                            )
+                            _state.value = _state.value.copy(
+                                curPost = post
+                            )
+                            break
+                        }
+                    }
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
                 }
             }
         }
