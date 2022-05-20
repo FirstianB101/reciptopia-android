@@ -11,12 +11,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ich.reciptopia.presentation.community.components.PostPreviewItem
 import com.ich.reciptopia.presentation.community.components.startPostActivity
 import com.ich.reciptopia.presentation.main.search.SearchScreenEvent
@@ -29,6 +32,7 @@ fun SearchResultScreen(
 ){
     val context = LocalContext.current
     val state = viewModel.state.collectAsState()
+    val isRefreshing by viewModel.isRefreshing
 
     LaunchedEffect(Unit){
         viewModel.eventFlow.collectLatest { event ->
@@ -40,39 +44,46 @@ fun SearchResultScreen(
         }
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize()
-    ){
-        itemsIndexed(state.value.posts){ idx, post ->
-            Divider()
-            PostPreviewItem(
-                modifier = Modifier.fillMaxWidth(),
-                post = post,
-                owner = post.owner,
-                starFilled = post.isFavorite,
-                onStarClick = {
-                    viewModel.onEvent(SearchScreenEvent.FavoriteButtonClicked(post))
-                },
-                onPostClick = {
-                    startPostActivity(context, post.id!!)
-                },
-                onLikeClick = {
-                    viewModel.onEvent(SearchScreenEvent.LikeButtonClicked(post))
-                }
-            )
+    SwipeRefresh(
+        state = rememberSwipeRefreshState(isRefreshing),
+        onRefresh = {
+            viewModel.onEvent(SearchScreenEvent.RefreshResultList)
         }
-    }
-
-    if(state.value.posts.isEmpty()){
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize()
         ){
-            Text(
-                text = "검색 결과가 없습니다",
-                fontSize = 19.sp,
-                textAlign = TextAlign.Center
-            )
+            itemsIndexed(state.value.posts){ idx, post ->
+                Divider()
+                PostPreviewItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    post = post,
+                    owner = post.owner,
+                    starFilled = post.isFavorite,
+                    onStarClick = {
+                        viewModel.onEvent(SearchScreenEvent.FavoriteButtonClicked(post))
+                    },
+                    onPostClick = {
+                        startPostActivity(context, post.id!!)
+                    },
+                    onLikeClick = {
+                        viewModel.onEvent(SearchScreenEvent.LikeButtonClicked(post))
+                    }
+                )
+            }
+        }
+
+        if(state.value.posts.isEmpty()){
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ){
+                Text(
+                    text = "검색 결과가 없습니다",
+                    fontSize = 19.sp,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }

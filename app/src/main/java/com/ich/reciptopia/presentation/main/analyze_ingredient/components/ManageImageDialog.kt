@@ -1,14 +1,15 @@
 package com.ich.reciptopia.presentation.main.analyze_ingredient.components
 
 import android.graphics.Bitmap
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,7 +21,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.ich.reciptopia.R
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ManageImageDialog(
     showDialog: Boolean,
@@ -81,12 +81,12 @@ fun ManageImageDialog(
                         }
 
                         LazyVerticalGrid(
+                            columns = androidx.compose.foundation.lazy.grid.GridCells.Fixed(2),
                             modifier = Modifier.weight(1f),
-                            cells = GridCells.Fixed(2),
                             contentPadding = PaddingValues(8.dp)
-                        ){
-                            items(images.size){ idx ->
-                                if(idx < images.size) {
+                        ) {
+                            items(images.size) { idx ->
+                                if (idx < images.size) {
                                     CapturedImageItem(
                                         image = images[idx],
                                         contentDescription = "Manage Image",

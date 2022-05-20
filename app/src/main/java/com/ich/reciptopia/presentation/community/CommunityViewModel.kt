@@ -1,5 +1,7 @@
 package com.ich.reciptopia.presentation.community
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
@@ -29,6 +31,9 @@ class CommunityViewModel @Inject constructor(
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    private val _isRefreshing = mutableStateOf(false)
+    val isRefreshing: State<Boolean> = _isRefreshing
 
     init {
         observeUserChanged()

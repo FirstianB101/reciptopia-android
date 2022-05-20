@@ -1,5 +1,7 @@
 package com.ich.reciptopia.presentation.main.search
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
@@ -29,12 +31,18 @@ class SearchViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    private val _isRefreshing = mutableStateOf(false)
+    val isRefreshing: State<Boolean> = _isRefreshing
+
     init {
         observeUserChanged()
     }
 
     fun onEvent(event: SearchScreenEvent) {
         when (event) {
+            is SearchScreenEvent.RefreshResultList -> {
+                getSearchedPostList()
+            }
             is SearchScreenEvent.DoSearch -> {
                 getSearchedPostList()
                 val newHistory = SearchHistory(

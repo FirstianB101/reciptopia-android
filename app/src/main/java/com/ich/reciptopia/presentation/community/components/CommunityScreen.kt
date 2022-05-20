@@ -18,10 +18,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ich.reciptopia.R
-import com.ich.reciptopia.presentation.post_detail.PostActivity
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 import com.ich.reciptopia.presentation.community.CommunityViewModel
+import com.ich.reciptopia.presentation.post_detail.PostActivity
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -29,19 +31,20 @@ fun CommunityScreen(
     modifier: Modifier = Modifier,
     viewModel: CommunityViewModel = hiltViewModel(),
     onLoginButtonClicked: () -> Unit
-){
+) {
     val state = viewModel.state.collectAsState()
     val options = listOf("최신순", "조회순")
     var expanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    val isRefreshing by viewModel.isRefreshing
 
     BackHandler(state.value.searchMode) {
         viewModel.onEvent(CommunityScreenEvent.SearchModeOff)
     }
 
-    LaunchedEffect(Unit){
+    LaunchedEffect(Unit) {
         viewModel.eventFlow.collectLatest { event ->
-            when(event){
+            when (event) {
                 is CommunityViewModel.UiEvent.ShowToast -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
@@ -51,7 +54,7 @@ fun CommunityScreen(
             }
         }
     }
-    
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -64,83 +67,92 @@ fun CommunityScreen(
                 onSearchButtonClicked = { viewModel.onEvent(CommunityScreenEvent.SearchButtonClicked) }
             )
         }
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ){
-            Column(
+    ){
+        SwipeRefresh(
+            state = rememberSwipeRefreshState(isRefreshing),
+            onRefresh = { viewModel.onEvent(CommunityScreenEvent.GetPosts) }
+        ) {
+            Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                Box(
-                    modifier = Modifier.align(Alignment.End)
+                Column(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    TextButton(
-                        modifier = Modifier.padding(top = 8.dp, end = 8.dp),
-                        onClick = { expanded = !expanded }
+                    Box(
+                        modifier = Modifier.align(Alignment.End)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.FilterList,
-                            contentDescription = null,
-                            tint = Color.Black
-                        )
-                        Text(
-                            text = state.value.sortOption,
-                            color = Color.Black
-                        )
-                    }
-                    DropdownMenu(
-                        modifier = Modifier.width(85.dp),
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false },
-                    ) {
-                        options.forEach { label ->
-                            DropdownMenuItem(onClick = {
-                                expanded = false
-                                viewModel.onEvent(CommunityScreenEvent.SortOptionChanged(label))
-                            }) {
-                                Text(text = label)
+                        TextButton(
+                            modifier = Modifier.padding(top = 8.dp, end = 8.dp),
+                            onClick = { expanded = !expanded }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = null,
+                                tint = Color.Black
+                            )
+                            Text(
+                                text = state.value.sortOption,
+                                color = Color.Black
+                            )
+                        }
+                        DropdownMenu(
+                            modifier = Modifier.width(85.dp),
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                        ) {
+                            options.forEach { label ->
+                                DropdownMenuItem(onClick = {
+                                    expanded = false
+                                    viewModel.onEvent(CommunityScreenEvent.SortOptionChanged(label))
+                                }) {
+                                    Text(text = label)
+                                }
                             }
+                        }
+                    }
+
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        itemsIndexed(state.value.posts) { idx, post ->
+                            Divider()
+                            PostPreviewItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                post = post,
+                                owner = post.owner,
+                                starFilled = post.isFavorite,
+                                onStarClick = {
+                                    viewModel.onEvent(
+                                        CommunityScreenEvent.FavoriteButtonClicked(
+                                            post
+                                        )
+                                    )
+                                },
+                                onPostClick = {
+                                    startPostActivity(context, post.id!!)
+                                },
+                                onLikeClick = {
+                                    viewModel.onEvent(CommunityScreenEvent.LikeButtonClicked(post))
+                                }
+                            )
                         }
                     }
                 }
 
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
-                ){
-                    itemsIndexed(state.value.posts){ idx, post ->
-                        Divider()
-                        PostPreviewItem(
-                            modifier = Modifier.fillMaxWidth(),
-                            post = post,
-                            owner = post.owner,
-                            starFilled = post.isFavorite,
-                            onStarClick = {
-                                viewModel.onEvent(CommunityScreenEvent.FavoriteButtonClicked(post))
-                            },
-                            onPostClick = {
-                                startPostActivity(context, post.id!!)
-                            },
-                            onLikeClick = {
-                                viewModel.onEvent(CommunityScreenEvent.LikeButtonClicked(post))
-                            }
-                        )
-                    }
+                FloatingActionButton(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .align(Alignment.BottomEnd)
+                        .offset(x = (-16).dp, y = (-16).dp),
+                    onClick = { viewModel.onEvent(CommunityScreenEvent.CreatePostStateChanged(true)) },
+                    backgroundColor = colorResource(id = R.color.main_color),
+                    contentColor = Color.White
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Create,
+                        contentDescription = "Community Write FAB"
+                    )
                 }
-            }
-
-            FloatingActionButton(
-                modifier = Modifier
-                    .size(48.dp)
-                    .align(Alignment.BottomEnd)
-                    .offset(x = (-16).dp, y = (-16).dp),
-                onClick = { viewModel.onEvent(CommunityScreenEvent.CreatePostStateChanged(true)) },
-                backgroundColor = colorResource(id = R.color.main_color),
-                contentColor = Color.White
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Create,
-                    contentDescription = "Community Write FAB"
-                )
             }
         }
     }
@@ -154,16 +166,16 @@ fun CommunityScreen(
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
-    ){
-        if(state.value.isLoading){
+    ) {
+        if (state.value.isLoading) {
             CircularProgressIndicator()
         }
     }
 }
 
-fun startPostActivity(context: Context, postId: Long){
+fun startPostActivity(context: Context, postId: Long) {
     val intent = PostActivity.getPostIntent(context).apply {
-        putExtra("selectedPostId",postId)
+        putExtra("selectedPostId", postId)
     }
     context.startActivity(intent)
 }
