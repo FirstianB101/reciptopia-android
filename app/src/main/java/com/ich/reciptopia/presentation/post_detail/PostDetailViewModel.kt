@@ -43,10 +43,10 @@ class PostDetailViewModel @Inject constructor(
                 if(post.id != null) {
                     if (post.isFavorite) {
                         unFavoritePost(post.id)
-                            .invokeOnCompletion { getPostInfo().invokeOnCompletion { getOwnerOfPost() } }
+                            .invokeOnCompletion { getPostInfo().invokeOnCompletion { getPost() } }
                     } else {
                         favoritePost(post.id)
-                            .invokeOnCompletion { getPostInfo().invokeOnCompletion { getOwnerOfPost() } }
+                            .invokeOnCompletion { getPostInfo().invokeOnCompletion { getPost() } }
                     }
                 }
             }

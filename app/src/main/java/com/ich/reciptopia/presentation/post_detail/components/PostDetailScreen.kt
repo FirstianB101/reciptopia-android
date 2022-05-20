@@ -1,5 +1,6 @@
 package com.ich.reciptopia.presentation.post_detail.components
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -12,10 +13,12 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -25,6 +28,7 @@ import coil.compose.rememberImagePainter
 import com.ich.reciptopia.R
 import com.ich.reciptopia.presentation.post_detail.PostDetailEvent
 import com.ich.reciptopia.presentation.post_detail.PostDetailViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun PostDetailScreen(
@@ -33,6 +37,17 @@ fun PostDetailScreen(
     onCommentClicked: () -> Unit
 ){
     val state = viewModel.state.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit){
+        viewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is PostDetailViewModel.UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = modifier
