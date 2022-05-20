@@ -7,7 +7,7 @@ import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Constants
 import com.ich.reciptopia.common.util.FavoriteTypeConverter
 import com.ich.reciptopia.common.util.SearchHistoryTypeConverter
-import com.ich.reciptopia.data.data_source.SearchDatabase
+import com.ich.reciptopia.data.data_source.ReciptopiaDatabase
 import com.ich.reciptopia.data.remote.AuthenticationInterceptor
 import com.ich.reciptopia.data.remote.ReciptopiaApi
 import dagger.Module
@@ -62,9 +62,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSearchHistoryDatabase(app: Application, gson: Gson): SearchDatabase {
+    fun provideSearchHistoryDatabase(app: Application, gson: Gson): ReciptopiaDatabase {
         return Room
-            .databaseBuilder(app, SearchDatabase::class.java, SearchDatabase.DATABASE_NAME)
+            .databaseBuilder(app, ReciptopiaDatabase::class.java, ReciptopiaDatabase.DATABASE_NAME)
             .addTypeConverter(SearchHistoryTypeConverter(gson))
             .addTypeConverter(FavoriteTypeConverter(gson))
             .build()

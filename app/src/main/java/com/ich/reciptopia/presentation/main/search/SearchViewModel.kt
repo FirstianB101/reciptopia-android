@@ -6,6 +6,7 @@ import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.Post
+import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.domain.use_case.search.SearchUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -35,7 +36,7 @@ class SearchViewModel @Inject constructor(
     fun onEvent(event: SearchScreenEvent) {
         when (event) {
             is SearchScreenEvent.DoSearch -> {
-                getSearchedPostsWithFavorite()
+                getSearchedPostList()
                 val newHistory = SearchHistory(
                     ownerId = _state.value.currentUser?.account?.id,
                     ingredientNames = event.ingredientNames
@@ -48,7 +49,7 @@ class SearchViewModel @Inject constructor(
                 }
             }
             is SearchScreenEvent.ClickHistory -> {
-                getSearchedPostsWithFavorite()
+                getSearchedPostList()
 
                 viewModelScope.launch {
                     _eventFlow.emit(UiEvent.NavigateToSearchResultScreen)
@@ -71,28 +72,44 @@ class SearchViewModel @Inject constructor(
             is SearchScreenEvent.FavoriteButtonClicked -> {
                 if (event.post.isFavorite) {
                     unFavoritePost(event.post.id!!)
-                        .invokeOnCompletion { getSearchedPostsWithFavorite() }
+                        .invokeOnCompletion { getSearchedPostList() }
                 } else {
                     favoritePost(event.post.id!!)
-                        .invokeOnCompletion { getSearchedPostsWithFavorite() }
+                        .invokeOnCompletion { getSearchedPostList() }
+                }
+            }
+            is SearchScreenEvent.LikeButtonClicked -> {
+                if(_state.value.currentUser != null) {
+                    if (event.post.like) {
+                        unlikePost(event.post.id!!)
+                            .invokeOnCompletion { getSearchedPostList() }
+                    } else {
+                        likePost(event.post.id!!)
+                            .invokeOnCompletion { getSearchedPostList() }
+                    }
+                }else{
+                    viewModelScope.launch {
+                        _eventFlow.emit(UiEvent.ShowToast("좋아요를 표시하려면 로그인 해주세요"))
+                    }
                 }
             }
         }
     }
 
-    private fun getSearchedPostsWithFavorite(){
+    private fun getSearchedPostList(){
         getSearchedPosts().invokeOnCompletion {
             getFavoritesForFillingStar()
+            getPostLikeTags()
             _state.value.posts.forEachIndexed { i, post ->
                 getOwnerOfPost(i, post.ownerId!!)
             }
         }
     }
 
-    private fun getFavoritePosts() {
+    private fun getFavoritePosts() = viewModelScope.launch {
         getFavorites().invokeOnCompletion {
             _state.value.favorites.forEachIndexed { index, favorite ->
-                getPostsWithFavoritesFromDB(index, favorite)
+                getPostsWithFavorites(index, favorite)
                     .invokeOnCompletion {
                         getPostOwner(index, _state.value.favorites[index].post)
                     }
@@ -210,8 +227,8 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun deleteFavorite(postId: Long) = viewModelScope.launch {
-        val login = _state.value.currentUser != null
-        useCases.deleteFavorite(postId, login).collect{ result ->
+        val ownerId = _state.value.currentUser?.account?.id
+        useCases.deleteFavorite(ownerId, postId, ownerId != null).collect{ result ->
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -234,7 +251,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun getPostsWithFavoritesFromDB(idx: Int, favorite: Favorite) = viewModelScope.launch {
+    private fun getPostsWithFavorites(idx: Int, favorite: Favorite) = viewModelScope.launch {
         val postId = _state.value.favorites[idx].postId!!
         useCases.getPost(postId).collect { result ->
             when (result) {
@@ -310,6 +327,148 @@ class SearchViewModel @Inject constructor(
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("검색 결과를 불러오지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun getPostLikeTags() = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id
+        if(userId != null) {
+            useCases.getPostLikeTags(userId).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _state.value = _state.value.copy(
+                            likeTags = result.data!!,
+                            isLoading = false
+                        )
+
+                        val map = mutableMapOf<Long, PostLikeTag>()
+
+                        for (tag in result.data) {
+                            map[tag.postId!!] = tag
+                        }
+
+                        val posts = _state.value.posts.toMutableList()
+                        posts.forEachIndexed { index, post ->
+                            if (map[post.id] != null) {
+                                posts[index] = post.copy(
+                                    like = true
+                                )
+                            }
+                        }
+
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            posts = posts
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = _state.value.copy(
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getFavoritePostLikeTags() = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id
+        if(userId != null) {
+            useCases.getPostLikeTags(userId).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        _state.value = _state.value.copy(
+                            likeTags = result.data!!,
+                            isLoading = false
+                        )
+
+                        val map = mutableMapOf<Long, PostLikeTag>()
+
+                        for (tag in result.data) {
+                            map[tag.postId!!] = tag
+                        }
+
+                        val favorites = _state.value.favorites.toMutableList()
+                        favorites.forEachIndexed { index, favorite ->
+                            if (map[favorite.post?.id] != null) {
+                                favorites[index] = favorites[index].copy(
+                                    post = favorite.post?.copy(
+                                        like = true
+                                    )
+                                )
+                            }
+                        }
+
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            favorites = favorites
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = _state.value.copy(
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun likePost(postId: Long) = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id!!
+        useCases.likePost(userId, postId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("좋아요를 표시하지 못했습니다(${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun unlikePost(postId: Long) = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id!!
+        useCases.unlikePost(userId, postId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("좋아요를 취소하지 못했습니다(${result.message})"))
                 }
             }
         }

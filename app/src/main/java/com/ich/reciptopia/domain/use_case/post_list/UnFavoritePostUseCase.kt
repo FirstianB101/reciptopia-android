@@ -1,23 +1,24 @@
-package com.ich.reciptopia.domain.use_case.community
+package com.ich.reciptopia.domain.use_case.post_list
 
 import android.database.sqlite.SQLiteException
 import com.ich.reciptopia.common.util.Constants
 import com.ich.reciptopia.common.util.Resource
-import com.ich.reciptopia.domain.repository.CommunityRepository
+import com.ich.reciptopia.domain.repository.PostListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class PostUnLikeUseCase @Inject constructor(
-    private val repository: CommunityRepository
-) {
-    operator fun invoke(ownerId: Long, postId: Long,): Flow<Resource<Unit>> = flow{
+class UnFavoritePostUseCase  @Inject constructor(
+    private val repository: PostListRepository
+){
+    operator fun invoke(ownerId: Long?, postId: Long, login: Boolean): Flow<Resource<Unit>> = flow{
         try{
             emit(Resource.Loading<Unit>())
 
-            repository.unLikePost(ownerId, postId)
+            if(login) repository.unFavoritePostLogin(ownerId, postId)
+            else repository.unFavoritePostNotLogin(postId)
 
             emit(Resource.Success<Unit>(null))
         }catch (e: HttpException){

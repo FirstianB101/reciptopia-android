@@ -144,7 +144,7 @@ fun SearchScreen(
                                         startPostActivity(context, favorite.post?.id!!)
                                     },
                                     onLikeClick = {
-
+                                        viewModel.onEvent(SearchScreenEvent.LikeButtonClicked(favorite.post!!))
                                     }
                                 )
                                 Divider()

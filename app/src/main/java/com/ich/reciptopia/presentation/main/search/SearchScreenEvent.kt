@@ -3,6 +3,7 @@ package com.ich.reciptopia.presentation.main.search
 import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.SearchHistory
+import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 
 sealed class SearchScreenEvent{
     data class DoSearch(val ingredientNames: List<String?>): SearchScreenEvent()
@@ -13,4 +14,5 @@ sealed class SearchScreenEvent{
     object GetFavoritePosts: SearchScreenEvent()
 
     data class FavoriteButtonClicked(val post: Post): SearchScreenEvent()
+    data class LikeButtonClicked(val post: Post): SearchScreenEvent()
 }

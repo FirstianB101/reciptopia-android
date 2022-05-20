@@ -1,6 +1,6 @@
 package com.ich.reciptopia.di
 
-import com.ich.reciptopia.data.data_source.SearchDatabase
+import com.ich.reciptopia.data.data_source.ReciptopiaDatabase
 import com.ich.reciptopia.data.remote.ReciptopiaApi
 import com.ich.reciptopia.data.repository.*
 import com.ich.reciptopia.domain.repository.*
@@ -16,8 +16,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideSearchHistoryRepository(api: ReciptopiaApi, db: SearchDatabase): SearchRepository{
-        return SearchRepositoryImpl(api, db.searchDao)
+    fun provideSearchHistoryRepository(api: ReciptopiaApi, db: ReciptopiaDatabase): SearchRepository{
+        return SearchRepositoryImpl(api, db.reciptopiaDao)
     }
 
     @Provides
@@ -40,13 +40,19 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideCommunityRepository(api: ReciptopiaApi, db: SearchDatabase): CommunityRepository{
-        return CommunityRepositoryImpl(api, db.searchDao)
+    fun provideCommunityRepository(api: ReciptopiaApi): CommunityRepository{
+        return CommunityRepositoryImpl(api)
     }
 
     @Provides
     @Singleton
-    fun providePostDetailRepository(api: ReciptopiaApi, db: SearchDatabase): PostDetailRepository{
-        return PostDetailRepositoryImpl(api, db.searchDao)
+    fun providePostDetailRepository(api: ReciptopiaApi, db: ReciptopiaDatabase): PostDetailRepository{
+        return PostDetailRepositoryImpl(api, db.reciptopiaDao)
+    }
+
+    @Provides
+    @Singleton
+    fun providePostListRepository(api: ReciptopiaApi, db: ReciptopiaDatabase): PostListRepository{
+        return PostListRepositoryImpl(api, db.reciptopiaDao)
     }
 }

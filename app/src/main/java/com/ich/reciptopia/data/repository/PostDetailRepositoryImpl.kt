@@ -1,6 +1,6 @@
 package com.ich.reciptopia.data.repository
 
-import com.ich.reciptopia.data.data_source.SearchDao
+import com.ich.reciptopia.data.data_source.ReciptopiaDao
 import com.ich.reciptopia.data.remote.ReciptopiaApi
 import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Favorite
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.first
 
 class PostDetailRepositoryImpl(
     private val api: ReciptopiaApi,
-    private val dao: SearchDao
+    private val dao: ReciptopiaDao
 ): PostDetailRepository {
 
     override suspend fun getPost(postId: Long): Post {

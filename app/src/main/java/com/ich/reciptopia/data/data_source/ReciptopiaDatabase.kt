@@ -6,7 +6,6 @@ import androidx.room.TypeConverters
 import com.ich.reciptopia.common.util.FavoriteTypeConverter
 import com.ich.reciptopia.common.util.SearchHistoryTypeConverter
 import com.ich.reciptopia.domain.model.Favorite
-import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.model.SearchHistory
 
 @Database(
@@ -19,8 +18,8 @@ import com.ich.reciptopia.domain.model.SearchHistory
         FavoriteTypeConverter::class
     ]
 )
-abstract class SearchDatabase: RoomDatabase() {
-    abstract val searchDao: SearchDao
+abstract class ReciptopiaDatabase: RoomDatabase() {
+    abstract val reciptopiaDao: ReciptopiaDao
 
     companion object{
         const val DATABASE_NAME = "search_db"

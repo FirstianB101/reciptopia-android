@@ -7,7 +7,7 @@ import com.ich.reciptopia.domain.model.SearchHistory
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface SearchDao {
+interface ReciptopiaDao {
 
     @Query("SELECT * FROM searchhistory ORDER BY id DESC")
     fun getSearchHistories(): Flow<List<SearchHistory>>

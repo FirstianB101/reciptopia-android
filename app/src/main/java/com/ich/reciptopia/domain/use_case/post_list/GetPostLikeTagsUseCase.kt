@@ -1,9 +1,9 @@
-package com.ich.reciptopia.domain.use_case.community
+package com.ich.reciptopia.domain.use_case.post_list
 
 import com.ich.reciptopia.common.util.Constants
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.domain.model.PostLikeTag
-import com.ich.reciptopia.domain.repository.CommunityRepository
+import com.ich.reciptopia.domain.repository.PostListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -11,7 +11,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class GetPostLikeTagsUseCase @Inject constructor(
-    private val repository: CommunityRepository
+    private val repository: PostListRepository
 ) {
     operator fun invoke(userId: Long): Flow<Resource<List<PostLikeTag>>> = flow{
         try{

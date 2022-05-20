@@ -1,10 +1,10 @@
-package com.ich.reciptopia.domain.use_case.search
+package com.ich.reciptopia.domain.use_case.post_list
 
 import android.database.sqlite.SQLiteException
 import com.ich.reciptopia.common.util.Constants
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.domain.model.Favorite
-import com.ich.reciptopia.domain.repository.SearchRepository
+import com.ich.reciptopia.domain.repository.PostListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -13,7 +13,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class GetFavoritesUseCase  @Inject constructor(
-    private val repository: SearchRepository
+    private val repository: PostListRepository
 ){
     operator fun invoke(userId: Long?): Flow<Resource<List<Favorite>>> = flow{
         try{

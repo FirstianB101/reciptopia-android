@@ -127,7 +127,7 @@ class CommunityViewModel @Inject constructor(
                         .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
                 }
             }
-            is CommunityScreenEvent.LikebuttonClicked -> {
+            is CommunityScreenEvent.LikeButtonClicked -> {
                 if(_state.value.currentUser != null) {
                     if (event.post.like) {
                         unlikePost(event.post.id!!)

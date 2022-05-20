@@ -1,7 +1,8 @@
 package com.ich.reciptopia.domain.use_case.search
 
+import com.ich.reciptopia.domain.use_case.post_list.*
+
 data class SearchUseCases(
-    val getFavoritePosts: GetFavoritePostsUseCase,
     val deleteFavorite: DeleteFavoriteUseCase,
     val getSearchHistories: GetSearchHistoriesUseCase,
     val addSearchHistory: AddSearchHistoryUseCase,
@@ -11,5 +12,8 @@ data class SearchUseCases(
     val getSearchedPosts: GetSearchedPostsUseCase,
     val favoritePost: FavoritePostUseCase,
     val unFavoritePost: UnFavoritePostUseCase,
-    val getFavorites: GetFavoritesUseCase
+    val getFavorites: GetFavoritesUseCase,
+    val likePost: PostLikeUseCase,
+    val unlikePost: PostUnLikeUseCase,
+    val getPostLikeTags: GetPostLikeTagsUseCase,
 )
