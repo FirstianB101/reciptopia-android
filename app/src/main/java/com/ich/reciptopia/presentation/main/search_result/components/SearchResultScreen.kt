@@ -61,7 +61,7 @@ fun SearchResultScreen(
                     owner = post.owner,
                     starFilled = post.isFavorite,
                     onStarClick = {
-                        viewModel.onEvent(SearchScreenEvent.FavoriteButtonClicked(post))
+                        viewModel.onEvent(SearchScreenEvent.FavoriteButtonClicked(post, idx))
                     },
                     onPostClick = {
                         startPostActivity(context, post.id!!)

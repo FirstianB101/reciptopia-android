@@ -14,6 +14,6 @@ sealed class SearchScreenEvent{
     object GetFavoritePosts: SearchScreenEvent()
 
     object RefreshResultList: SearchScreenEvent()
-    data class FavoriteButtonClicked(val post: Post): SearchScreenEvent()
+    data class FavoriteButtonClicked(val post: Post, val idx: Int): SearchScreenEvent()
     data class LikeButtonClicked(val post: Post): SearchScreenEvent()
 }

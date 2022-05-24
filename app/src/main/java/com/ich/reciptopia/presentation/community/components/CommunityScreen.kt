@@ -123,9 +123,7 @@ fun CommunityScreen(
                                 starFilled = post.isFavorite,
                                 onStarClick = {
                                     viewModel.onEvent(
-                                        CommunityScreenEvent.FavoriteButtonClicked(
-                                            post
-                                        )
+                                        CommunityScreenEvent.FavoriteButtonClicked(post, idx)
                                     )
                                 },
                                 onPostClick = {

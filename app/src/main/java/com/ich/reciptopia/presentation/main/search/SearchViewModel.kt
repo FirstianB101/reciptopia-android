@@ -78,13 +78,10 @@ class SearchViewModel @Inject constructor(
                 getFavoritePosts()
             }
             is SearchScreenEvent.FavoriteButtonClicked -> {
-                if (event.post.isFavorite) {
-                    unFavoritePost(event.post.id!!)
-                        .invokeOnCompletion { getSearchedPostList() }
-                } else {
-                    favoritePost(event.post.id!!)
-                        .invokeOnCompletion { getSearchedPostList() }
-                }
+                if (event.post.isFavorite)
+                    unFavoritePost(event.post.id!!, event.idx)
+                else 
+                    favoritePost(event.post.id!!, event.idx)
             }
             is SearchScreenEvent.LikeButtonClicked -> {
                 if(_state.value.currentUser != null) {
@@ -482,12 +479,17 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun favoritePost(postId: Long) = viewModelScope.launch {
+    private fun favoritePost(postId: Long, idx: Int) = viewModelScope.launch {
         val ownerId = _state.value.currentUser?.account?.id
         useCases.favoritePost(ownerId, postId, ownerId != null).collect{ result ->
             when(result){
                 is Resource.Success -> {
+                    val posts = _state.value.posts.toMutableList()
+                    posts[idx] = posts[idx].copy(
+                        isFavorite = true
+                    )
                     _state.value = _state.value.copy(
+                        posts = posts,
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 추가했습니다"))
@@ -507,12 +509,17 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun unFavoritePost(postId: Long) = viewModelScope.launch {
+    private fun unFavoritePost(postId: Long, idx: Int) = viewModelScope.launch {
         val ownerId = _state.value.currentUser?.account?.id
         useCases.unFavoritePost(ownerId, postId, ownerId != null).collect{ result ->
             when(result){
                 is Resource.Success -> {
+                    val posts = _state.value.posts.toMutableList()
+                    posts[idx] = posts[idx].copy(
+                        isFavorite = false
+                    )
                     _state.value = _state.value.copy(
+                        posts = posts,
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("즐겨찾기를 제거했습니다"))

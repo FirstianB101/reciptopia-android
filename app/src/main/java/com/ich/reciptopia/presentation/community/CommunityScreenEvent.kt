@@ -10,7 +10,7 @@ sealed class CommunityScreenEvent{
     data class CreatePostContentChanged(val content: String): CommunityScreenEvent()
     data class CreatePostAddImage(val uri: String): CommunityScreenEvent()
     data class CreatePostRemoveImage(val idx: Int): CommunityScreenEvent()
-    data class FavoriteButtonClicked(val post: Post): CommunityScreenEvent()
+    data class FavoriteButtonClicked(val post: Post, val idx: Int): CommunityScreenEvent()
     data class LikeButtonClicked(val post: Post): CommunityScreenEvent()
     object SearchModeOff: CommunityScreenEvent()
     object SearchButtonClicked: CommunityScreenEvent()
