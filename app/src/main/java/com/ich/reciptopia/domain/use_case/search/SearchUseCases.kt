@@ -1,6 +1,6 @@
 package com.ich.reciptopia.domain.use_case.search
 
-import com.ich.reciptopia.domain.use_case.post_list.*
+import com.ich.reciptopia.domain.use_case.post.*
 
 data class SearchUseCases(
     val deleteFavorite: DeleteFavoriteUseCase,

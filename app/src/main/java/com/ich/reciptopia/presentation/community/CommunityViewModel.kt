@@ -131,13 +131,10 @@ class CommunityViewModel @Inject constructor(
             }
             is CommunityScreenEvent.LikeButtonClicked -> {
                 if(_state.value.currentUser != null) {
-                    if (event.post.like) {
-                        unlikePost(event.post.id!!)
-                            .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
-                    } else {
-                        likePost(event.post.id!!)
-                            .invokeOnCompletion { onEvent(CommunityScreenEvent.GetPosts) }
-                    }
+                    if (event.post.like)
+                        unlikePost(event.post.id!!, event.idx)
+                    else
+                        likePost(event.post.id!!, event.idx)
                 }else{
                     viewModelScope.launch {
                         _eventFlow.emit(UiEvent.ShowToast("좋아요를 표시하려면 로그인 해주세요"))
@@ -275,12 +272,17 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun likePost(postId: Long) = viewModelScope.launch {
+    private fun likePost(postId: Long, idx: Int) = viewModelScope.launch {
         val userId = _state.value.currentUser?.account?.id!!
         useCases.likePost(userId, postId).collect { result ->
             when (result) {
                 is Resource.Success -> {
+                    val posts = _state.value.posts.toMutableList()
+                    posts[idx] = posts[idx].copy(
+                        like = true
+                    )
                     _state.value = _state.value.copy(
+                        posts = posts,
                         isLoading = false
                     )
                 }
@@ -299,12 +301,17 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun unlikePost(postId: Long) = viewModelScope.launch {
+    private fun unlikePost(postId: Long, idx: Int) = viewModelScope.launch {
         val userId = _state.value.currentUser?.account?.id!!
         useCases.unlikePost(userId, postId).collect { result ->
             when (result) {
                 is Resource.Success -> {
+                    val posts = _state.value.posts.toMutableList()
+                    posts[idx] = posts[idx].copy(
+                        like = false
+                    )
                     _state.value = _state.value.copy(
+                        posts = posts,
                         isLoading = false
                     )
                 }

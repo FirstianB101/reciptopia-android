@@ -130,7 +130,7 @@ fun CommunityScreen(
                                     startPostActivity(context, post.id!!)
                                 },
                                 onLikeClick = {
-                                    viewModel.onEvent(CommunityScreenEvent.LikeButtonClicked(post))
+                                    viewModel.onEvent(CommunityScreenEvent.LikeButtonClicked(post, idx))
                                 }
                             )
                         }

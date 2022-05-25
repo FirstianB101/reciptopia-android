@@ -52,7 +52,7 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePostListRepository(api: ReciptopiaApi, db: ReciptopiaDatabase): PostListRepository{
-        return PostListRepositoryImpl(api, db.reciptopiaDao)
+    fun providePostListRepository(api: ReciptopiaApi, db: ReciptopiaDatabase): PostRepository{
+        return PostRepositoryImpl(api, db.reciptopiaDao)
     }
 }

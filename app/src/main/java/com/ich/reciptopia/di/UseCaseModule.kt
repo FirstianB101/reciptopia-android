@@ -12,7 +12,7 @@ import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
 import com.ich.reciptopia.domain.use_case.post_detail.GetPostInfoUseCase
 import com.ich.reciptopia.domain.use_case.post_detail.PostDetailUseCases
-import com.ich.reciptopia.domain.use_case.post_list.*
+import com.ich.reciptopia.domain.use_case.post.*
 import com.ich.reciptopia.domain.use_case.search.*
 import dagger.Module
 import dagger.Provides
@@ -26,21 +26,21 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideSearchUseCases(searchRepository: SearchRepository, postListRepository: PostListRepository): SearchUseCases{
+    fun provideSearchUseCases(searchRepository: SearchRepository, postRepository: PostRepository): SearchUseCases{
         return SearchUseCases(
-            deleteFavorite = DeleteFavoriteUseCase(postListRepository),
+            deleteFavorite = DeleteFavoriteUseCase(postRepository),
             getSearchHistories = GetSearchHistoriesUseCase(searchRepository),
             addSearchHistory = AddSearchHistoryUseCase(searchRepository),
             deleteSearchHistory = DeleteSearchHistoryUseCase(searchRepository),
             getPost = GetPostUseCase(searchRepository),
-            getOwner = GetOwnerOfPostUseCase(postListRepository),
+            getOwner = GetOwnerOfPostUseCase(postRepository),
             getSearchedPosts = GetSearchedPostsUseCase(searchRepository),
-            getFavorites = GetFavoritesUseCase(postListRepository),
-            favoritePost = FavoritePostUseCase(postListRepository),
-            unFavoritePost = UnFavoritePostUseCase(postListRepository),
-            likePost = PostLikeUseCase(postListRepository),
-            unlikePost = PostUnLikeUseCase(postListRepository),
-            getPostLikeTags = GetPostLikeTagsUseCase(postListRepository)
+            getFavorites = GetFavoritesUseCase(postRepository),
+            favoritePost = FavoritePostUseCase(postRepository),
+            unFavoritePost = UnFavoritePostUseCase(postRepository),
+            likePost = PostLikeUseCase(postRepository),
+            unlikePost = PostUnLikeUseCase(postRepository),
+            getPostLikeTags = GetPostLikeTagsUseCase(postRepository)
         )
     }
 
@@ -67,30 +67,33 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideCommunityUseCases(communityRepository: CommunityRepository, postListRepository: PostListRepository): CommunityUseCases{
+    fun provideCommunityUseCases(communityRepository: CommunityRepository, postRepository: PostRepository): CommunityUseCases{
         return CommunityUseCases(
             createPost = CreatePostUseCase(communityRepository),
             getPostsByTime = GetPostsByTimeUseCase(communityRepository),
             getPostsByViews = GetPostsByViewsUseCase(communityRepository),
-            getPostLikeTags = GetPostLikeTagsUseCase(postListRepository),
-            getOwnerOfPost = GetOwnerOfPostUseCase(postListRepository),
-            favoritePost = FavoritePostUseCase(postListRepository),
-            getFavorites = GetFavoritesUseCase(postListRepository),
-            unFavoritePost = UnFavoritePostUseCase(postListRepository),
-            likePost = PostLikeUseCase(postListRepository),
-            unlikePost = PostUnLikeUseCase(postListRepository)
+            getPostLikeTags = GetPostLikeTagsUseCase(postRepository),
+            getOwnerOfPost = GetOwnerOfPostUseCase(postRepository),
+            favoritePost = FavoritePostUseCase(postRepository),
+            getFavorites = GetFavoritesUseCase(postRepository),
+            unFavoritePost = UnFavoritePostUseCase(postRepository),
+            likePost = PostLikeUseCase(postRepository),
+            unlikePost = PostUnLikeUseCase(postRepository)
         )
     }
 
     @Provides
     @Singleton
-    fun providePostDetailUseCases(postDetailRepository: PostDetailRepository, postListRepository: PostListRepository): PostDetailUseCases{
+    fun providePostDetailUseCases(postDetailRepository: PostDetailRepository, postRepository: PostRepository): PostDetailUseCases{
         return PostDetailUseCases(
             getPostInfo = GetPostInfoUseCase(postDetailRepository),
-            getOwnerOfPost = GetOwnerOfPostUseCase(postListRepository),
-            favoritePost = FavoritePostUseCase(postListRepository),
-            unFavoritePost = UnFavoritePostUseCase(postListRepository),
-            getFavorites = GetFavoritesUseCase(postListRepository)
+            getOwnerOfPost = GetOwnerOfPostUseCase(postRepository),
+            favoritePost = FavoritePostUseCase(postRepository),
+            unFavoritePost = UnFavoritePostUseCase(postRepository),
+            getFavorites = GetFavoritesUseCase(postRepository),
+            likePost = PostLikeUseCase(postRepository),
+            unlikePost = PostUnLikeUseCase(postRepository),
+            getLikeTags = GetPostLikeTagsUseCase(postRepository)
         )
     }
 }

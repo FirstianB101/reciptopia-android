@@ -5,7 +5,7 @@ import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.PostLikeTag
 import kotlinx.coroutines.flow.Flow
 
-interface PostListRepository{
+interface PostRepository{
     suspend fun getOwnerOfPost(accountId: Long): Account
 
     suspend fun favoritePostNotLogin(ownerId: Long?, postId: Long?)

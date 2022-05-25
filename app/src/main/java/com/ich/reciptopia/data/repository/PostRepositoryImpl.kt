@@ -2,17 +2,18 @@ package com.ich.reciptopia.data.repository
 
 import com.ich.reciptopia.data.data_source.ReciptopiaDao
 import com.ich.reciptopia.data.remote.ReciptopiaApi
+import com.ich.reciptopia.data.repository.RepositoryTestUtils.testPostLikeTags
 import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.PostLikeTag
-import com.ich.reciptopia.domain.repository.PostListRepository
+import com.ich.reciptopia.domain.repository.PostRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
-class PostListRepositoryImpl(
+class PostRepositoryImpl(
     private val api: ReciptopiaApi,
     private val dao: ReciptopiaDao
-) : PostListRepository {
+) : PostRepository {
 
     override suspend fun getOwnerOfPost(accountId: Long): Account {
         return RepositoryTestUtils.testOwner.find { it.id == accountId }!!
@@ -63,9 +64,9 @@ class PostListRepositoryImpl(
     }
 
     override suspend fun likePost(ownerId: Long?, postId: Long?) {
-        RepositoryTestUtils.testPostLikeTags.add(
+        testPostLikeTags.add(
             PostLikeTag(
-                id = RepositoryTestUtils.nextPostId++,
+                id = RepositoryTestUtils.nextLikeTagId++,
                 ownerId = ownerId,
                 postId = postId
             )
@@ -73,11 +74,11 @@ class PostListRepositoryImpl(
     }
 
     override suspend fun unLikePost(ownerId: Long?, postId: Long?) {
-        for (i in RepositoryTestUtils.testPostLikeTags.indices) {
-            if (RepositoryTestUtils.testPostLikeTags[i].ownerId == ownerId &&
-                RepositoryTestUtils.testPostLikeTags[i].postId == postId
+        for (i in testPostLikeTags.indices) {
+            if (testPostLikeTags[i].ownerId == ownerId &&
+                testPostLikeTags[i].postId == postId
             ) {
-                RepositoryTestUtils.testPostLikeTags.removeAt(i)
+                testPostLikeTags.removeAt(i)
                 break
             }
         }
@@ -85,6 +86,6 @@ class PostListRepositoryImpl(
 
 
     override suspend fun getLikeTags(userId: Long): List<PostLikeTag> {
-        return RepositoryTestUtils.testPostLikeTags.filter { it.ownerId == userId }
+        return testPostLikeTags.filter { it.ownerId == userId }
     }
 }

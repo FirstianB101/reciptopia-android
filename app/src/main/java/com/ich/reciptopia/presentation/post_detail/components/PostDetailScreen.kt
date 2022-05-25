@@ -188,13 +188,16 @@ fun PostDetailScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             TextButton(
-                onClick = {  }
+                onClick = {
+                    viewModel.onEvent(PostDetailEvent.ClickLike)
+                }
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
                     imageVector = Icons.Default.ThumbUp,
                     contentDescription = "",
-                    tint = Color.Gray
+                    tint = if(state.value.curPost?.like == true) colorResource(id = R.color.main_color)
+                            else Color.Gray
                 )
                 
                 Text(

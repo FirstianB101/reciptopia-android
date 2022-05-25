@@ -1,14 +1,14 @@
 package com.ich.reciptopia.domain.use_case.post_detail
 
-import com.ich.reciptopia.domain.use_case.post_list.FavoritePostUseCase
-import com.ich.reciptopia.domain.use_case.post_list.GetFavoritesUseCase
-import com.ich.reciptopia.domain.use_case.post_list.GetOwnerOfPostUseCase
-import com.ich.reciptopia.domain.use_case.post_list.UnFavoritePostUseCase
+import com.ich.reciptopia.domain.use_case.post.*
 
 data class PostDetailUseCases(
     val getPostInfo: GetPostInfoUseCase,
     val getOwnerOfPost: GetOwnerOfPostUseCase,
     val favoritePost: FavoritePostUseCase,
     val unFavoritePost: UnFavoritePostUseCase,
-    val getFavorites: GetFavoritesUseCase
+    val getFavorites: GetFavoritesUseCase,
+    val likePost: PostLikeUseCase,
+    val unlikePost: PostUnLikeUseCase,
+    val getLikeTags: GetPostLikeTagsUseCase
 )

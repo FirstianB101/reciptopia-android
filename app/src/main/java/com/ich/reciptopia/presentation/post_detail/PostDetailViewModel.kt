@@ -29,14 +29,25 @@ class PostDetailViewModel @Inject constructor(
 
     fun initialize(postId: Long){
         this.postId = postId
-        getPost()
         observeUserChanged()
+        getPost()
     }
 
     fun onEvent(event: PostDetailEvent){
         when(event){
             is PostDetailEvent.ClickLike -> {
-
+                val isLogin = _state.value.currentUser != null
+                val isLike = _state.value.curPost?.like == true
+                if(isLogin){
+                    if(isLike)
+                        unlikePost()
+                    else
+                        likePost()
+                }else{
+                    viewModelScope.launch {
+                        _eventFlow.emit(UiEvent.ShowToast("로그인 후 좋아요를 누를 수 있습니다"))
+                    }
+                }
             }
             is PostDetailEvent.ClickFavorite -> {
                 val post = _state.value.curPost!!
@@ -74,6 +85,7 @@ class PostDetailViewModel @Inject constructor(
         getPostInfo().invokeOnCompletion {
             getOwnerOfPost()
             getFavoritePostsForFillingStar()
+            getPostLikeTagsForFillingThumb()
         }
     }
 
@@ -195,6 +207,94 @@ class PostDetailViewModel @Inject constructor(
                     _state.value = _state.value.copy(
                         isLoading = false
                     )
+                }
+            }
+        }
+    }
+
+    private fun likePost() = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id!!
+        useCases.likePost(userId, postId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val post = _state.value.curPost
+                    _state.value = _state.value.copy(
+                        curPost = post?.copy(like = true),
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("좋아요를 표시하지 못했습니다(${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun unlikePost() = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id!!
+        useCases.unlikePost(userId, postId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val post = _state.value.curPost
+                    _state.value = _state.value.copy(
+                        curPost = post?.copy(like = false),
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("좋아요를 취소하지 못했습니다(${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun getPostLikeTagsForFillingThumb() = viewModelScope.launch {
+        val userId = _state.value.currentUser?.account?.id
+        if(userId != null) {
+            useCases.getLikeTags(userId).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val tags = result.data!!
+                        val post = _state.value.curPost
+                        var like = false
+
+                        tags.forEach {
+                            if (it.ownerId == userId && it.postId == post?.id) {
+                                like = true
+                            }
+                        }
+
+                        _state.value = _state.value.copy(
+                            curPost = post?.copy(like = like),
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = _state.value.copy(
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
