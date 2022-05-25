@@ -80,7 +80,7 @@ class SearchViewModel @Inject constructor(
             is SearchScreenEvent.FavoriteButtonClicked -> {
                 if (event.post.isFavorite)
                     unFavoritePost(event.post.id!!, event.idx)
-                else 
+                else
                     favoritePost(event.post.id!!, event.idx)
             }
             is SearchScreenEvent.LikeButtonClicked -> {

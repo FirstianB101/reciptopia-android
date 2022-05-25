@@ -38,7 +38,22 @@ interface ReciptopiaApi {
     suspend fun getPost(): PostDto
 
     @GET("posts")
-    suspend fun getPosts(): List<PostDto>
+    suspend fun getPosts(): PostWithCommentAndLikeTagCountsDto
+
+    @POST("posts")
+    suspend fun getPostsByOwnerId(@Query("ownerId")ownerId: Long): PostWithCommentAndLikeTagCountsDto
+
+    @POST("posts")
+    suspend fun getPostsByTitleLike(@Query("titleLike")title: String): PostWithCommentAndLikeTagCountsDto
+
+    @POST("posts")
+    suspend fun getPostsByIds(@Query("ids")ids: List<Long>): PostWithCommentAndLikeTagCountsDto
+
+    @POST("posts")
+    suspend fun getPostsByIngredients(
+        @Query("mainIngredientNames")mainIngredients: List<String>,
+        @Query("subIngredientNames")subIngredients: List<String>
+    ): PostWithCommentAndLikeTagCountsDto
 
     @POST("posts")
     suspend fun createPost(@Body post: Post): PostDto
@@ -55,7 +70,10 @@ interface ReciptopiaApi {
     suspend fun getComment(@Path("id")commentId: Long): CommentDto
 
     @GET("post/comments")
-    suspend fun getComments(): List<CommentDto>
+    suspend fun getComments(): CommentsDto
+
+    @GET("post/comments")
+    suspend fun getCommentsByPostId(@Query("postId")postId: Long): CommentsDto
 
     @POST("post/comments")
     suspend fun createComment(@Body comment: Comment): CommentDto
@@ -72,7 +90,10 @@ interface ReciptopiaApi {
     suspend fun getReply(@Path("id")replyId: Long): ReplyDto
 
     @GET("post/comment/replies")
-    suspend fun getReplies(): List<ReplyDto>
+    suspend fun getReplies(): RepliesDto
+
+    @GET("post/comment/replies")
+    suspend fun getRepliesByCommentId(@Query("commentId")commentId: Long): RepliesDto
 
     @POST("post/comment/replies")
     suspend fun createReply(@Body reply: Reply): ReplyDto
@@ -85,16 +106,19 @@ interface ReciptopiaApi {
 
 
     // Step
-    @GET("post/recipeId/steps/{id}")
+    @GET("post/recipe/steps/{id}")
     suspend fun getStep(@Path("id")stepId: Long): StepDto
 
-    @POST("post/recipeId/steps")
-    suspend fun createStep(@Body step: Step): StepDto
+    @POST("post/recipe/steps")
+    suspend fun createStep(@Body step: Step): StepsDto
 
-    @PATCH("post/recipeId/steps/{id}")
+    @POST("post/recipe/steps")
+    suspend fun getStepsByRecipeId(@Query("recipeId")recipeId: Long): StepsDto
+
+    @PATCH("post/recipe/steps/{id}")
     suspend fun patchStep(@Body step: Step): StepDto
 
-    @DELETE("post/recipeId/steps/{id}")
+    @DELETE("post/recipe/steps/{id}")
     suspend fun deleteStep(@Path("id")stepId: Long): Response<Unit>
 
 
@@ -104,6 +128,9 @@ interface ReciptopiaApi {
 
     @POST("post/recipe/mainIngredients")
     suspend fun createMainIngredient(@Body ingredient: MainIngredient): MainIngredientDto
+
+    @POST("post/recipe/mainIngredients")
+    suspend fun getMainIngredientsByRecipeId(@Query("recipeId")recipeId: Long): MainIngredientsDto
 
     @PATCH("post/recipe/mainIngredients/{id}")
     suspend fun patchMainIngredient(@Path("id")ingredientId: Long, @Body ingredient: MainIngredient): MainIngredientDto
@@ -118,6 +145,9 @@ interface ReciptopiaApi {
 
     @POST("post/recipe/subIngredients")
     suspend fun createSubIngredient(@Body ingredient: SubIngredient): SubIngredientDto
+
+    @POST("post/recipe/subIngredients")
+    suspend fun getSubIngredientsByRecipeId(@Query("recipeId")recipeId: Long): SubIngredientsDto
 
     @PATCH("post/recipe/subIngredients/{id}")
     suspend fun patchSubIngredient(@Path("id")ingredientId: Long, @Body ingredient: SubIngredient): SubIngredientDto
@@ -187,7 +217,7 @@ interface ReciptopiaApi {
     suspend fun getSearchHistory(@Path("id")historyId: Long): SearchHistoryDto
 
     @GET("account/{ownerId}/searchHistories")
-    suspend fun getSearchHistories(): List<SearchHistoryDto>
+    suspend fun getSearchHistories(@Path("ownerId")ownerId: Long): List<SearchHistoryDto>
 
     @POST("account/searchHistories")
     suspend fun createSearchHistory(@Body history: SearchHistory): SearchHistoryDto
@@ -202,6 +232,9 @@ interface ReciptopiaApi {
 
     @GET("account/favorites")
     suspend fun getFavorites(): List<FavoriteDto>
+
+    @GET("account/favorites")
+    suspend fun getFavoritesByOwnerId(@Query("ownerId")ownerId: Long): FavoritesDto
 
     @POST("account/favorites")
     suspend fun createFavorite(@Body favorite: Favorite): FavoriteDto
