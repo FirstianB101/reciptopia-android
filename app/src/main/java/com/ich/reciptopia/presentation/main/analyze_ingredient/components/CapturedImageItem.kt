@@ -51,8 +51,9 @@ fun CapturedImageItem(
         }
 
         Image(
+            modifier = Modifier.size(240.dp),
             bitmap = image.asImageBitmap(),
-            contentScale = ContentScale.Fit,
+            contentScale = ContentScale.Crop,
             contentDescription = contentDescription
         )
     }
