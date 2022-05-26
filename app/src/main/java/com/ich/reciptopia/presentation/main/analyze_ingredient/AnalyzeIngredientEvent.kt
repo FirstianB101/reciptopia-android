@@ -6,5 +6,6 @@ sealed class AnalyzeIngredientEvent{
     data class OnImageCaptured(val image: Bitmap): AnalyzeIngredientEvent()
     data class DeleteImages(val images: List<Bitmap>): AnalyzeIngredientEvent()
     data class ManageDialogStateChanged(val show: Boolean): AnalyzeIngredientEvent()
-    data class ResultDialogStateChanged(val show: Boolean): AnalyzeIngredientEvent()
+    object CloseAnalyzeResultDialog: AnalyzeIngredientEvent()
+    object StartAnalyzing: AnalyzeIngredientEvent()
 }

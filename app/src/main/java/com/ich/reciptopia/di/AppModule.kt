@@ -54,7 +54,9 @@ object AppModule {
     @Singleton
     @Named("image_analyze")
     fun provideImageAnalyzeRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
+        .baseUrl(Constants.IMAGE_API_URL)
         .build()
 
     @Provides

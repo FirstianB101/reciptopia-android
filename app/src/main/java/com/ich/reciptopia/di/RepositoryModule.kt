@@ -1,6 +1,7 @@
 package com.ich.reciptopia.di
 
 import com.ich.reciptopia.data.data_source.ReciptopiaDatabase
+import com.ich.reciptopia.data.remote.ImageAnalyzeApi
 import com.ich.reciptopia.data.remote.ReciptopiaApi
 import com.ich.reciptopia.data.repository.*
 import com.ich.reciptopia.domain.repository.*
@@ -54,5 +55,11 @@ object RepositoryModule {
     @Singleton
     fun providePostListRepository(api: ReciptopiaApi, db: ReciptopiaDatabase): PostRepository{
         return PostRepositoryImpl(api, db.reciptopiaDao)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAnalyzeIngredientRepository(api: ImageAnalyzeApi): AnalyzeIngredientRepository{
+        return AnalyzeIngredientRepositoryImpl(api)
     }
 }

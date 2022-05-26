@@ -5,5 +5,7 @@ import android.graphics.Bitmap
 data class AnalyzeIngredientState(
     val images: List<Bitmap> = emptyList(),
     val showManageDialog: Boolean = false,
-    val showAnalyzeResultDialog: Boolean = false
+    val showAnalyzeResultDialog: Boolean = false,
+    val isLoading: Boolean = false,
+    val analyzeResults: Map<String, String> = emptyMap()
 )

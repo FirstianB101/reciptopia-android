@@ -1,10 +1,13 @@
 package com.ich.reciptopia.presentation.main.analyze_ingredient
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.common.util.Constants
+import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.common.util.getAddedList
 import com.ich.reciptopia.common.util.getRemovedList
+import com.ich.reciptopia.domain.use_case.analyze_ingredient.ImageAnalyzeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AnalyzeIngredientViewModel @Inject constructor(
-
+    private val analyzeImage: ImageAnalyzeUseCase
 ): ViewModel() {
 
     private val _state = MutableStateFlow(AnalyzeIngredientState())
@@ -46,10 +49,40 @@ class AnalyzeIngredientViewModel @Inject constructor(
                     showManageDialog = event.show
                 )
             }
-            is AnalyzeIngredientEvent.ResultDialogStateChanged -> {
+            is AnalyzeIngredientEvent.CloseAnalyzeResultDialog -> {
                 _state.value = _state.value.copy(
-                    showAnalyzeResultDialog = event.show
+                    showAnalyzeResultDialog = false
                 )
+            }
+            is AnalyzeIngredientEvent.StartAnalyzing -> {
+                val images = _state.value.images
+                analyzeImages(images)
+            }
+        }
+    }
+
+    private fun analyzeImages(images: List<Bitmap>) = viewModelScope.launch {
+        analyzeImage(images).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    val data = result.data!!
+                    _state.value = _state.value.copy(
+                        analyzeResults = data.response_data?.predicts!!,
+                        showAnalyzeResultDialog = true,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("이미지 분석에 실패했습니다 (${result.message})"))
+                }
             }
         }
     }

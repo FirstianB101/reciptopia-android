@@ -1,16 +1,12 @@
 package com.ich.reciptopia.presentation.main.analyze_ingredient.components
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,20 +22,21 @@ import androidx.compose.ui.window.Dialog
 import com.ich.reciptopia.R
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AnalyzeResultDialog(
     showDialog: Boolean,
+    analyzeResults: Map<String, String>?,
     onSearchRecipes: (List<ChipState>) -> Unit,
     onClose: () -> Unit
 ){
     if(showDialog){
-        val chipStates = remember { mutableStateListOf(
-            ChipState("메인 재료1", mutableStateOf(false)),
-            ChipState("메인 재료2", mutableStateOf(false)),
-            ChipState("서브 재료1", mutableStateOf(true)),
-            ChipState("서브 재료2", mutableStateOf(true)),
-        )}
+        val chipStates = remember { mutableStateListOf<ChipState>()}
+
+        LaunchedEffect(Unit){
+            analyzeResults?.keys?.forEach{
+                chipStates.add(ChipState(analyzeResults[it] ?: "Unknown", mutableStateOf(true)))
+            }
+        }
 
         Dialog(onDismissRequest = onClose) {
             Surface(
