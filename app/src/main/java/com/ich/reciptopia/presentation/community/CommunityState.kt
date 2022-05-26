@@ -14,6 +14,7 @@ data class CommunityState(
     val likeTags: List<PostLikeTag> = emptyList(),
     val newPostTitle: String = "",
     val newPostContent: String = "",
+    val newPostStep: String = "",
     val newPictureUrls: List<String> = emptyList(),
     val currentUser: User? = null
 )

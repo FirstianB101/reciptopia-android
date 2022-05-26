@@ -89,6 +89,11 @@ class CommunityViewModel @Inject constructor(
                     newPostContent = event.content
                 )
             }
+            is CommunityScreenEvent.CreatePostStepChanged -> {
+                _state.value = _state.value.copy(
+                    newPostStep = event.step
+                )
+            }
             is CommunityScreenEvent.CreatePostAddImage -> {
                 _state.value = _state.value.copy(
                     newPictureUrls = _state.value.newPictureUrls.getAddedList(event.uri)

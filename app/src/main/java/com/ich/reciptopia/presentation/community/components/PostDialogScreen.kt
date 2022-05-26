@@ -20,7 +20,10 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -98,8 +101,7 @@ fun PostDialogScreen(
             onValueChange = { viewModel.onEvent(CommunityScreenEvent.CreatePostTitleChanged(it)) },
             decorationBox = { innerTextField ->
                 Row(
-                    Modifier
-                        .padding(16.dp)
+                    modifier = Modifier.padding(16.dp)
                 ) {
 
                     if (state.value.newPostTitle.isEmpty()) {
@@ -133,7 +135,13 @@ fun PostDialogScreen(
                             if (images.size < Constants.MAX_IMAGE_CNT) {
                                 galleryLauncher.launch("image/*")
                             } else {
-                                Toast.makeText(context, "이미지는 최대 10장까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
+                                Toast
+                                    .makeText(
+                                        context,
+                                        "이미지는 최대 10장까지 추가할 수 있습니다.",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                    .show()
                             }
                         },
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -181,6 +189,29 @@ fun PostDialogScreen(
                     if (state.value.newPostContent.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.comment_input_content),
+                            color = Color.LightGray
+                        )
+                    }
+                    innerTextField()
+                }
+            },
+        )
+
+        Divider()
+        BasicTextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(3f),
+            value = state.value.newPostStep,
+            onValueChange = { viewModel.onEvent(CommunityScreenEvent.CreatePostStepChanged(it)) },
+            decorationBox = { innerTextField ->
+                Row(
+                    Modifier.padding(16.dp)
+                ) {
+
+                    if (state.value.newPostContent.isEmpty()) {
+                        Text(
+                            text = stringResource(id = R.string.comment_input_step),
                             color = Color.LightGray
                         )
                     }

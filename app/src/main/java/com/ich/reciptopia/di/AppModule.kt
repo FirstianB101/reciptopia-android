@@ -9,6 +9,7 @@ import com.ich.reciptopia.common.util.FavoriteTypeConverter
 import com.ich.reciptopia.common.util.SearchHistoryTypeConverter
 import com.ich.reciptopia.data.data_source.ReciptopiaDatabase
 import com.ich.reciptopia.data.remote.AuthenticationInterceptor
+import com.ich.reciptopia.data.remote.ImageAnalyzeApi
 import com.ich.reciptopia.data.remote.ReciptopiaApi
 import dagger.Module
 import dagger.Provides
@@ -18,6 +19,7 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -47,6 +49,18 @@ object AppModule {
             .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
             .build()
     }
+
+    @Provides
+    @Singleton
+    @Named("image_analyze")
+    fun provideImageAnalyzeRetrofit(okHttpClient: OkHttpClient): Retrofit = Retrofit.Builder()
+        .client(okHttpClient)
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideImageAnalyzeService(@Named("image_analyze") retrofit: Retrofit): ImageAnalyzeApi
+        = retrofit.create(ImageAnalyzeApi::class.java)
 
     @Provides
     @Singleton
