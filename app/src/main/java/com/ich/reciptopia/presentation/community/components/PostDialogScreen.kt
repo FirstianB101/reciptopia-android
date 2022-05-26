@@ -20,10 +20,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +35,7 @@ import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.Constants
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 import com.ich.reciptopia.presentation.community.CommunityViewModel
+import com.ich.reciptopia.presentation.my_page.profile.components.TextInputDialog
 
 @Composable
 fun PostDialogScreen(
@@ -175,6 +173,22 @@ fun PostDialogScreen(
 
         Divider()
 
+        HorizontalAddableChips(
+            modifier = Modifier.padding(4.dp, 8.dp),
+            elements = state.value.newPostChips,
+            onChipClicked = { text, isMain, idx ->
+                viewModel.onEvent(CommunityScreenEvent.ClickChip(idx))
+            },
+            onImageClicked = { text, isMain, idx ->
+                viewModel.onEvent(CommunityScreenEvent.RemoveChip(idx))
+            },
+            onAddChip = {
+                viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(true))
+            }
+        )
+
+        Divider()
+
         BasicTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -185,7 +199,6 @@ fun PostDialogScreen(
                 Row(
                     Modifier.padding(16.dp)
                 ) {
-
                     if (state.value.newPostContent.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.comment_input_content),
@@ -198,6 +211,7 @@ fun PostDialogScreen(
         )
 
         Divider()
+
         BasicTextField(
             modifier = Modifier
                 .fillMaxWidth()
@@ -209,7 +223,7 @@ fun PostDialogScreen(
                     Modifier.padding(16.dp)
                 ) {
 
-                    if (state.value.newPostContent.isEmpty()) {
+                    if (state.value.newPostStep.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.comment_input_step),
                             color = Color.LightGray
@@ -218,6 +232,19 @@ fun PostDialogScreen(
                     innerTextField()
                 }
             },
+        )
+
+        TextInputDialog(
+            modifier = Modifier.padding(16.dp),
+            title = stringResource(id = R.string.input_ingredient),
+            buttonText = stringResource(id = R.string.add_ingredient),
+            initialValue = "",
+            dialogState = state.value.showAddChipDialog,
+            onDismiss = { viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(false)) },
+            onButtonClick = {
+                viewModel.onEvent(CommunityScreenEvent.AddChip(it))
+                viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(false))
+            }
         )
     }
 }

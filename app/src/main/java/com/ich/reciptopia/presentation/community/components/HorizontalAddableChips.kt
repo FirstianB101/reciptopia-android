@@ -2,27 +2,29 @@ package com.ich.reciptopia.presentation.community.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Icon
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.TestTags
 import com.ich.reciptopia.presentation.main.search.components.ChipWithImage
+import com.ich.reciptopia.presentation.main.search.util.ChipState
 
 @Composable
-private fun Chip(
-    text: String,
+private fun AddChip(
+    icon: ImageVector,
     backgroundColor: Color,
     contentColor: Color,
     modifier: Modifier = Modifier,
@@ -37,34 +39,37 @@ private fun Chip(
             color = backgroundColor
         ),
         modifier = modifier
+            .clickable { onChipClicked() }
     ) {
-        Row(modifier = Modifier) {
-            Text(
-                text = text,
-                style = MaterialTheme.typography.body2,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .clickable { onChipClicked() }
+        Row(
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = icon,
+                contentDescription = "Create Post Dialog Chip Add Icon"
             )
         }
     }
 }
 
 @Composable
-fun AddableChips(
+fun HorizontalAddableChips(
     modifier: Modifier = Modifier,
-    elements: List<String>,
-    selectStates: List<Boolean>,
+    elements: List<ChipState>,
     onChipClicked: (String, Boolean, Int) -> Unit,
     onImageClicked: (String, Boolean, Int) -> Unit,
     onAddChip: () -> Unit
 ) {
     LazyRow(
-        modifier = modifier.testTag(TestTags.CHIP_ROW)
+        modifier = modifier.fillMaxWidth()
     ) {
         item{
-            Chip(
-                text = "+",
+            AddChip(
+                modifier = Modifier
+                    .size(80.dp, 35.dp),
+                icon = Icons.Filled.Add,
                 backgroundColor = colorResource(id = R.color.light_blue),
                 contentColor = Color.Black,
                 onChipClicked = onAddChip
@@ -73,11 +78,11 @@ fun AddableChips(
         }
         items(elements.size){ idx ->
             ChipWithImage(
-                text = elements[idx],
+                text = elements[idx].text,
                 imageId = R.drawable.close,
-                selected = selectStates[idx],
+                selected = elements[idx].isSubIngredient.value,
                 onChipClicked = { content, isMain ->
-                    onChipClicked(content,isMain,idx)
+                    onChipClicked(content, isMain,idx)
                 },
                 onImageClicked = { content, isMain ->
                     onImageClicked(content, isMain, idx)

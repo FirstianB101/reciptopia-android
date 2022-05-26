@@ -116,9 +116,11 @@ fun ProfileScreen(
         }
     }
 
-    ChangeNicknameDialog(
+    TextInputDialog(
         modifier = Modifier.padding(16.dp),
-        initialNickname = state.value.nickname,
+        initialValue = state.value.nickname,
+        title = stringResource(id = R.string.edit_nickname),
+        buttonText = stringResource(id = R.string.modify),
         dialogState = state.value.showEditDialogState,
         onDismiss = { viewModel.onEvent(ProfileScreenEvent.EditDialogStateChanged(false)) },
         onButtonClick = {

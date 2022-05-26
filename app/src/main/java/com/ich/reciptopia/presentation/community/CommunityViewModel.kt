@@ -12,6 +12,7 @@ import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
+import com.ich.reciptopia.presentation.main.search.util.ChipState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -102,6 +103,30 @@ class CommunityViewModel @Inject constructor(
             is CommunityScreenEvent.CreatePostRemoveImage -> {
                 _state.value = _state.value.copy(
                     newPictureUrls = _state.value.newPictureUrls.getRemovedList(event.idx)
+                )
+            }
+            is CommunityScreenEvent.AddChip -> {
+                val newChip = ChipState(event.chipText, mutableStateOf(true))
+                _state.value = _state.value.copy(
+                    newPostChips = _state.value.newPostChips.getAddedList(newChip)
+                )
+            }
+            is CommunityScreenEvent.RemoveChip -> {
+                val chip = _state.value.newPostChips[event.idx]
+                _state.value = _state.value.copy(
+                    newPostChips = _state.value.newPostChips.getRemovedList(chip)
+                )
+            }
+            is CommunityScreenEvent.ClickChip -> {
+                val chips = _state.value.newPostChips.toMutableList()
+                chips[event.idx].isSubIngredient.value = !chips[event.idx].isSubIngredient.value
+                _state.value = _state.value.copy(
+                    newPostChips = chips
+                )
+            }
+            is CommunityScreenEvent.AddChipDialogStateChanged -> {
+                _state.value = _state.value.copy(
+                    showAddChipDialog = event.show
                 )
             }
             is CommunityScreenEvent.GetPosts -> {
