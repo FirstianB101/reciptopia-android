@@ -4,12 +4,11 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,14 +25,11 @@ fun ManageImageDialog(
     showDialog: Boolean,
     images: List<Bitmap>,
     numOfImages: Int,
-    onDeleteImage: (List<Bitmap>) -> Unit,
+    onDeleteImage: (Int) -> Unit,
     onAnalyzeButtonClicked: () -> Unit,
     onClose: () -> Unit
 ){
     if(showDialog){
-        var deleteModeState by rememberSaveable { mutableStateOf(false) }
-        val deleteImageStates = List(images.size){ rememberSaveable { mutableStateOf(false) } }
-
         Dialog(onDismissRequest = onClose) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
@@ -56,28 +52,6 @@ fun ManageImageDialog(
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold
                             )
-
-                            TextButton(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(8.dp),
-                                onClick = {
-                                    deleteModeState = !deleteModeState
-                                    if(!deleteModeState){
-                                        val selectedBitmaps = images.filterIndexed { index, _ ->
-                                            deleteImageStates[index].value
-                                        }
-                                        onDeleteImage(selectedBitmaps)
-                                    }
-                                }
-                            ) {
-                                Text(
-                                    text = if(deleteModeState) "완료" else "삭제",
-                                    color = Color.Black,
-                                    fontSize = 18.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
                         }
 
                         LazyVerticalGrid(
@@ -88,12 +62,11 @@ fun ManageImageDialog(
                             items(images.size) { idx ->
                                 if (idx < images.size) {
                                     CapturedImageItem(
+                                        modifier = Modifier.padding(8.dp),
                                         image = images[idx],
                                         contentDescription = "Manage Image",
-                                        showCheckIcon = deleteModeState,
-                                        isChecked = deleteImageStates[idx].value,
-                                        onCheckedChanged = {
-                                            deleteImageStates[idx].value = it
+                                        onDeleteClick = {
+                                            onDeleteImage(idx)
                                         }
                                     )
                                 }

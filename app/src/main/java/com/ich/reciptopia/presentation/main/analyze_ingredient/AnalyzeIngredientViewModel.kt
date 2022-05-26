@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.common.util.Constants
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.common.util.getAddedList
-import com.ich.reciptopia.common.util.getRemovedList
 import com.ich.reciptopia.domain.use_case.analyze_ingredient.ImageAnalyzeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,10 +35,13 @@ class AnalyzeIngredientViewModel @Inject constructor(
                     )
                 }
             }
-            is AnalyzeIngredientEvent.DeleteImages -> {
+            is AnalyzeIngredientEvent.DeleteImage -> {
+                val images = _state.value.images.toMutableList()
+                images.removeAt(event.idx)
                 _state.value = _state.value.copy(
-                    images = _state.value.images.getRemovedList(event.images)
+                    images = images
                 )
+
                 viewModelScope.launch {
                     _eventFlow.emit(UiEvent.ShowToast("선택한 사진을 제거했습니다."))
                 }

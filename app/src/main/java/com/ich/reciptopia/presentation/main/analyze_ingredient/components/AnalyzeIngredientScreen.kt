@@ -56,7 +56,7 @@ fun AnalyzeIngredientScreen(
         images = state.value.images,
         numOfImages = state.value.images.size,
         onDeleteImage = { checkedBitmaps ->
-            viewModel.onEvent(AnalyzeIngredientEvent.DeleteImages(checkedBitmaps))
+            viewModel.onEvent(AnalyzeIngredientEvent.DeleteImage(checkedBitmaps))
         },
         onAnalyzeButtonClicked = {
             viewModel.onEvent(AnalyzeIngredientEvent.StartAnalyzing)
