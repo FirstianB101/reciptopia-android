@@ -4,5 +4,6 @@ data class Comment(
     val id: Long? = null,
     val ownerId: Long? = null,
     val postId: Long? = null,
-    val content: String? = null
+    val content: String? = null,
+    val replies: List<Reply>? = null
 )

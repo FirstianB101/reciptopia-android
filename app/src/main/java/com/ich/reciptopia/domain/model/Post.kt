@@ -9,5 +9,7 @@ data class Post(
     val views: Long? = null,
     val owner: Account? = null,
     val isFavorite: Boolean = false,
-    val like: Boolean = false
+    val like: Boolean = false,
+    val commentCount: Int? = null,
+    val likeCount: Int? = null
 )

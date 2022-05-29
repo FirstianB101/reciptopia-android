@@ -163,6 +163,9 @@ interface ReciptopiaApi {
     @POST("post/recipes")
     suspend fun createRecipe(@Body recipe: Recipe): RecipeDto
 
+    @GET("post/recipes")
+    suspend fun getRecipeByPostId(@Query("postIds")postId: Long): Recipe
+
     @PATCH("post/recipes/{id}")
     suspend fun patchRecipe(@Path("id")recipeId: Long, @Body recipe: Recipe): RecipeDto
 

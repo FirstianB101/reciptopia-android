@@ -30,7 +30,7 @@ class PostDetailViewModel @Inject constructor(
     fun initialize(postId: Long){
         this.postId = postId
         observeUserChanged()
-        getPost()
+        fillCurPostInfo()
     }
 
     fun onEvent(event: PostDetailEvent){
@@ -54,10 +54,10 @@ class PostDetailViewModel @Inject constructor(
                 if(post.id != null) {
                     if (post.isFavorite) {
                         unFavoritePost(post.id)
-                            .invokeOnCompletion { getPostInfo().invokeOnCompletion { getPost() } }
+                            .invokeOnCompletion { getPostInfo().invokeOnCompletion { fillCurPostInfo() } }
                     } else {
                         favoritePost(post.id)
-                            .invokeOnCompletion { getPostInfo().invokeOnCompletion { getPost() } }
+                            .invokeOnCompletion { getPostInfo().invokeOnCompletion { fillCurPostInfo() } }
                     }
                 }
             }
@@ -77,15 +77,22 @@ class PostDetailViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 currentUser = user
             )
-            getPost()
+            fillCurPostInfo()
         }
     }
 
-    private fun getPost(){
-        getPostInfo().invokeOnCompletion {
-            getOwnerOfPost()
-            getFavoritePostsForFillingStar()
-            getPostLikeTagsForFillingThumb()
+    private fun fillCurPostInfo() = viewModelScope.launch{
+        getPostInfo().join()
+        getOwnerOfPost()
+        getFavoritePostsForFillingStar()
+        getPostLikeTagsForFillingThumb()
+        getRecipe(postId).join()
+        getMainIngredients(postId)
+        getSubIngredients(postId)
+        getSteps(_state.value.curRecipe?.id!!)
+        getComments(postId).join()
+        _state.value.comments.forEachIndexed { idx, comment ->
+            getReplies(comment.id!!, idx)
         }
     }
 
@@ -295,6 +302,148 @@ class PostDetailViewModel @Inject constructor(
                             isLoading = false
                         )
                     }
+                }
+            }
+        }
+    }
+
+    private fun getRecipe(postId: Long) = viewModelScope.launch {
+        useCases.getRecipe(postId).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        curRecipe = result.data,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getMainIngredients(postId: Long) = viewModelScope.launch {
+        useCases.getMainIngredients(postId).collect { result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        mainIngredients = result.data!!,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getSubIngredients(postId: Long) = viewModelScope.launch {
+        useCases.getSubIngredients(postId).collect { result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        subIngredients = result.data!!,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getSteps(recipeId: Long) = viewModelScope.launch {
+        useCases.getSteps(recipeId).collect { result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        curPostSteps = result.data!!,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getComments(postId: Long) = viewModelScope.launch {
+        useCases.getComments(postId).collect { result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        comments = result.data!!,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getReplies(commentId: Long, idx: Int) = viewModelScope.launch {
+        useCases.getReplies(commentId).collect { result ->
+            when(result){
+                is Resource.Success -> {
+                    val comments = _state.value.comments.toMutableList()
+                    comments[idx] = comments[idx].copy(
+                        replies = result.data
+                    )
+                    _state.value = _state.value.copy(
+                        comments = comments,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
                 }
             }
         }

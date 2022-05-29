@@ -62,7 +62,7 @@ fun MainScreen(
 
         ReciptopiaTabRow(
             modifier = Modifier
-                .fillMaxWidth(0.6f)
+                .fillMaxWidth(0.7f)
                 .padding(top = 8.dp, bottom = 16.dp, start = 0.dp, end = 0.dp),
             tabTexts = tabTexts,
             selectedIndex = tabIndex,

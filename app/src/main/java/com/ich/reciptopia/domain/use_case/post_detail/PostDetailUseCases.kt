@@ -10,5 +10,11 @@ data class PostDetailUseCases(
     val getFavorites: GetFavoritesUseCase,
     val likePost: PostLikeUseCase,
     val unlikePost: PostUnLikeUseCase,
-    val getLikeTags: GetPostLikeTagsUseCase
+    val getLikeTags: GetPostLikeTagsUseCase,
+    val getRecipe: GetRecipeUseCase,
+    val getSteps: GetStepsUseCase,
+    val getMainIngredients: GetMainIngredientsUseCase,
+    val getSubIngredients: GetSubIngredientsUseCase,
+    val getComments: GetCommentsUseCase,
+    val getReplies: GetRepliesUseCase
 )

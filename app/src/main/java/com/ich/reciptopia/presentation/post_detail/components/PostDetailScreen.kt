@@ -5,6 +5,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -18,8 +20,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -51,6 +55,7 @@ fun PostDetailScreen(
 
     Column(
         modifier = modifier
+            .verticalScroll(rememberScrollState())
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -124,8 +129,11 @@ fun PostDetailScreen(
             state.value.curPost?.pictureUrls?.let {
                 itemsIndexed(it){ idx, url ->
                     Image(
-                        modifier = Modifier.size(200.dp),
+                        modifier = Modifier
+                            .size(200.dp)
+                            .padding(8.dp),
                         painter = rememberImagePainter(url),
+                        contentScale = ContentScale.Crop,
                         contentDescription = ""
                     )
                 }
@@ -168,19 +176,23 @@ fun PostDetailScreen(
         
         Text(
             modifier = Modifier.padding(12.dp),
-            text = "레시피",
+            text = stringResource(id = R.string.how_to_make),
             fontSize = 19.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
         )
-        
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .padding(12.dp),
-            text = "soooooooooooooooooooooooooooo\nLooooooooooooooooo\n" +
-                    "oooooooooong\n recipeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
-        )
+
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            state.value.curPostSteps.forEachIndexed { idx, step ->
+                Text(
+                    modifier = Modifier.offset(x = 24.dp),
+                    text = "${idx + 1}. ${step.description}"
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -201,7 +213,7 @@ fun PostDetailScreen(
                 )
                 
                 Text(
-                    text = " 123",
+                    text = " ${state.value.curPost?.likeCount}",
                     color = Color.Gray
                 )
             }
@@ -219,7 +231,7 @@ fun PostDetailScreen(
                 )
 
                 Text(
-                    text = " 123",
+                    text = " ${state.value.curPost?.commentCount}",
                     color = Color.Gray
                 )
             }

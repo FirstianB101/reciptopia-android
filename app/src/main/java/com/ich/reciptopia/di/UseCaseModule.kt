@@ -10,9 +10,8 @@ import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
-import com.ich.reciptopia.domain.use_case.post_detail.GetPostInfoUseCase
-import com.ich.reciptopia.domain.use_case.post_detail.PostDetailUseCases
 import com.ich.reciptopia.domain.use_case.post.*
+import com.ich.reciptopia.domain.use_case.post_detail.*
 import com.ich.reciptopia.domain.use_case.search.*
 import dagger.Module
 import dagger.Provides
@@ -93,7 +92,13 @@ object UseCaseModule {
             getFavorites = GetFavoritesUseCase(postRepository),
             likePost = PostLikeUseCase(postRepository),
             unlikePost = PostUnLikeUseCase(postRepository),
-            getLikeTags = GetPostLikeTagsUseCase(postRepository)
+            getLikeTags = GetPostLikeTagsUseCase(postRepository),
+            getRecipe = GetRecipeUseCase(postDetailRepository),
+            getComments = GetCommentsUseCase(postDetailRepository),
+            getMainIngredients = GetMainIngredientsUseCase(postDetailRepository),
+            getReplies = GetRepliesUseCase(postDetailRepository),
+            getSteps = GetStepsUseCase(postDetailRepository),
+            getSubIngredients = GetSubIngredientsUseCase(postDetailRepository)
         )
     }
 }
