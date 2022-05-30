@@ -1,6 +1,8 @@
 package com.ich.reciptopia.data.repository
 
 import com.ich.reciptopia.data.remote.ReciptopiaApi
+import com.ich.reciptopia.data.repository.RepositoryTestUtils.testCommentLikeTags
+import com.ich.reciptopia.data.repository.RepositoryTestUtils.testReplyLikeTags
 import com.ich.reciptopia.domain.model.*
 import com.ich.reciptopia.domain.repository.PostDetailRepository
 
@@ -36,5 +38,54 @@ class PostDetailRepositoryImpl(
 
     override suspend fun getReplies(commentId: Long): List<Reply> {
         return RepositoryTestUtils.testReplies.filter { it.commentId == commentId }
+    }
+
+    override suspend fun createComment(comment: Comment): Comment {
+        RepositoryTestUtils.testComments.add(
+            comment.copy(id = RepositoryTestUtils.nextCommentId++)
+        )
+        return comment
+    }
+
+    override suspend fun getCommentLikeTags(ownerId: Long?): List<CommentLikeTag> {
+        return testCommentLikeTags.filter { it.ownerId == ownerId }
+    }
+
+    override suspend fun getReplyLikeTags(ownerId: Long?): List<ReplyLikeTag> {
+        return testReplyLikeTags.filter { it.ownerId == ownerId }
+    }
+
+    override suspend fun likeComment(ownerId: Long?, commentId: Long): CommentLikeTag {
+        return CommentLikeTag(
+            id = RepositoryTestUtils.nextCommentLikeTagId++,
+            ownerId = ownerId,
+            commentId = commentId
+        )
+    }
+
+    override suspend fun likeReply(ownerId: Long?, replyId: Long): ReplyLikeTag {
+        return ReplyLikeTag(
+            id = RepositoryTestUtils.nextReplyLikeTagId++,
+            ownerId = ownerId,
+            replyId = replyId
+        )
+    }
+
+    override suspend fun unlikeComment(commentLikeTagId: Long?) {
+        testCommentLikeTags.forEachIndexed { idx, commentLikeTag ->
+            if(commentLikeTag.id == commentLikeTagId){
+                testCommentLikeTags.removeAt(idx)
+                return
+            }
+        }
+    }
+
+    override suspend fun unlikeReply(replyLikeTagId: Long?) {
+        testReplyLikeTags.forEachIndexed { idx, replyLikeTag ->
+            if(replyLikeTag.id == replyLikeTagId){
+                testReplyLikeTags.removeAt(idx)
+                return
+            }
+        }
     }
 }

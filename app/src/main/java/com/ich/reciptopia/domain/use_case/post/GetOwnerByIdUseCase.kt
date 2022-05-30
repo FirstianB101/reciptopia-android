@@ -10,7 +10,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class GetOwnerOfPostUseCase @Inject constructor(
+class GetOwnerByIdUseCase @Inject constructor(
     private val repository: PostRepository
 ) {
     operator fun invoke(accountId: Long): Flow<Resource<Account>> = flow{

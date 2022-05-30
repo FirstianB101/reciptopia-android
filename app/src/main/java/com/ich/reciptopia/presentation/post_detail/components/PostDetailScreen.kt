@@ -152,7 +152,7 @@ fun PostDetailScreen(
         state.value.mainIngredients.forEach {
             Text(
                 modifier = Modifier.offset(x = 24.dp),
-                text = "${it.name}(${it.detail}) "
+                text = "${it.name} (${it.detail}) "
             )
         }
         
@@ -168,7 +168,7 @@ fun PostDetailScreen(
         state.value.subIngredients.forEach {
             Text(
                 modifier = Modifier.offset(x = 24.dp),
-                text = "${it.name}(${it.detail}) "
+                text = "${it.name} (${it.detail}) "
             )
         }
 

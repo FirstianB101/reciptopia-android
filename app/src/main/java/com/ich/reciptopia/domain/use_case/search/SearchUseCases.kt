@@ -8,7 +8,7 @@ data class SearchUseCases(
     val addSearchHistory: AddSearchHistoryUseCase,
     val deleteSearchHistory: DeleteSearchHistoryUseCase,
     val getPost: GetPostUseCase,
-    val getOwner: GetOwnerOfPostUseCase,
+    val getOwner: GetOwnerByIdUseCase,
     val getSearchedPosts: GetSearchedPostsUseCase,
     val favoritePost: FavoritePostUseCase,
     val unFavoritePost: UnFavoritePostUseCase,

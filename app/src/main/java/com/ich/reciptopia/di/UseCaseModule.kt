@@ -32,7 +32,7 @@ object UseCaseModule {
             addSearchHistory = AddSearchHistoryUseCase(searchRepository),
             deleteSearchHistory = DeleteSearchHistoryUseCase(searchRepository),
             getPost = GetPostUseCase(searchRepository),
-            getOwner = GetOwnerOfPostUseCase(postRepository),
+            getOwner = GetOwnerByIdUseCase(postRepository),
             getSearchedPosts = GetSearchedPostsUseCase(searchRepository),
             getFavorites = GetFavoritesUseCase(postRepository),
             favoritePost = FavoritePostUseCase(postRepository),
@@ -72,7 +72,7 @@ object UseCaseModule {
             getPostsByTime = GetPostsByTimeUseCase(communityRepository),
             getPostsByViews = GetPostsByViewsUseCase(communityRepository),
             getPostLikeTags = GetPostLikeTagsUseCase(postRepository),
-            getOwnerOfPost = GetOwnerOfPostUseCase(postRepository),
+            getOwnerOfPost = GetOwnerByIdUseCase(postRepository),
             favoritePost = FavoritePostUseCase(postRepository),
             getFavorites = GetFavoritesUseCase(postRepository),
             unFavoritePost = UnFavoritePostUseCase(postRepository),
@@ -86,7 +86,7 @@ object UseCaseModule {
     fun providePostDetailUseCases(postDetailRepository: PostDetailRepository, postRepository: PostRepository): PostDetailUseCases{
         return PostDetailUseCases(
             getPostInfo = GetPostInfoUseCase(postDetailRepository),
-            getOwnerOfPost = GetOwnerOfPostUseCase(postRepository),
+            getOwnerById = GetOwnerByIdUseCase(postRepository),
             favoritePost = FavoritePostUseCase(postRepository),
             unFavoritePost = UnFavoritePostUseCase(postRepository),
             getFavorites = GetFavoritesUseCase(postRepository),
@@ -98,7 +98,14 @@ object UseCaseModule {
             getMainIngredients = GetMainIngredientsUseCase(postDetailRepository),
             getReplies = GetRepliesUseCase(postDetailRepository),
             getSteps = GetStepsUseCase(postDetailRepository),
-            getSubIngredients = GetSubIngredientsUseCase(postDetailRepository)
+            getSubIngredients = GetSubIngredientsUseCase(postDetailRepository),
+            createComment = CreateCommentUseCase(postDetailRepository),
+            getCommentLikeTags = GetCommentLikeTagsUseCase(postDetailRepository),
+            getReplyLikeTags = GetReplyLikeTagsUseCase(postDetailRepository),
+            likeComment = LikeCommentUseCase(postDetailRepository),
+            unlikeComment = UnLikeCommentUseCase(postDetailRepository),
+            likeReply = LikeReplyUseCase(postDetailRepository),
+            unlikeReply = UnLikeReplyUseCase(postDetailRepository)
         )
     }
 }

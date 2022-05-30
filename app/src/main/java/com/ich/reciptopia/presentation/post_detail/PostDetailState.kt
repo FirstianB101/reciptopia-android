@@ -11,5 +11,7 @@ data class PostDetailState(
     val currentUser: User? = null,
     val curRecipe: Recipe? = null,
     val curPostSteps: List<Step> = emptyList(),
-    val comments: List<Comment> = emptyList()
+    val comments: List<Comment> = emptyList(),
+    val commentLikeTags: List<CommentLikeTag> = emptyList(),
+    val replyLikeTags: List<ReplyLikeTag> = emptyList()
 )

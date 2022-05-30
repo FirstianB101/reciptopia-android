@@ -4,7 +4,7 @@ import com.ich.reciptopia.domain.use_case.post.*
 
 data class PostDetailUseCases(
     val getPostInfo: GetPostInfoUseCase,
-    val getOwnerOfPost: GetOwnerOfPostUseCase,
+    val getOwnerById: GetOwnerByIdUseCase,
     val favoritePost: FavoritePostUseCase,
     val unFavoritePost: UnFavoritePostUseCase,
     val getFavorites: GetFavoritesUseCase,
@@ -16,5 +16,12 @@ data class PostDetailUseCases(
     val getMainIngredients: GetMainIngredientsUseCase,
     val getSubIngredients: GetSubIngredientsUseCase,
     val getComments: GetCommentsUseCase,
-    val getReplies: GetRepliesUseCase
+    val getReplies: GetRepliesUseCase,
+    val createComment: CreateCommentUseCase,
+    val getCommentLikeTags: GetCommentLikeTagsUseCase,
+    val getReplyLikeTags: GetReplyLikeTagsUseCase,
+    val likeComment: LikeCommentUseCase,
+    val unlikeComment: UnLikeCommentUseCase,
+    val likeReply: LikeReplyUseCase,
+    val unlikeReply: UnLikeReplyUseCase
 )

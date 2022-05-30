@@ -9,6 +9,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.SubdirectoryArrowRight
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,18 +20,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ich.reciptopia.R
-import com.ich.reciptopia.domain.model.Comment
+import com.ich.reciptopia.domain.model.Reply
 
 @Composable
-fun CommentItem(
+fun ReplyItem(
     modifier: Modifier = Modifier,
-    comment: Comment,
-    onCommentClick: () -> Unit,
-    onCommentLikeClick: () -> Unit
+    reply: Reply,
+    onReplyClick: () -> Unit,
+    onReplyLikeClick: () -> Unit
 ){
     Row(
         modifier = modifier
-            .clickable { onCommentClick() }
+            .clickable { onReplyClick() }
+            .padding(start = 40.dp)
     ) {
         IconButton(
             onClick = {}
@@ -56,20 +58,20 @@ fun CommentItem(
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.dp),
-                    text = comment.owner?.nickname ?: "(알 수 없음)",
+                    text = reply.owner?.nickname ?: "(알 수 없음)",
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
 
                 TextButton(
-                    onClick = onCommentLikeClick
+                    onClick = onReplyLikeClick
                 ) {
                     Icon(
                         modifier = Modifier.size(12.dp),
                         imageVector = Icons.Default.ThumbUp,
                         contentDescription = "",
-                        tint = if(comment.like) colorResource(id = R.color.main_color) else Color.Gray
+                        tint = if(reply.like) colorResource(id = R.color.main_color) else Color.Gray
                     )
 
                     Text(
@@ -80,7 +82,7 @@ fun CommentItem(
             }
 
             Text(
-                text = comment.content ?: ""
+                text = reply.content ?: ""
             )
         }
     }

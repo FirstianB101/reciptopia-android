@@ -25,6 +25,8 @@ object RepositoryTestUtils {
     var nextCommentId = 5L
     var nextReplyId = 4L
     var nextStepId = 4L
+    var nextCommentLikeTagId = 3L
+    var nextReplyLikeTagId = 3L
 
     val testPosts = mutableListOf(
         Post(
@@ -167,6 +169,19 @@ object RepositoryTestUtils {
             content = "꼴랑 이게 댓글?"
         )
     )
+
+    val testCommentLikeTags = mutableListOf(
+        CommentLikeTag(
+            id = 1L,
+            ownerId = 1L,
+            commentId = 1L
+        ),
+        CommentLikeTag(
+            id = 2L,
+            ownerId = 1L,
+            commentId = 3L
+        )
+    )
     
     val testReplies = mutableListOf(
         Reply(
@@ -186,6 +201,19 @@ object RepositoryTestUtils {
             ownerId = 1L,
             commentId = 4L,
             content = "꼴랑 답글에 답글"
+        )
+    )
+
+    val testReplyLikeTags = mutableListOf(
+        ReplyLikeTag(
+            id = 1L,
+            ownerId = 1L,
+            replyId = 1L
+        ),
+        ReplyLikeTag(
+            id = 2L,
+            ownerId = 1L,
+            replyId = 3L
         )
     )
 
