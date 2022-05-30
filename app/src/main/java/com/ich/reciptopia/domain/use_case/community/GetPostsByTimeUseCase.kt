@@ -13,11 +13,11 @@ import javax.inject.Inject
 class GetPostsByTimeUseCase @Inject constructor(
     private val repository: CommunityRepository
 ){
-    operator fun invoke(): Flow<Resource<List<Post>>> = flow{
+    operator fun invoke(searchQuery: String): Flow<Resource<List<Post>>> = flow{
         try{
             emit(Resource.Loading<List<Post>>())
 
-            val posts = repository.getPostsByTime()
+            val posts = repository.getPostsByTime(searchQuery)
             emit(Resource.Success<List<Post>>(posts))
         }catch (e: HttpException){
             emit(Resource.Error<List<Post>>(e.localizedMessage ?: Constants.HTTP_EXCEPTION_COMMENT))

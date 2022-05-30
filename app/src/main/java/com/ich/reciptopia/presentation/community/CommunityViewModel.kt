@@ -14,7 +14,6 @@ import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -39,7 +38,7 @@ class CommunityViewModel @Inject constructor(
 
     init {
         observeUserChanged()
-        onEvent(CommunityScreenEvent.GetPosts)
+        onEvent(CommunityScreenEvent.SearchPosts)
     }
 
     fun onEvent(event: CommunityScreenEvent) {
@@ -58,7 +57,7 @@ class CommunityViewModel @Inject constructor(
             is CommunityScreenEvent.SearchButtonClicked -> {
                 val searchModeIsOn = _state.value.searchMode
                 if (searchModeIsOn) {
-                    // 검색 시작
+                    onEvent(CommunityScreenEvent.SearchPosts)
                 } else {
                     _state.value = _state.value.copy(
                         searchMode = true
@@ -79,7 +78,7 @@ class CommunityViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     sortOption = event.option
                 )
-                onEvent(CommunityScreenEvent.GetPosts)
+                onEvent(CommunityScreenEvent.SearchPosts)
             }
             is CommunityScreenEvent.CreatePostTitleChanged -> {
                 _state.value = _state.value.copy(
@@ -130,7 +129,7 @@ class CommunityViewModel @Inject constructor(
                     showAddChipDialog = event.show
                 )
             }
-            is CommunityScreenEvent.GetPosts -> {
+            is CommunityScreenEvent.SearchPosts -> {
                 val job = when (_state.value.sortOption) {
                     "최신순" -> getPostsByTime()
                     "조회순" -> getPostsByViews()
@@ -180,12 +179,13 @@ class CommunityViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 currentUser = user
             )
-            onEvent(CommunityScreenEvent.GetPosts)
+            onEvent(CommunityScreenEvent.SearchPosts)
         }
     }
 
     private fun getPostsByTime() = viewModelScope.launch {
-        useCases.getPostsByTime().collect { result ->
+        val searchQuery = _state.value.searchQuery
+        useCases.getPostsByTime(searchQuery).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -209,7 +209,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun getPostsByViews() = viewModelScope.launch {
-        useCases.getPostsByViews().collect { result ->
+        val searchQuery = _state.value.searchQuery
+        useCases.getPostsByViews(searchQuery).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(

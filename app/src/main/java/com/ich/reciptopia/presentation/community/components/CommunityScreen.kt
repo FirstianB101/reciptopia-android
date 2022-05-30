@@ -70,7 +70,7 @@ fun CommunityScreen(
     ){
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing),
-            onRefresh = { viewModel.onEvent(CommunityScreenEvent.GetPosts) }
+            onRefresh = { viewModel.onEvent(CommunityScreenEvent.SearchPosts) }
         ) {
             Box(
                 modifier = Modifier.fillMaxSize()

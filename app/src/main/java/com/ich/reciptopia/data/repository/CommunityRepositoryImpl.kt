@@ -10,14 +10,14 @@ class CommunityRepositoryImpl(
     private val api: ReciptopiaApi
 ): CommunityRepository {
 
-    override suspend fun getPostsByTime(): List<Post> {
+    override suspend fun getPostsByTime(searchQuery: String): List<Post> {
         delay(500L)
-        return RepositoryTestUtils.testPosts
+        return RepositoryTestUtils.testPosts.filter { it.title?.contains(searchQuery) ?: false }
     }
 
-    override suspend fun getPostsByViews(): List<Post> {
+    override suspend fun getPostsByViews(searchQuery: String): List<Post> {
         delay(500L)
-        return RepositoryTestUtils.testPosts.reversed()
+        return RepositoryTestUtils.testPosts.reversed().filter{ it.title?.contains(searchQuery) ?: false }
     }
 
     override suspend fun createPost(post: Post): Post {

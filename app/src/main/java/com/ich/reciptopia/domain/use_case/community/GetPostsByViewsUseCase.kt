@@ -13,11 +13,11 @@ import javax.inject.Inject
 class GetPostsByViewsUseCase @Inject constructor(
     private val repository: CommunityRepository
 ){
-    operator fun invoke(): Flow<Resource<List<Post>>> = flow{
+    operator fun invoke(searchQuery: String): Flow<Resource<List<Post>>> = flow{
         try{
             emit(Resource.Loading<List<Post>>())
 
-            val posts = repository.getPostsByViews()
+            val posts = repository.getPostsByViews(searchQuery)
             emit(Resource.Success<List<Post>>(posts))
         }catch (e: HttpException){
             emit(Resource.Error<List<Post>>(e.localizedMessage ?: Constants.HTTP_EXCEPTION_COMMENT))

@@ -22,6 +22,6 @@ sealed class CommunityScreenEvent{
     object SearchModeOff: CommunityScreenEvent()
     object SearchButtonClicked: CommunityScreenEvent()
 
-    object GetPosts: CommunityScreenEvent()
+    object SearchPosts: CommunityScreenEvent()
     object CreatePost: CommunityScreenEvent()
 }
