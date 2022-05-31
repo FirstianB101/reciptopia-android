@@ -54,14 +54,17 @@ class SignUpViewModel @Inject constructor(
                 )
             }
             is SignUpScreenEvent.SignUp -> {
-                val infoFilled = allInfoFilled()
-                if(infoFilled is SignUpFormatErrors.NoError){
-                    checkEmailExists().invokeOnCompletion {
+                viewModelScope.launch {
+                    val infoFilled = allInfoFilled()
+                    if(infoFilled is SignUpFormatErrors.NoError){
+                        checkEmailExists().join()
+
                         if(!_state.value.emailExist)
                             signUp()
-                    }
-                }else{
-                    viewModelScope.launch {
+                        else
+                            _eventFlow.emit(UiEvent.ShowToast("이미 존재하는 이메일입니다"))
+
+                    }else{
                         _eventFlow.emit(UiEvent.ShowSnackbar(infoFilled.msg))
                     }
                 }

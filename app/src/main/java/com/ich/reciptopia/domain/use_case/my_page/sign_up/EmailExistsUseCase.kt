@@ -17,7 +17,7 @@ class EmailExistsUseCase @Inject constructor(
             emit(Resource.Loading<Boolean>())
 
             val exist = repository.accountExists(email)
-            emit(Resource.Success<Boolean>(exist.exist))
+            emit(Resource.Success<Boolean>(exist.exists))
         }catch (e: HttpException){
             emit(Resource.Error<Boolean>(e.localizedMessage ?: Constants.HTTP_EXCEPTION_COMMENT))
         }catch (e: IOException){
