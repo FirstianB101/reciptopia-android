@@ -56,12 +56,17 @@ fun ReplyItem(
             ) {
                 Text(
                     modifier = Modifier
-                        .weight(1f)
                         .padding(end = 4.dp),
                     text = reply.owner?.nickname ?: "(알 수 없음)",
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
+                )
+
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = "2022/03/29",
+                    fontSize = 14.sp
                 )
 
                 TextButton(

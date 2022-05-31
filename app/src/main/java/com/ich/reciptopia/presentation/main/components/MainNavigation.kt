@@ -1,5 +1,6 @@
 package com.ich.reciptopia.presentation.main.components
 
+import android.widget.Toast
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,6 +8,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -18,6 +20,7 @@ import com.ich.reciptopia.presentation.main.analyze_ingredient.components.Analyz
 import com.ich.reciptopia.presentation.main.search.SearchViewModel
 import com.ich.reciptopia.presentation.main.search.components.SearchScreen
 import com.ich.reciptopia.presentation.main.search_result.components.SearchResultScreen
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun MainNavigation(
@@ -28,12 +31,23 @@ fun MainNavigation(
     notificationButtonClicked: () -> Unit
 ) {
     val state = viewModel.state.collectAsState()
+    val context = LocalContext.current
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val searchViewModel: SearchViewModel = hiltViewModel()
 
     val searchSource = remember { MutableInteractionSource() }
+
+    LaunchedEffect(Unit){
+        viewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is MainViewModel.UiEvent.ShowToast -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     LaunchedEffect(currentRoute) {
         when (currentRoute) {

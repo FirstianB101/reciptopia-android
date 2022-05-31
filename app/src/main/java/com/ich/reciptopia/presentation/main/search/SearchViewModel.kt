@@ -44,16 +44,20 @@ class SearchViewModel @Inject constructor(
                 getSearchedPostList()
             }
             is SearchScreenEvent.DoSearch -> {
-                getSearchedPostList()
-                val newHistory = SearchHistory(
-                    ownerId = _state.value.currentUser?.account?.id,
-                    ingredientNames = event.ingredientNames
-                )
-                addSearchHistory(newHistory)
-                    .invokeOnCompletion { getSearchHistories() }
-
                 viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.NavigateToSearchResultScreen)
+                    if(event.ingredientNames.isNotEmpty()) {
+                        getSearchedPostList()
+                        val newHistory = SearchHistory(
+                            ownerId = _state.value.currentUser?.account?.id,
+                            ingredientNames = event.ingredientNames
+                        )
+                        addSearchHistory(newHistory).join()
+                        getSearchHistories()
+                        
+                        _eventFlow.emit(UiEvent.NavigateToSearchResultScreen)
+                    }else{
+                        _eventFlow.emit(UiEvent.ShowToast("검색할 재료들을 추가해주세요"))
+                    }
                 }
             }
             is SearchScreenEvent.ClickHistory -> {

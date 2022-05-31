@@ -2,12 +2,16 @@ package com.ich.reciptopia.presentation.main
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.common.util.getAddedList
 import com.ich.reciptopia.common.util.getRemovedList
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -17,6 +21,9 @@ class MainViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(MainScreenState())
     val state = _state.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     fun onEvent(event: MainScreenEvent){
         when(event){
@@ -35,10 +42,16 @@ class MainViewModel @Inject constructor(
                 _state.value.chipStates[event.idx].isSubIngredient.value = !previous
             }
             is MainScreenEvent.AddChip -> {
-                val newChip = ChipState(state.value.searchQuery, mutableStateOf(true))
-                _state.value = _state.value.copy(
-                    chipStates = _state.value.chipStates.getAddedList(newChip)
-                )
+                if(_state.value.searchQuery.isNotBlank()) {
+                    val newChip = ChipState(_state.value.searchQuery, mutableStateOf(true))
+                    _state.value = _state.value.copy(
+                        chipStates = _state.value.chipStates.getAddedList(newChip)
+                    )
+                }else{
+                    viewModelScope.launch {
+                        _eventFlow.emit(UiEvent.ShowToast("재료 이름을 입력 후 추가해주세요"))
+                    }
+                }
             }
             is MainScreenEvent.RemoveChip -> {
                 _state.value = _state.value.copy(
@@ -56,5 +69,9 @@ class MainViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    sealed class UiEvent{
+        data class ShowToast(val message: String): UiEvent()
     }
 }
