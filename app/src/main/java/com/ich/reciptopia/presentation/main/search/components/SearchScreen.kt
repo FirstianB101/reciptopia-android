@@ -178,6 +178,15 @@ fun SearchScreen(
             )
         }
     }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        if(state.value.isLoading){
+            CircularProgressIndicator()
+        }
+    }
 }
 
 private fun startPostActivity(context: Context, postId: Long?) {
