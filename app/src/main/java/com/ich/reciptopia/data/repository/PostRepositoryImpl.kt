@@ -2,7 +2,10 @@ package com.ich.reciptopia.data.repository
 
 import com.ich.reciptopia.data.data_source.ReciptopiaDao
 import com.ich.reciptopia.data.remote.ReciptopiaApi
-import com.ich.reciptopia.data.repository.RepositoryTestUtils.testPostLikeTags
+import com.ich.reciptopia.data.remote.dto.toAccount
+import com.ich.reciptopia.data.remote.dto.toFavorite
+import com.ich.reciptopia.data.remote.dto.toFavoriteList
+import com.ich.reciptopia.data.remote.dto.toPostLikeTag
 import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.PostLikeTag
@@ -16,25 +19,15 @@ class PostRepositoryImpl(
 ) : PostRepository {
 
     override suspend fun getOwnerOfPost(accountId: Long): Account {
-        return RepositoryTestUtils.testOwner.find { it.id == accountId }!!
+        return api.getAccount(accountId).toAccount()
     }
 
-    override suspend fun favoritePostLogin(ownerId: Long?, postId: Long?) {
-        val favorite = Favorite(
-            id = RepositoryTestUtils.nextFavoriteId++,
-            ownerId = ownerId,
-            postId = postId
-        )
-        RepositoryTestUtils.testFavorites.add(favorite)
+    override suspend fun favoritePostLogin(ownerId: Long?, postId: Long?): Favorite {
+        return api.createFavorite(Favorite(ownerId = ownerId, postId = postId)).toFavorite()
     }
 
-    override suspend fun unFavoritePostLogin(ownerId: Long?, postId: Long?) {
-        for (i in RepositoryTestUtils.testFavorites.indices) {
-            if (RepositoryTestUtils.testFavorites[i].ownerId == ownerId && RepositoryTestUtils.testFavorites[i].postId == postId) {
-                RepositoryTestUtils.testFavorites.removeAt(i)
-                break
-            }
-        }
+    override suspend fun unFavoritePostLogin(favoriteId: Long?) {
+        api.deleteFavorite(favoriteId)
     }
 
     override suspend fun favoritePostNotLogin(ownerId: Long?, postId: Long?) {
@@ -60,32 +53,19 @@ class PostRepositoryImpl(
     }
 
     override suspend fun getFavorites(userId: Long): List<Favorite> {
-        return RepositoryTestUtils.testFavorites.filter { it.ownerId == userId }
+        return api.getFavoritesByOwnerId(userId).toFavoriteList()
     }
 
-    override suspend fun likePost(ownerId: Long?, postId: Long?) {
-        testPostLikeTags.add(
-            PostLikeTag(
-                id = RepositoryTestUtils.nextLikeTagId++,
-                ownerId = ownerId,
-                postId = postId
-            )
-        )
+    override suspend fun likePost(ownerId: Long?, postId: Long?): PostLikeTag {
+        return api.createPostLikeTag(PostLikeTag(ownerId = ownerId, postId = postId)).toPostLikeTag()
     }
 
-    override suspend fun unLikePost(ownerId: Long?, postId: Long?) {
-        for (i in testPostLikeTags.indices) {
-            if (testPostLikeTags[i].ownerId == ownerId &&
-                testPostLikeTags[i].postId == postId
-            ) {
-                testPostLikeTags.removeAt(i)
-                break
-            }
-        }
+    override suspend fun unLikePost(postLikeTagId: Long?) {
+        api.deletePostLikeTag(postLikeTagId)
     }
 
 
     override suspend fun getLikeTags(userId: Long): List<PostLikeTag> {
-        return testPostLikeTags.filter { it.ownerId == userId }
+        return api.getPostLikeTags().map{it.toPostLikeTag()}
     }
 }

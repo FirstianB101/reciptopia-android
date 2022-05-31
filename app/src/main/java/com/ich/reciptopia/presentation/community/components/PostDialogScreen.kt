@@ -20,7 +20,10 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +38,6 @@ import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.Constants
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 import com.ich.reciptopia.presentation.community.CommunityViewModel
-import com.ich.reciptopia.presentation.my_page.profile.components.TextInputDialog
 
 @Composable
 fun PostDialogScreen(
@@ -222,7 +224,6 @@ fun PostDialogScreen(
                 Row(
                     Modifier.padding(16.dp)
                 ) {
-
                     if (state.value.newPostStep.isEmpty()) {
                         Text(
                             text = stringResource(id = R.string.comment_input_step),
@@ -234,15 +235,13 @@ fun PostDialogScreen(
             },
         )
 
-        TextInputDialog(
-            modifier = Modifier.padding(16.dp),
+        IngredientNameWithDetailDialog(
             title = stringResource(id = R.string.input_ingredient),
             buttonText = stringResource(id = R.string.add_ingredient),
-            initialValue = "",
             dialogState = state.value.showAddChipDialog,
             onDismiss = { viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(false)) },
-            onButtonClick = {
-                viewModel.onEvent(CommunityScreenEvent.AddChip(it))
+            onButtonClick = { name, detail ->
+                viewModel.onEvent(CommunityScreenEvent.AddChip(name, detail))
                 viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(false))
             }
         )

@@ -12,11 +12,11 @@ import java.io.IOException
 class DeleteFavoriteUseCase(
     private val repository: PostRepository
 ) {
-    operator fun invoke(ownerId: Long?, postId: Long, login: Boolean): Flow<Resource<Unit>> = flow{
+    operator fun invoke(postId: Long, favoriteId: Long?, login: Boolean): Flow<Resource<Unit>> = flow{
         try{
             emit(Resource.Loading<Unit>())
 
-            if(login) repository.unFavoritePostLogin(ownerId, postId)
+            if(login) repository.unFavoritePostLogin(favoriteId)
             else repository.unFavoritePostNotLogin(postId)
 
         }catch (e: HttpException){

@@ -115,7 +115,6 @@ fun CommunityScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         itemsIndexed(state.value.posts) { idx, post ->
-                            Divider()
                             PostPreviewItem(
                                 modifier = Modifier.fillMaxWidth(),
                                 post = post,
@@ -133,6 +132,7 @@ fun CommunityScreen(
                                     viewModel.onEvent(CommunityScreenEvent.LikeButtonClicked(post, idx))
                                 }
                             )
+                            Divider()
                         }
                     }
                 }

@@ -4,7 +4,8 @@ import androidx.compose.runtime.MutableState
 
 data class ChipState(
     var text: String,
-    var isSubIngredient: MutableState<Boolean>
+    var isSubIngredient: MutableState<Boolean>,
+    var detail: String = ""
 ){
     fun toChipInfo(): ChipInfo{
         return ChipInfo(text,isSubIngredient.value)

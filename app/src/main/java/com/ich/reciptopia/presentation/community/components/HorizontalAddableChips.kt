@@ -78,7 +78,7 @@ fun HorizontalAddableChips(
         }
         items(elements.size){ idx ->
             ChipWithImage(
-                text = elements[idx].text,
+                text = "${elements[idx].text} ${elements[idx].detail}",
                 imageId = R.drawable.close,
                 selected = elements[idx].isSubIngredient.value,
                 onChipClicked = { content, isMain ->

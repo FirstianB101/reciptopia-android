@@ -116,13 +116,10 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun getFavoritePosts() = viewModelScope.launch {
-        getFavorites().invokeOnCompletion {
-            _state.value.favorites.forEachIndexed { index, favorite ->
-                getPostsWithFavorites(index, favorite)
-                    .invokeOnCompletion {
-                        getPostOwner(index, _state.value.favorites[index].post)
-                    }
-            }
+        getFavorites().join()
+        getPostsWithFavorites(_state.value.favorites).join()
+        _state.value.favorites.forEachIndexed { index, favorite ->
+            getPostOwner(index, favorite.post)
         }
     }
 
@@ -237,7 +234,8 @@ class SearchViewModel @Inject constructor(
 
     private fun deleteFavorite(postId: Long) = viewModelScope.launch {
         val ownerId = _state.value.currentUser?.account?.id
-        useCases.deleteFavorite(ownerId, postId, ownerId != null).collect{ result ->
+        val favoriteId = _state.value.favorites.find{it.postId == postId}?.id
+        useCases.deleteFavorite(postId, favoriteId,ownerId != null).collect{ result ->
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -260,15 +258,21 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun getPostsWithFavorites(idx: Int, favorite: Favorite) = viewModelScope.launch {
-        val postId = _state.value.favorites[idx].postId!!
-        useCases.getPost(postId).collect { result ->
+    private fun getPostsWithFavorites(favoriteList: List<Favorite>) = viewModelScope.launch {
+        val postIds = _state.value.favorites.map{it.postId!!}
+        useCases.getPost(postIds).collect { result ->
             when (result) {
                 is Resource.Success -> {
+                    val map = mutableMapOf<Long, Post>()
+                    result.data!!.forEach { post ->
+                        map[post.id!!] = post
+                    }
                     val favorites = _state.value.favorites.toMutableList()
-                    favorites[idx] = favorite.copy(
-                        post = result.data
-                    )
+                    for(i in favorites.indices){
+                        favorites[i] = favorites[i].copy(
+                            post = map[favorites[i].postId]
+                        )
+                    }
                     _state.value = _state.value.copy(
                         favorites = favorites,
                         isLoading = false
@@ -318,7 +322,15 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun getSearchedPosts() = viewModelScope.launch {
-        useCases.getSearchedPosts().collect{ result ->
+        val mainIngredients = mutableListOf<String>()
+        val subIngredients = mutableListOf<String>()
+
+        _state.value.chipInfosForSearch?.forEach{ chip ->
+            if(chip.isSubIngredient) subIngredients.add(chip.text)
+            else mainIngredients.add(chip.text)
+        }
+
+        useCases.getSearchedPosts(mainIngredients, subIngredients).collect{ result ->
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -460,8 +472,8 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun unlikePost(postId: Long) = viewModelScope.launch {
-        val userId = _state.value.currentUser?.account?.id!!
-        useCases.unlikePost(userId, postId).collect { result ->
+        val likeTagId = _state.value.likeTags.find{it.postId == postId}?.id
+        useCases.unlikePost(likeTagId).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -515,7 +527,8 @@ class SearchViewModel @Inject constructor(
 
     private fun unFavoritePost(postId: Long, idx: Int) = viewModelScope.launch {
         val ownerId = _state.value.currentUser?.account?.id
-        useCases.unFavoritePost(ownerId, postId, ownerId != null).collect{ result ->
+        val favoriteId = _state.value.favorites.find{it.postId == postId}?.id
+        useCases.unFavoritePost(postId, favoriteId,ownerId != null).collect{ result ->
             when(result){
                 is Resource.Success -> {
                     val posts = _state.value.posts.toMutableList()

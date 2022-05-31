@@ -40,23 +40,26 @@ interface ReciptopiaApi {
     @GET("posts")
     suspend fun getPosts(): PostWithCommentAndLikeTagCountsDto
 
-    @POST("posts")
+    @GET("posts")
     suspend fun getPostsByOwnerId(@Query("ownerId")ownerId: Long): PostWithCommentAndLikeTagCountsDto
 
-    @POST("posts")
-    suspend fun getPostsByTitleLike(@Query("titleLike")title: String): PostWithCommentAndLikeTagCountsDto
+    @GET("posts")
+    suspend fun getPostsByTitleLike(
+        @Query("titleLike")title: String,
+        @Query("sort")sort: String
+    ): PostWithCommentAndLikeTagCountsDto
 
-    @POST("posts")
+    @GET("posts")
     suspend fun getPostsByIds(@Query("ids")ids: List<Long>): PostWithCommentAndLikeTagCountsDto
 
-    @POST("posts")
+    @GET("posts")
     suspend fun getPostsByIngredients(
         @Query("mainIngredientNames")mainIngredients: List<String>,
         @Query("subIngredientNames")subIngredients: List<String>
     ): PostWithCommentAndLikeTagCountsDto
 
-    @POST("posts")
-    suspend fun createPost(@Body post: Post): PostDto
+    @POST("recipePosts")
+    suspend fun createRecipePost(@Body recipePost: RecipePost): RecipePostDto
 
     @PATCH("posts/{id}")
     suspend fun patchPost(@Path("id")postId: Long, post: Post): PostDto
@@ -112,7 +115,7 @@ interface ReciptopiaApi {
     @POST("post/recipe/steps")
     suspend fun createStep(@Body step: Step): StepsDto
 
-    @POST("post/recipe/steps")
+    @GET("post/recipe/steps")
     suspend fun getStepsByRecipeId(@Query("recipeId")recipeId: Long): StepsDto
 
     @PATCH("post/recipe/steps/{id}")
@@ -129,8 +132,8 @@ interface ReciptopiaApi {
     @POST("post/recipe/mainIngredients")
     suspend fun createMainIngredient(@Body ingredient: MainIngredient): MainIngredientDto
 
-    @POST("post/recipe/mainIngredients")
-    suspend fun getMainIngredientsByRecipeId(@Query("recipeId")recipeId: Long): MainIngredientsDto
+    @GET("post/recipe/mainIngredients")
+    suspend fun getMainIngredientsByPostId(@Query("postId")postId: Long): MainIngredientsDto
 
     @PATCH("post/recipe/mainIngredients/{id}")
     suspend fun patchMainIngredient(@Path("id")ingredientId: Long, @Body ingredient: MainIngredient): MainIngredientDto
@@ -146,8 +149,8 @@ interface ReciptopiaApi {
     @POST("post/recipe/subIngredients")
     suspend fun createSubIngredient(@Body ingredient: SubIngredient): SubIngredientDto
 
-    @POST("post/recipe/subIngredients")
-    suspend fun getSubIngredientsByRecipeId(@Query("recipeId")recipeId: Long): SubIngredientsDto
+    @GET("post/recipe/subIngredients")
+    suspend fun getSubIngredientsByPostId(@Query("postId")postId: Long): SubIngredientsDto
 
     @PATCH("post/recipe/subIngredients/{id}")
     suspend fun patchSubIngredient(@Path("id")ingredientId: Long, @Body ingredient: SubIngredient): SubIngredientDto
@@ -164,7 +167,7 @@ interface ReciptopiaApi {
     suspend fun createRecipe(@Body recipe: Recipe): RecipeDto
 
     @GET("post/recipes")
-    suspend fun getRecipeByPostId(@Query("postIds")postId: Long): Recipe
+    suspend fun getRecipeByPostId(@Query("postIds")postIds: List<Long>): RecipesDto
 
     @PATCH("post/recipes/{id}")
     suspend fun patchRecipe(@Path("id")recipeId: Long, @Body recipe: Recipe): RecipeDto
@@ -184,7 +187,7 @@ interface ReciptopiaApi {
     suspend fun createPostLikeTag(@Body tag: PostLikeTag): PostLikeTagDto
 
     @DELETE("post/likeTags/{id}")
-    suspend fun deletePostLikeTag(@Path("id")tagId: Long): Response<Unit>
+    suspend fun deletePostLikeTag(@Path("id")tagId: Long?): Response<Unit>
 
 
     // CommentLikeTag
@@ -198,7 +201,7 @@ interface ReciptopiaApi {
     suspend fun createCommentLikeTag(@Body tag: CommentLikeTag): CommentLikeTagDto
 
     @DELETE("post/comment/likeTags/{id}")
-    suspend fun deleteCommentLikeTag(@Path("id")tagId: Long): Response<Unit>
+    suspend fun deleteCommentLikeTag(@Path("id")tagId: Long?): Response<Unit>
 
 
     // ReplyLikeTag
@@ -212,7 +215,7 @@ interface ReciptopiaApi {
     suspend fun createReplyLikeTag(@Body tag: ReplyLikeTag): ReplyLikeTagDto
 
     @DELETE("post/comment/reply/likeTags/{id}")
-    suspend fun deleteReplyLikeTag(@Path("id")tagId: Long): Response<Unit>
+    suspend fun deleteReplyLikeTag(@Path("id")tagId: Long?): Response<Unit>
 
 
     // SearchHistory
@@ -220,7 +223,7 @@ interface ReciptopiaApi {
     suspend fun getSearchHistory(@Path("id")historyId: Long): SearchHistoryDto
 
     @GET("account/{ownerId}/searchHistories")
-    suspend fun getSearchHistories(@Path("ownerId")ownerId: Long): List<SearchHistoryDto>
+    suspend fun getSearchHistories(@Path("ownerId")ownerId: Long?): SearchHistoriesDto
 
     @POST("account/searchHistories")
     suspend fun createSearchHistory(@Body history: SearchHistory): SearchHistoryDto
@@ -234,7 +237,7 @@ interface ReciptopiaApi {
     suspend fun getFavorite(@Path("id")favoriteId: Long): FavoriteDto
 
     @GET("account/favorites")
-    suspend fun getFavorites(): List<FavoriteDto>
+    suspend fun getFavorites(): FavoritesDto
 
     @GET("account/favorites")
     suspend fun getFavoritesByOwnerId(@Query("ownerId")ownerId: Long): FavoritesDto
@@ -243,5 +246,5 @@ interface ReciptopiaApi {
     suspend fun createFavorite(@Body favorite: Favorite): FavoriteDto
 
     @DELETE("account/favorites/{id}")
-    suspend fun deleteFavorite(@Path("id")favoriteId: Long): Response<Unit>
+    suspend fun deleteFavorite(@Path("id")favoriteId: Long?): Response<Unit>
 }

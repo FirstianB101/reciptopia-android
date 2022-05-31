@@ -13,16 +13,16 @@ import javax.inject.Inject
 class GetPostUseCase @Inject constructor(
     private val repository: SearchRepository
 ) {
-    operator fun invoke(postId: Long): Flow<Resource<Post>> = flow{
+    operator fun invoke(postIds: List<Long>): Flow<Resource<List<Post>>> = flow{
         try{
-            emit(Resource.Loading<Post>())
+            emit(Resource.Loading<List<Post>>())
 
-            val post = repository.getPost(postId)
-            emit(Resource.Success<Post>(post))
+            val post = repository.getPostByIds(postIds)
+            emit(Resource.Success<List<Post>>(post))
         }catch (e: HttpException){
-            emit(Resource.Error<Post>(e.localizedMessage ?: Constants.HTTP_EXCEPTION_COMMENT))
+            emit(Resource.Error<List<Post>>(e.localizedMessage ?: Constants.HTTP_EXCEPTION_COMMENT))
         }catch (e: IOException){
-            emit(Resource.Error<Post>(Constants.CANNOT_CONNECT_SERVER_COMMENT))
+            emit(Resource.Error<List<Post>>(Constants.CANNOT_CONNECT_SERVER_COMMENT))
         }
     }
 }

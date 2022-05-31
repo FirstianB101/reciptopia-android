@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.domain.model.Comment
+import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.use_case.post_detail.PostDetailUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -213,7 +214,7 @@ class PostDetailViewModel @Inject constructor(
 
     private fun unFavoritePost(postId: Long) = viewModelScope.launch {
         val userId = _state.value.currentUser?.account?.id
-        useCases.unFavoritePost(userId, postId, userId != null).collect{ result ->
+        useCases.unFavoritePost(postId, 0L, userId != null).collect{ result ->
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -251,6 +252,7 @@ class PostDetailViewModel @Inject constructor(
                                 isFavorite = true
                             )
                             _state.value = _state.value.copy(
+                                curPostFavorite = favorite,
                                 curPost = post
                             )
                             break
@@ -298,8 +300,8 @@ class PostDetailViewModel @Inject constructor(
     }
 
     private fun unlikePost() = viewModelScope.launch {
-        val userId = _state.value.currentUser?.account?.id!!
-        useCases.unlikePost(userId, postId).collect { result ->
+        val likeTagId = _state.value.curPostLikeTag?.id
+        useCases.unlikePost(likeTagId).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     val post = _state.value.curPost
@@ -332,14 +334,17 @@ class PostDetailViewModel @Inject constructor(
                         val tags = result.data!!
                         val post = _state.value.curPost
                         var like = false
+                        var likeTag: PostLikeTag? = null
 
                         tags.forEach {
                             if (it.ownerId == userId && it.postId == post?.id) {
                                 like = true
+                                likeTag = it
                             }
                         }
 
                         _state.value = _state.value.copy(
+                            curPostLikeTag = likeTag,
                             curPost = post?.copy(like = like),
                             isLoading = false
                         )

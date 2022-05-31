@@ -13,11 +13,11 @@ import javax.inject.Inject
 class GetSearchedPostsUseCase @Inject constructor(
     private val repository: SearchRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<Post>>> = flow{
+    operator fun invoke(mainIngredients: List<String>, subIngredients: List<String>): Flow<Resource<List<Post>>> = flow{
         try{
             emit(Resource.Loading<List<Post>>())
 
-            val posts = repository.getSearchedPosts()
+            val posts = repository.getSearchedPosts(mainIngredients, subIngredients)
             emit(Resource.Success<List<Post>>(posts))
         }catch (e: HttpException){
             emit(Resource.Error<List<Post>>(e.localizedMessage ?: Constants.HTTP_EXCEPTION_COMMENT))

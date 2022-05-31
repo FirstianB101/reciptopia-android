@@ -3,7 +3,7 @@ package com.ich.reciptopia.domain.use_case.community
 import com.ich.reciptopia.domain.use_case.post.*
 
 data class CommunityUseCases(
-    val createPost: CreatePostUseCase,
+    val createRecipePost: CreatePostUseCase,
     val getPostsByTime: GetPostsByTimeUseCase,
     val getPostsByViews: GetPostsByViewsUseCase,
     val getOwnerOfPost: GetOwnerByIdUseCase,

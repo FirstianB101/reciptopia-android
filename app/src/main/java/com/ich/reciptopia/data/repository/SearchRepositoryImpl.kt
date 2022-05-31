@@ -2,14 +2,13 @@ package com.ich.reciptopia.data.repository
 
 import com.ich.reciptopia.data.data_source.ReciptopiaDao
 import com.ich.reciptopia.data.remote.ReciptopiaApi
-import com.ich.reciptopia.data.repository.RepositoryTestUtils.nextFavoriteId
-import com.ich.reciptopia.domain.model.Account
-import com.ich.reciptopia.domain.model.Favorite
+import com.ich.reciptopia.data.remote.dto.toPostList
+import com.ich.reciptopia.data.remote.dto.toSearchHistory
+import com.ich.reciptopia.data.remote.dto.toSearchHistoryList
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.domain.repository.SearchRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import retrofit2.Response
 
 class SearchRepositoryImpl(
@@ -31,29 +30,25 @@ class SearchRepositoryImpl(
     }
 
     override suspend fun getSearchHistories(userId: Long?): List<SearchHistory> {
-        return RepositoryTestUtils.testHistories.filter { it.ownerId == userId }
+        return api.getSearchHistories(userId).toSearchHistoryList()
     }
 
     override suspend fun addSearchHistory(history: SearchHistory): SearchHistory {
-        RepositoryTestUtils.testHistories.add(history)
-        return history
+        return api.createSearchHistory(history).toSearchHistory()
     }
 
     override suspend fun deleteSearchHistory(historyId: Long): Response<Unit> {
-        for(i in RepositoryTestUtils.testHistories.indices){
-            if(RepositoryTestUtils.testHistories[i].id == historyId) {
-                RepositoryTestUtils.testHistories.removeAt(i)
-                break
-            }
-        }
-        return Response.success(Unit)
+        return api.deleteSearchHistory(historyId)
     }
 
-    override suspend fun getPost(postId: Long): Post {
-        return RepositoryTestUtils.testPosts.find{ it.id == postId }!!
+    override suspend fun getPostByIds(postIds: List<Long>): List<Post> {
+        return api.getPostsByIds(postIds).toPostList()
     }
 
-    override suspend fun getSearchedPosts(): List<Post> {
-        return RepositoryTestUtils.testPosts
+    override suspend fun getSearchedPosts(
+        mainIngredients: List<String>,
+        subIngredients: List<String>
+    ): List<Post> {
+        return api.getPostsByIngredients(mainIngredients, subIngredients).toPostList()
     }
 }

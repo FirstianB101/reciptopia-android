@@ -14,7 +14,7 @@ interface SearchRepository {
     suspend fun addSearchHistory(history: SearchHistory): SearchHistory
     suspend fun deleteSearchHistory(historyId: Long): Response<Unit>
 
-    suspend fun getSearchedPosts(): List<Post>
+    suspend fun getSearchedPosts(mainIngredients: List<String>, subIngredients: List<String>): List<Post>
 
-    suspend fun getPost(postId: Long): Post
+    suspend fun getPostByIds(postIds: List<Long>): List<Post>
 }

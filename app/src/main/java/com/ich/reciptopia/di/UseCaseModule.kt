@@ -68,7 +68,7 @@ object UseCaseModule {
     @Singleton
     fun provideCommunityUseCases(communityRepository: CommunityRepository, postRepository: PostRepository): CommunityUseCases{
         return CommunityUseCases(
-            createPost = CreatePostUseCase(communityRepository),
+            createRecipePost = CreatePostUseCase(communityRepository),
             getPostsByTime = GetPostsByTimeUseCase(communityRepository),
             getPostsByViews = GetPostsByViewsUseCase(communityRepository),
             getPostLikeTags = GetPostLikeTagsUseCase(postRepository),

@@ -8,9 +8,7 @@ import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.common.util.getAddedList
 import com.ich.reciptopia.common.util.getRemovedList
-import com.ich.reciptopia.domain.model.Favorite
-import com.ich.reciptopia.domain.model.Post
-import com.ich.reciptopia.domain.model.PostLikeTag
+import com.ich.reciptopia.domain.model.*
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -106,7 +104,7 @@ class CommunityViewModel @Inject constructor(
                 )
             }
             is CommunityScreenEvent.AddChip -> {
-                val newChip = ChipState(event.chipText, mutableStateOf(true))
+                val newChip = ChipState(event.chipText, mutableStateOf(true), event.detail)
                 _state.value = _state.value.copy(
                     newPostChips = _state.value.newPostChips.getAddedList(newChip)
                 )
@@ -144,14 +142,31 @@ class CommunityViewModel @Inject constructor(
                 }
             }
             is CommunityScreenEvent.CreatePost -> {
-                val newPost = Post(
-                    ownerId = _state.value.currentUser?.account?.id,
-                    title = _state.value.newPostTitle,
-                    content = _state.value.newPostContent,
-                    pictureUrls = _state.value.newPictureUrls,
-                    views = 0L
+                val mainIngredients = mutableListOf<MainIngredient>()
+                val subIngredients = mutableListOf<SubIngredient>()
+
+                _state.value.newPostChips.forEach { chipState ->
+                    if(chipState.isSubIngredient.value){
+                        subIngredients.add(SubIngredient(name = chipState.text, detail = chipState.detail))
+                    }else{
+                        mainIngredients.add(MainIngredient(name = chipState.text, detail = chipState.detail))
+                    }
+                }
+                val steps = _state.value.newPostStep.split('\n')
+                    .filter{ it.isNotBlank() }
+                    .map{ Step(description = it, pictureUrl = null) }
+                val newPost = RecipePost(
+                    post = Post(
+                        ownerId = _state.value.currentUser?.account?.id,
+                        title = _state.value.newPostTitle,
+                        content = _state.value.newPostContent,
+                        pictureUrls = _state.value.newPictureUrls
+                    ),
+                    mainIngredients = RecipePostMainIngredients(mainIngredients),
+                    subIngredients = RecipePostSubIngredients(subIngredients),
+                    steps = RecipePostSteps(steps)
                 )
-                createPost(newPost)
+                createRecipePost(newPost)
             }
             is CommunityScreenEvent.FavoriteButtonClicked -> {
                 if (event.post.isFavorite)
@@ -233,8 +248,8 @@ class CommunityViewModel @Inject constructor(
         }
     }
 
-    private fun createPost(post: Post) = viewModelScope.launch {
-        useCases.createPost(post).collect { result ->
+    private fun createRecipePost(recipePost: RecipePost) = viewModelScope.launch {
+        useCases.createRecipePost(recipePost).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -334,8 +349,8 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun unlikePost(postId: Long, idx: Int) = viewModelScope.launch {
-        val userId = _state.value.currentUser?.account?.id!!
-        useCases.unlikePost(userId, postId).collect { result ->
+        val likeTagId = _state.value.likeTags.find {it.postId == postId}?.id
+        useCases.unlikePost(likeTagId).collect { result ->
             when (result) {
                 is Resource.Success -> {
                     val posts = _state.value.posts.toMutableList()
@@ -383,6 +398,7 @@ class CommunityViewModel @Inject constructor(
                     }
 
                     _state.value = _state.value.copy(
+                        favorites = result.data,
                         isLoading = false,
                         posts = posts
                     )
@@ -434,7 +450,8 @@ class CommunityViewModel @Inject constructor(
 
     private fun unFavoritePost(postId: Long, idx: Int) = viewModelScope.launch {
         val ownerId = _state.value.currentUser?.account?.id
-        useCases.unFavoritePost(ownerId, postId, ownerId != null).collect{ result ->
+        val favoriteId = _state.value.favorites.find{it.postId == postId}?.id
+        useCases.unFavoritePost(postId, favoriteId,ownerId != null).collect{ result ->
             when(result){
                 is Resource.Success -> {
                     val posts = _state.value.posts.toMutableList()

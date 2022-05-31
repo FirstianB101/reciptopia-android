@@ -164,7 +164,6 @@ fun SearchScreen(
             onClick = {
                 viewModel.onEvent(
                     SearchScreenEvent.DoSearch(
-                        //SearchHistory(ingredients = chipStates.map { s -> s.toChipInfo() })
                         ingredientNames = chipStates.map {s -> s.text}
                     )
                 )
