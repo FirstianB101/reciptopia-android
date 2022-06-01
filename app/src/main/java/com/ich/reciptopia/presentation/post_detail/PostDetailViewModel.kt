@@ -211,11 +211,13 @@ class PostDetailViewModel @Inject constructor(
 
     private fun unFavoritePost(postId: Long) = viewModelScope.launch {
         val userId = _state.value.currentUser?.account?.id
-        useCases.unFavoritePost(postId, 0L, userId != null).collect{ result ->
+        val favoriteId = _state.value.curPostFavorite?.id
+        useCases.unFavoritePost(postId, favoriteId, userId != null).collect{ result ->
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
                         curPost = _state.value.curPost?.copy(isFavorite = false),
+                        curPostFavorite = null,
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("즐겨찾기가 제거되었습니다"))
@@ -278,7 +280,8 @@ class PostDetailViewModel @Inject constructor(
                 is Resource.Success -> {
                     val post = _state.value.curPost
                     _state.value = _state.value.copy(
-                        curPost = post?.copy(like = true),
+                        curPost = post?.copy(like = true, likeCount = post.likeCount?.plus(1)),
+                        curPostLikeTag = result.data!!,
                         isLoading = false
                     )
                 }
@@ -304,7 +307,8 @@ class PostDetailViewModel @Inject constructor(
                 is Resource.Success -> {
                     val post = _state.value.curPost
                     _state.value = _state.value.copy(
-                        curPost = post?.copy(like = false),
+                        curPost = post?.copy(like = false, likeCount = post.likeCount?.minus(1)),
+                        curPostLikeTag = null,
                         isLoading = false
                     )
                 }
