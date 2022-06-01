@@ -30,14 +30,13 @@ class PostRepositoryImpl(
         api.deleteFavorite(favoriteId)
     }
 
-    override suspend fun favoritePostNotLogin(ownerId: Long?, postId: Long?) {
-        dao.insertFavorite(
-            Favorite(
-                id = RepositoryTestUtils.nextFavoriteId++,
-                postId = postId,
-                ownerId = ownerId
-            )
+    override suspend fun favoritePostNotLogin(ownerId: Long?, postId: Long?): Favorite {
+        val newFavorite = Favorite(
+            postId = postId,
+            ownerId = ownerId
         )
+        dao.insertFavorite(newFavorite)
+        return newFavorite
     }
 
     override suspend fun unFavoritePostNotLogin(postId: Long) {
@@ -60,7 +59,7 @@ class PostRepositoryImpl(
         return api.createPostLikeTag(PostLikeTag(ownerId = ownerId, postId = postId)).toPostLikeTag()
     }
 
-    override suspend fun unLikePost(postLikeTagId: Long?) {
+    override suspend fun unLikePost(postLikeTagId: Long) {
         api.deletePostLikeTag(postLikeTagId)
     }
 

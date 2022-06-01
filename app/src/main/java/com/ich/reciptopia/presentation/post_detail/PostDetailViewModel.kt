@@ -55,15 +55,10 @@ class PostDetailViewModel @Inject constructor(
                 viewModelScope.launch {
                     val post = _state.value.curPost!!
                     if(post.id != null) {
-                        if (post.isFavorite) {
-                            unFavoritePost(post.id).join()
-                            getPostInfo().join()
-                            fillCurPostInfo()
-                        } else {
-                            favoritePost(post.id).join()
-                            getPostInfo().join()
-                            fillCurPostInfo()
-                        }
+                        if (post.isFavorite)
+                            unFavoritePost(post.id)
+                        else
+                            favoritePost(post.id)
                     }
                 }
             }
@@ -193,6 +188,8 @@ class PostDetailViewModel @Inject constructor(
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
+                        curPost = _state.value.curPost?.copy(isFavorite = true),
+                        curPostFavorite = result.data,
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("즐겨찾기에 추가되었습니다"))
@@ -218,6 +215,7 @@ class PostDetailViewModel @Inject constructor(
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
+                        curPost = _state.value.curPost?.copy(isFavorite = false),
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("즐겨찾기가 제거되었습니다"))
@@ -300,7 +298,7 @@ class PostDetailViewModel @Inject constructor(
     }
 
     private fun unlikePost() = viewModelScope.launch {
-        val likeTagId = _state.value.curPostLikeTag?.id
+        val likeTagId = _state.value.curPostLikeTag?.id!!
         useCases.unlikePost(likeTagId).collect { result ->
             when (result) {
                 is Resource.Success -> {

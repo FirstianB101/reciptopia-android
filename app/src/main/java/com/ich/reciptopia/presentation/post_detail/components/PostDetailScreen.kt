@@ -1,6 +1,7 @@
 package com.ich.reciptopia.presentation.post_detail.components
 
 import android.widget.Toast
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -212,9 +213,9 @@ fun PostDetailScreen(
                             else Color.Gray
                 )
                 
-                Text(
-                    text = " ${state.value.curPost?.likeCount}",
-                    color = Color.Gray
+                AnimatedLikeCounter(
+                    count = state.value.curPost?.likeCount ?: 0,
+                    like = state.value.curPost?.like ?: false
                 )
             }
 
@@ -245,5 +246,32 @@ fun PostDetailScreen(
         if(state.value.isLoading){
             CircularProgressIndicator()
         }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class)
+@Composable
+private fun AnimatedLikeCounter(
+    count: Int,
+    like: Boolean
+){
+    AnimatedContent(
+        targetState = count,
+        transitionSpec = {
+            if (targetState > initialState) {
+                slideInVertically { height -> height } + fadeIn() with
+                        slideOutVertically { height -> -height } + fadeOut()
+            } else {
+                slideInVertically { height -> -height } + fadeIn() with
+                        slideOutVertically { height -> height } + fadeOut()
+            }.using(
+                SizeTransform(clip = false)
+            )
+        }
+    ) { targetCount ->
+        Text(
+            text = "$targetCount",
+            color = if(like) colorResource(id = R.color.main_color) else Color.Gray
+        )
     }
 }

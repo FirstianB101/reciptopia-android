@@ -16,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.components.EmptyText
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 import com.ich.reciptopia.presentation.community.CommunityViewModel
 import com.ich.reciptopia.presentation.post_detail.PostActivity
@@ -109,6 +111,15 @@ fun CommunityScreen(
                                 }
                             }
                         }
+                    }
+
+                    if(state.value.posts.isEmpty()){
+                        EmptyText(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            text = stringResource(id = R.string.comment_no_posts)
+                        )
                     }
 
                     LazyColumn(

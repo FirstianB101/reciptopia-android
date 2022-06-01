@@ -349,7 +349,7 @@ class CommunityViewModel @Inject constructor(
     }
 
     private fun unlikePost(postId: Long, idx: Int) = viewModelScope.launch {
-        val likeTagId = _state.value.likeTags.find {it.postId == postId}?.id
+        val likeTagId = _state.value.likeTags.find {it.postId == postId}?.id!!
         useCases.unlikePost(likeTagId).collect { result ->
             when (result) {
                 is Resource.Success -> {

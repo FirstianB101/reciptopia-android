@@ -88,16 +88,13 @@ class SearchViewModel @Inject constructor(
                     favoritePost(event.post.id!!, event.idx)
             }
             is SearchScreenEvent.LikeButtonClicked -> {
-                if(_state.value.currentUser != null) {
-                    if (event.post.like) {
-                        unlikePost(event.post.id!!)
-                            .invokeOnCompletion { getSearchedPostList() }
-                    } else {
-                        likePost(event.post.id!!)
-                            .invokeOnCompletion { getSearchedPostList() }
-                    }
-                }else{
-                    viewModelScope.launch {
+                viewModelScope.launch {
+                    if(_state.value.currentUser != null) {
+                        if (event.post.like)
+                            unlikePost(event.post.id!!, event.idx)
+                        else
+                            likePost(event.post.id!!, event.idx)
+                    }else{
                         _eventFlow.emit(UiEvent.ShowToast("좋아요를 표시하려면 로그인 해주세요"))
                     }
                 }
@@ -117,7 +114,8 @@ class SearchViewModel @Inject constructor(
 
     private fun getFavoritePosts() = viewModelScope.launch {
         getFavorites().join()
-        getPostsWithFavorites(_state.value.favorites).join()
+        getPostsWithFavorites().join()
+        getFavoritePostLikeTags()
         _state.value.favorites.forEachIndexed { index, favorite ->
             getPostOwner(index, favorite.post)
         }
@@ -258,7 +256,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun getPostsWithFavorites(favoriteList: List<Favorite>) = viewModelScope.launch {
+    private fun getPostsWithFavorites() = viewModelScope.launch {
         val postIds = _state.value.favorites.map{it.postId!!}
         useCases.getPost(postIds).collect { result ->
             when (result) {
@@ -297,7 +295,7 @@ class SearchViewModel @Inject constructor(
         useCases.getOwner(accountId).collect { result ->
             when (result) {
                 is Resource.Success -> {
-                    val postWithAccount = post.copy(owner = result.data)
+                    val postWithAccount = post?.copy(owner = result.data)
                     val favorites = _state.value.favorites.toMutableList()
                     favorites[idx] = favorites[idx].copy(
                         post = postWithAccount
@@ -447,12 +445,20 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun likePost(postId: Long) = viewModelScope.launch {
+    private fun likePost(postId: Long, idx: Int) = viewModelScope.launch {
         val userId = _state.value.currentUser?.account?.id!!
         useCases.likePost(userId, postId).collect { result ->
             when (result) {
                 is Resource.Success -> {
+                    val favorites = _state.value.favorites.toMutableList()
+                    favorites[idx] = favorites[idx].copy(
+                        post = favorites[idx].post?.copy(like = true)
+                    )
+                    val likeTags = _state.value.likeTags.toMutableList()
+                    likeTags.add(result.data!!)
                     _state.value = _state.value.copy(
+                        likeTags = likeTags,
+                        favorites = favorites,
                         isLoading = false
                     )
                 }
@@ -471,12 +477,20 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun unlikePost(postId: Long) = viewModelScope.launch {
-        val likeTagId = _state.value.likeTags.find{it.postId == postId}?.id
+    private fun unlikePost(postId: Long, idx: Int) = viewModelScope.launch {
+        val likeTagId = _state.value.likeTags.find{it.postId == postId}?.id!!
         useCases.unlikePost(likeTagId).collect { result ->
             when (result) {
                 is Resource.Success -> {
+                    val favorites = _state.value.favorites.toMutableList()
+                    favorites[idx] = favorites[idx].copy(
+                        post = favorites[idx].post?.copy(like = false)
+                    )
+                    val likeTags = _state.value.likeTags.toMutableList()
+                    likeTags.removeIf { it.id == likeTagId }
                     _state.value = _state.value.copy(
+                        likeTags = likeTags,
+                        favorites = favorites,
                         isLoading = false
                     )
                 }

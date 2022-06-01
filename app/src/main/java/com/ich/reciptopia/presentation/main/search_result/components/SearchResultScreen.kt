@@ -67,7 +67,7 @@ fun SearchResultScreen(
                         startPostActivity(context, post.id!!)
                     },
                     onLikeClick = {
-                        viewModel.onEvent(SearchScreenEvent.LikeButtonClicked(post))
+                        viewModel.onEvent(SearchScreenEvent.LikeButtonClicked(post, idx))
                     }
                 )
             }

@@ -13,7 +13,7 @@ import javax.inject.Inject
 class PostUnLikeUseCase @Inject constructor(
     private val repository: PostRepository
 ) {
-    operator fun invoke(postLikeTagId: Long?): Flow<Resource<Unit>> = flow{
+    operator fun invoke(postLikeTagId: Long): Flow<Resource<Unit>> = flow{
         try{
             emit(Resource.Loading<Unit>())
 

@@ -45,4 +45,5 @@
     <string name="comment_input_text_for_search">검색어를 입력하세요.</string>
     <string name="comment_input_step">조리 순서를 입력하세요.</string>
     <string name="comment_no_comment">댓글이 없습니다</string>
+    <string name="comment_no_posts">검색된 포스트가 없습니다</string>
 </resources>

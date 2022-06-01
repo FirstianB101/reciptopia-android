@@ -21,11 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.components.EmptyText
 import com.ich.reciptopia.presentation.main.search.components.CustomTextField
 import com.ich.reciptopia.presentation.post_detail.PostDetailEvent
 import com.ich.reciptopia.presentation.post_detail.PostDetailViewModel
@@ -49,15 +49,11 @@ fun PostCommentBottomSheet(
         )
 
         if(state.value.comments.isEmpty()){
-            Text(
+            EmptyText(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                text = stringResource(id = R.string.comment_no_comment),
-                fontSize = 19.sp,
-                textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Bold,
-                color = Color.Gray
+                text = stringResource(id = R.string.comment_no_comment)
             )
         }
         
