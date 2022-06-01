@@ -206,7 +206,9 @@ fun PostDetailScreen(
                 }
             ) {
                 Icon(
-                    modifier = Modifier.size(24.dp),
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(end = 4.dp),
                     imageVector = Icons.Default.ThumbUp,
                     contentDescription = "",
                     tint = if(state.value.curPost?.like == true) colorResource(id = R.color.main_color)

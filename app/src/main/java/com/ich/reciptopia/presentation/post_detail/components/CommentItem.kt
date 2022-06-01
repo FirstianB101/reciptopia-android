@@ -29,8 +29,10 @@ fun CommentItem(
     onCommentLikeClick: () -> Unit
 ){
     Row(
-        modifier = modifier
+        modifier = Modifier
             .clickable { onCommentClick() }
+            .then(modifier),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
             onClick = {}

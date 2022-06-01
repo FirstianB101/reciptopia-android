@@ -30,9 +30,11 @@ fun ReplyItem(
     onReplyLikeClick: () -> Unit
 ){
     Row(
-        modifier = modifier
+        modifier = Modifier
             .clickable { onReplyClick() }
             .padding(start = 40.dp)
+            .then(modifier),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(
             onClick = {}

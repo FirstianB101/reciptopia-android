@@ -12,6 +12,7 @@ import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
 import com.ich.reciptopia.domain.use_case.post.*
 import com.ich.reciptopia.domain.use_case.post_detail.*
+import com.ich.reciptopia.domain.use_case.post_detail.chat.*
 import com.ich.reciptopia.domain.use_case.search.*
 import dagger.Module
 import dagger.Provides
@@ -94,18 +95,27 @@ object UseCaseModule {
             unlikePost = PostUnLikeUseCase(postRepository),
             getLikeTags = GetPostLikeTagsUseCase(postRepository),
             getRecipe = GetRecipeUseCase(postDetailRepository),
-            getComments = GetCommentsUseCase(postDetailRepository),
             getMainIngredients = GetMainIngredientsUseCase(postDetailRepository),
-            getReplies = GetRepliesUseCase(postDetailRepository),
             getSteps = GetStepsUseCase(postDetailRepository),
-            getSubIngredients = GetSubIngredientsUseCase(postDetailRepository),
-            createComment = CreateCommentUseCase(postDetailRepository),
-            getCommentLikeTags = GetCommentLikeTagsUseCase(postDetailRepository),
-            getReplyLikeTags = GetReplyLikeTagsUseCase(postDetailRepository),
-            likeComment = LikeCommentUseCase(postDetailRepository),
-            unlikeComment = UnLikeCommentUseCase(postDetailRepository),
-            likeReply = LikeReplyUseCase(postDetailRepository),
-            unlikeReply = UnLikeReplyUseCase(postDetailRepository)
+            getSubIngredients = GetSubIngredientsUseCase(postDetailRepository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providePostDetailChatUseCases(repository: PostDetailChatRepository): PostDetailChatUseCases{
+        return PostDetailChatUseCases(
+            getComments = GetCommentsUseCase(repository),
+            getReplies = GetRepliesUseCase(repository),
+            createComment = CreateCommentUseCase(repository),
+            getCommentLikeTags = GetCommentLikeTagsUseCase(repository),
+            getReplyLikeTags = GetReplyLikeTagsUseCase(repository),
+            likeComment = LikeCommentUseCase(repository),
+            unlikeComment = UnLikeCommentUseCase(repository),
+            likeReply = LikeReplyUseCase(repository),
+            unlikeReply = UnLikeReplyUseCase(repository),
+            getOwner = GetCommentOwnerUseCase(repository),
+            createReply = CreateReplyUseCase(repository)
         )
     }
 }

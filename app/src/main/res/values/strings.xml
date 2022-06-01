@@ -34,6 +34,7 @@
     <string name="comment_analyze_ingredients">재료를 분석했어요</string>
     <string name="comment_analyze_check">재료가 맞는지 확인해주세요. \n핵심 재료를 체크하면 해당 재료는 검색에 반드시 포함됩니다.</string>
     <string name="comment_input_comment">댓글을 작성해보세요.</string>
+    <string name="comment_input_reply">답글을 작성해보세요.</string>
     <string name="comment_input_title">제목을 입력하세요.</string>
     <string name="comment_input_content">내용을 입력하세요.</string>
     <string name="title_activity_post">PostActivity</string>

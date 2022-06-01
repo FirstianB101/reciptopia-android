@@ -1,6 +1,7 @@
 package com.ich.reciptopia.domain.use_case.post_detail
 
 import com.ich.reciptopia.domain.use_case.post.*
+import com.ich.reciptopia.domain.use_case.post_detail.chat.*
 
 data class PostDetailUseCases(
     val getPostInfo: GetPostInfoUseCase,
@@ -15,13 +16,4 @@ data class PostDetailUseCases(
     val getSteps: GetStepsUseCase,
     val getMainIngredients: GetMainIngredientsUseCase,
     val getSubIngredients: GetSubIngredientsUseCase,
-    val getComments: GetCommentsUseCase,
-    val getReplies: GetRepliesUseCase,
-    val createComment: CreateCommentUseCase,
-    val getCommentLikeTags: GetCommentLikeTagsUseCase,
-    val getReplyLikeTags: GetReplyLikeTagsUseCase,
-    val likeComment: LikeCommentUseCase,
-    val unlikeComment: UnLikeCommentUseCase,
-    val likeReply: LikeReplyUseCase,
-    val unlikeReply: UnLikeReplyUseCase
 )

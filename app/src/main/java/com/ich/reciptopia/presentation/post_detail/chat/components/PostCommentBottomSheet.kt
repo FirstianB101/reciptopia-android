@@ -1,5 +1,6 @@
-package com.ich.reciptopia.presentation.post_detail.components
+package com.ich.reciptopia.presentation.post_detail.chat.components
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -13,11 +14,13 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -27,15 +30,31 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.components.EmptyText
 import com.ich.reciptopia.presentation.main.search.components.CustomTextField
-import com.ich.reciptopia.presentation.post_detail.PostDetailEvent
-import com.ich.reciptopia.presentation.post_detail.PostDetailViewModel
+import com.ich.reciptopia.presentation.post_detail.chat.PostDetailChatEvent
+import com.ich.reciptopia.presentation.post_detail.chat.PostDetailChatViewModel
+import com.ich.reciptopia.presentation.post_detail.components.CommentItem
+import com.ich.reciptopia.presentation.post_detail.components.ReplyItem
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun PostCommentBottomSheet(
     modifier: Modifier = Modifier,
-    viewModel: PostDetailViewModel = hiltViewModel()
+    postId: Long,
+    viewModel: PostDetailChatViewModel = hiltViewModel()
 ){
     val state = viewModel.state.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit){
+        viewModel.initialize(postId)
+        viewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is PostDetailChatViewModel.UiEvent.ShowToast ->{
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
 
     Column(
         modifier = modifier,
@@ -63,22 +82,33 @@ fun PostCommentBottomSheet(
                 .weight(1f)
         ){
             itemsIndexed(state.value.comments){ cIdx, comment ->
+                val commentBackground =
+                    if(cIdx == state.value.selectedCommentIdx) colorResource(R.color.selected_comment_bg)
+                    else Color.White
                 CommentItem(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(commentBackground)
+                        .padding(8.dp)
+                        .offset(y = (-4).dp),
                     comment = comment,
-                    onCommentClick = {},
+                    onCommentClick = {
+                        viewModel.onEvent(PostDetailChatEvent.SelectComment(cIdx))
+                    },
                     onCommentLikeClick = {
-                        viewModel.onEvent(PostDetailEvent.CommentLikeButtonClick(comment, cIdx))
+                        viewModel.onEvent(PostDetailChatEvent.CommentLikeButtonClick(comment, cIdx))
                     }
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 comment.replies?.forEachIndexed { rIdx, reply ->
                     ReplyItem(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(4.dp)
+                            .offset(y = (-4).dp),
                         reply = reply,
                         onReplyClick = {},
                         onReplyLikeClick = {
-                            viewModel.onEvent(PostDetailEvent.ReplyLikeButtonClick(reply, cIdx, rIdx))
+                            viewModel.onEvent(PostDetailChatEvent.ReplyLikeButtonClick(reply, cIdx, rIdx))
                         }
                     )
                     Spacer(modifier = Modifier.height(4.dp))
@@ -93,9 +123,10 @@ fun PostCommentBottomSheet(
                 .padding(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val selectedCommentExist = state.value.selectedCommentIdx != null
             CustomTextField(
-                value = state.value.commentText,
-                onValueChange = { viewModel.onEvent(PostDetailEvent.CommentTextChanged(it)) },
+                value = state.value.inputText,
+                onValueChange = { viewModel.onEvent(PostDetailChatEvent.CommentTextChanged(it)) },
                 modifier = Modifier
                     .background(
                         Color(0xDDDDDDDD),
@@ -105,7 +136,8 @@ fun PostCommentBottomSheet(
                     .height(36.dp)
                     .weight(1f),
                 fontSize = 16.sp,
-                placeholderText = stringResource(id = R.string.comment_input_comment),
+                placeholderText = if(selectedCommentExist) stringResource(R.string.comment_input_reply)
+                                  else stringResource(id = R.string.comment_input_comment),
                 interactionSource =  MutableInteractionSource()
             )
             
@@ -113,7 +145,7 @@ fun PostCommentBottomSheet(
 
             IconButton(
                 onClick = {
-                    viewModel.onEvent(PostDetailEvent.CreateComment)
+                    viewModel.onEvent(PostDetailChatEvent.CreateCommentOrReply)
                 },
                 modifier = Modifier
                     .size(40.dp)

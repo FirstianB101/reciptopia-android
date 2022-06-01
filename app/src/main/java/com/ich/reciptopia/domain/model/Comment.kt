@@ -7,5 +7,5 @@ data class Comment(
     val content: String? = null,
     val owner: Account? = null,
     val replies: List<Reply>? = null,
-    val like: Boolean = false,
+    val like: Boolean = false
 )

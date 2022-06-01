@@ -1,10 +1,9 @@
-package com.ich.reciptopia.domain.use_case.post_detail
+package com.ich.reciptopia.domain.use_case.post_detail.chat
 
 import com.ich.reciptopia.common.util.Constants
 import com.ich.reciptopia.common.util.Resource
-import com.ich.reciptopia.domain.model.Comment
 import com.ich.reciptopia.domain.model.CommentLikeTag
-import com.ich.reciptopia.domain.repository.PostDetailRepository
+import com.ich.reciptopia.domain.repository.PostDetailChatRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
@@ -12,7 +11,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 class LikeCommentUseCase @Inject constructor(
-    private val repository: PostDetailRepository
+    private val repository: PostDetailChatRepository
 ) {
     operator fun invoke(ownerId: Long?, commentId: Long): Flow<Resource<CommentLikeTag>> = flow{
         try{

@@ -53,6 +53,12 @@ object RepositoryModule {
 
     @Provides
     @Singleton
+    fun providePostDetailChatRepository(api: ReciptopiaApi): PostDetailChatRepository{
+        return PostDetailChatRepositoryImpl(api)
+    }
+
+    @Provides
+    @Singleton
     fun providePostListRepository(api: ReciptopiaApi, db: ReciptopiaDatabase): PostRepository{
         return PostRepositoryImpl(api, db.reciptopiaDao)
     }
