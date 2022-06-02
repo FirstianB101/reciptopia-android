@@ -5,6 +5,7 @@ data class Reply(
     val ownerId: Long? = null,
     val commentId: Long? = null,
     val content: String? = null,
+    val createTime: String? = null,
     val owner: Account? = null,
     val like: Boolean = false
 )

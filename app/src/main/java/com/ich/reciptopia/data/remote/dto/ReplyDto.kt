@@ -6,7 +6,8 @@ data class ReplyDto(
     var id: Long? = null,
     var ownerId: Long? = null,
     var commentId: Long? = null,
-    var content: String? = null
+    var content: String? = null,
+    var createTime: String? = null
 )
 
 fun ReplyDto.toReply(): Reply{
@@ -14,6 +15,7 @@ fun ReplyDto.toReply(): Reply{
         id = id,
         ownerId = ownerId,
         commentId = commentId,
-        content = content
+        content = content,
+        createTime = createTime
     )
 }

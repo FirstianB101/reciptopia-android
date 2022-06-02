@@ -64,7 +64,7 @@ fun CommentItem(
                 )
 
                 Text(
-                    text = "2022/03/29",
+                    text = comment.createTime?.split('T')?.get(0) ?: "",
                     fontSize = 14.sp
                 )
 

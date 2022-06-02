@@ -6,7 +6,8 @@ data class CommentDto(
     var id: Long? = null,
     var ownerId: Long? = null,
     var postId: Long? = null,
-    var content: String? = null
+    var content: String? = null,
+    var createTime: String? = null
 )
 
 fun CommentDto.toComment(): Comment {
@@ -14,6 +15,7 @@ fun CommentDto.toComment(): Comment {
         id = id,
         ownerId = ownerId,
         postId = postId,
-        content = content
+        content = content,
+        createTime = createTime
     )
 }

@@ -65,7 +65,7 @@ fun ReplyItem(
                 )
 
                 Text(
-                    text = "2022/03/29",
+                    text = reply.createTime?.split('T')?.get(0) ?: "",
                     fontSize = 14.sp
                 )
                 
