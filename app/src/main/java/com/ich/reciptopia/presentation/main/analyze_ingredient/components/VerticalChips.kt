@@ -76,18 +76,17 @@ fun LongChip(
 @Composable
 fun VerticalChips(
     modifier: Modifier = Modifier,
-    elements: List<String>,
-    selectStates: List<Boolean>,
+    chipStates: List<ChipState>,
     onChipClicked: (String, Boolean, Int) -> Unit,
     onImageClicked: (String, Boolean, Int) -> Unit
 ){
     LazyColumn(modifier = modifier) {
-        items(elements.size){ idx ->
+        items(chipStates.size){ idx ->
             LongChip(
                 modifier = Modifier.fillMaxWidth(),
                 imageId = R.drawable.close,
-                text = elements[idx],
-                selected = selectStates[idx],
+                text = chipStates[idx].text,
+                selected = chipStates[idx].isSubIngredient.value,
                 onChipClicked = { content, isMain ->
                     onChipClicked(content,isMain,idx)
                 },

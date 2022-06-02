@@ -10,15 +10,9 @@ interface ReciptopiaApi {
     @POST("auth/token")
     suspend fun getToken(@Body auth: Auth): UserDto
 
-    @GET("auth/me")
-    suspend fun authorizeUser(): UserDto
-
     // Account
     @GET("accounts/{id}")
     suspend fun getAccount(@Path("id")accountId: Long): AccountDto
-
-    @GET("accounts")
-    suspend fun getAccounts(): List<AccountDto>
 
     @POST("accounts")
     suspend fun createAccount(@Body account: Account): AccountDto
@@ -36,9 +30,6 @@ interface ReciptopiaApi {
     // Post
     @GET("posts/{id}")
     suspend fun getPost(): PostDto
-
-    @GET("posts")
-    suspend fun getPosts(): PostWithCommentAndLikeTagCountsDto
 
     @GET("posts")
     suspend fun getPostsByOwnerId(@Query("ownerId")ownerId: Long): PostWithCommentAndLikeTagCountsDto
@@ -73,9 +64,6 @@ interface ReciptopiaApi {
     suspend fun getComment(@Path("id")commentId: Long): CommentDto
 
     @GET("post/comments")
-    suspend fun getComments(): CommentsDto
-
-    @GET("post/comments")
     suspend fun getCommentsByPostId(@Query("postId")postId: Long): CommentsDto
 
     @POST("post/comments")
@@ -91,9 +79,6 @@ interface ReciptopiaApi {
     // Reply
     @GET("post/comment/replies/{id}")
     suspend fun getReply(@Path("id")replyId: Long): ReplyDto
-
-    @GET("post/comment/replies")
-    suspend fun getReplies(): RepliesDto
 
     @GET("post/comment/replies")
     suspend fun getRepliesByCommentId(@Query("commentId")commentId: Long): RepliesDto
@@ -235,9 +220,6 @@ interface ReciptopiaApi {
     // Favorite
     @GET("account/favorites/{id}")
     suspend fun getFavorite(@Path("id")favoriteId: Long): FavoriteDto
-
-    @GET("account/favorites")
-    suspend fun getFavorites(): FavoritesDto
 
     @GET("account/favorites")
     suspend fun getFavoritesByOwnerId(@Query("ownerId")ownerId: Long): FavoritesDto

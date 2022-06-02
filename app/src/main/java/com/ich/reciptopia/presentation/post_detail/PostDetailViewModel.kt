@@ -37,17 +37,9 @@ class PostDetailViewModel @Inject constructor(
     fun onEvent(event: PostDetailEvent){
         when(event){
             is PostDetailEvent.ClickLike -> {
-                val isLogin = _state.value.currentUser != null
-                val isLike = _state.value.curPost?.like == true
-                if(isLogin){
-                    if(isLike)
-                        unlikePost()
-                    else
-                        likePost()
-                }else{
-                    viewModelScope.launch {
-                        _eventFlow.emit(UiEvent.ShowToast("로그인 후 좋아요를 누를 수 있습니다"))
-                    }
+                doIfLogin {
+                    val isLike = _state.value.curPost?.like == true
+                    if(isLike) unlikePost() else likePost()
                 }
             }
             is PostDetailEvent.ClickFavorite -> {
@@ -63,6 +55,16 @@ class PostDetailViewModel @Inject constructor(
             }
         }
     }
+
+    private fun doIfLogin(function: suspend () -> Unit) = viewModelScope.launch{
+        val isLogin = _state.value.currentUser != null
+        if(isLogin){
+            function()
+        }else{
+            _eventFlow.emit(UiEvent.ShowToast("로그인이 필요합니다"))
+        }
+    }
+
 
     private fun observeUserChanged() = viewModelScope.launch {
         app.user.collect{ user ->

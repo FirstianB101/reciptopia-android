@@ -14,11 +14,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.ich.reciptopia.R
-import com.ich.reciptopia.common.util.TestTags
 import com.ich.reciptopia.presentation.main.search.components.ChipWithImage
 import com.ich.reciptopia.presentation.main.search.util.ChipState
 
@@ -78,7 +76,7 @@ fun HorizontalAddableChips(
         }
         items(elements.size){ idx ->
             ChipWithImage(
-                text = "${elements[idx].text} ${elements[idx].detail}",
+                text = elements[idx].text,
                 imageId = R.drawable.close,
                 selected = elements[idx].isSubIngredient.value,
                 onChipClicked = { content, isMain ->

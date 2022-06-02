@@ -10,7 +10,6 @@ import com.ich.reciptopia.common.util.getAddedList
 import com.ich.reciptopia.common.util.getRemovedList
 import com.ich.reciptopia.domain.model.*
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
-import com.ich.reciptopia.presentation.main.search.util.ChipState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -103,10 +102,11 @@ class CommunityViewModel @Inject constructor(
                     newPictureUrls = _state.value.newPictureUrls.getRemovedList(event.idx)
                 )
             }
-            is CommunityScreenEvent.AddChip -> {
-                val newChip = ChipState(event.chipText, mutableStateOf(true), event.detail)
+            is CommunityScreenEvent.AddChips -> {
+                val chips = _state.value.newPostChips.toMutableList()
+                chips.addAll(event.chips)
                 _state.value = _state.value.copy(
-                    newPostChips = _state.value.newPostChips.getAddedList(newChip)
+                    newPostChips = chips
                 )
             }
             is CommunityScreenEvent.RemoveChip -> {

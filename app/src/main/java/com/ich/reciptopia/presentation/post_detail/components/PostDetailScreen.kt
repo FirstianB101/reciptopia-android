@@ -189,7 +189,7 @@ fun PostDetailScreen(
             state.value.curPostSteps.forEachIndexed { idx, step ->
                 Text(
                     modifier = Modifier.offset(x = 24.dp),
-                    text = "${idx + 1}. ${step.description}"
+                    text = "${step.description}"
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }

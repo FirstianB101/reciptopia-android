@@ -236,12 +236,15 @@ fun PostDialogScreen(
         )
 
         IngredientNameWithDetailDialog(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
             title = stringResource(id = R.string.input_ingredient),
-            buttonText = stringResource(id = R.string.add_ingredient),
+            buttonText = stringResource(id = R.string.add),
             dialogState = state.value.showAddChipDialog,
             onDismiss = { viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(false)) },
-            onButtonClick = { name, detail ->
-                viewModel.onEvent(CommunityScreenEvent.AddChip(name, detail))
+            onButtonClick = { chips ->
+                viewModel.onEvent(CommunityScreenEvent.AddChips(chips))
                 viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(false))
             }
         )
