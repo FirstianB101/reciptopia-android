@@ -43,29 +43,19 @@ class PostDetailChatViewModel @Inject constructor(
                 )
             }
             is PostDetailChatEvent.CreateCommentOrReply -> {
-                viewModelScope.launch {
-                    val isLogin = _state.value.currentUser != null
+                doIfLogin {
                     val createReply = _state.value.selectedCommentIdx != null
-                    if(isLogin){
-                        if(createReply) createReply().join()
-                        else createComment().join()
-                        getCommentsWithReply()
-                    }else{
-                        _eventFlow.emit(UiEvent.ShowToast("로그인이 필요합니다"))
-                    }
+                    if(createReply) createReply().join()
+                    else createComment().join()
+                    getCommentsWithReply()
                 }
             }
             is PostDetailChatEvent.CommentLikeButtonClick -> {
-                viewModelScope.launch {
-                    val isLogin = _state.value.currentUser != null
-                    if(isLogin){
-                        if(event.comment.like)
-                            unlikeComment(event.comment.id!!, event.idx)
-                        else
-                            likeComment(event.comment.id!!, event.idx)
-                    }else{
-                        _eventFlow.emit(UiEvent.ShowToast("로그인이 필요합니다"))
-                    }
+                doIfLogin {
+                    if(event.comment.like)
+                        unlikeComment(event.comment.id!!, event.idx)
+                    else
+                        likeComment(event.comment.id!!, event.idx)
                 }
             }
             is PostDetailChatEvent.SelectComment -> {
@@ -76,19 +66,44 @@ class PostDetailChatViewModel @Inject constructor(
                 )
             }
             is PostDetailChatEvent.ReplyLikeButtonClick -> {
-                viewModelScope.launch {
-                    val isLogin = _state.value.currentUser != null
-                    if(isLogin){
-                        if(event.reply.like)
-                            unlikeReply(event.reply.id!!, event.commentIdx, event.replyIdx)
-                        else
-                            likeReply(event.reply.id!!, event.commentIdx, event.replyIdx)
-
+                doIfLogin {
+                    if(event.reply.like)
+                        unlikeReply(event.reply.id!!, event.commentIdx, event.replyIdx)
+                    else
+                        likeReply(event.reply.id!!, event.commentIdx, event.replyIdx)
+                }
+            }
+            is PostDetailChatEvent.DeleteComment -> {
+                doIfLogin {
+                    val currentUserId = _state.value.currentUser?.account?.id
+                    if(event.comment.ownerId == currentUserId) {
+                        deleteComment(event.comment.id!!).join()
+                        getCommentsWithReply()
                     }else{
-                        _eventFlow.emit(UiEvent.ShowToast("로그인이 필요합니다"))
+                        _eventFlow.emit(UiEvent.ShowToast("본인이 작성한 댓글만 삭제할 수 있습니다"))
                     }
                 }
             }
+            is PostDetailChatEvent.DeleteReply -> {
+                doIfLogin {
+                    val currentUserId = _state.value.currentUser?.account?.id
+                    if(event.reply.ownerId == currentUserId) {
+                        deleteReply(event.reply.id!!).join()
+                        getCommentsWithReply()
+                    }else{
+                        _eventFlow.emit(UiEvent.ShowToast("본인이 작성한 답글만 삭제할 수 있습니다"))
+                    }
+                }
+            }
+        }
+    }
+
+    private fun doIfLogin(function: suspend () -> Unit) = viewModelScope.launch{
+        val isLogin = _state.value.currentUser != null
+        if(isLogin){
+            function()
+        }else{
+            _eventFlow.emit(UiEvent.ShowToast("로그인이 필요합니다"))
         }
     }
 
@@ -495,6 +510,54 @@ class PostDetailChatViewModel @Inject constructor(
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("좋아요를 취소하지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun deleteComment(commentId: Long) = viewModelScope.launch {
+        useCases.deleteComment(commentId).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("댓글을 삭제했습니다"))
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("댓글을 삭제하지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun deleteReply(replyId: Long) = viewModelScope.launch {
+        useCases.deleteReply(replyId).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("답글을 삭제했습니다"))
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("답글을 삭제하지 못했습니다 (${result.message})"))
                 }
             }
         }

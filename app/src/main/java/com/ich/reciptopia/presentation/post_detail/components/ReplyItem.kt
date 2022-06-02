@@ -8,8 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Chat
-import androidx.compose.material.icons.filled.SubdirectoryArrowRight
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,7 +26,7 @@ fun ReplyItem(
     modifier: Modifier = Modifier,
     reply: Reply,
     onReplyClick: () -> Unit,
-    onReplyLikeClick: () -> Unit
+    onReplyLikeClick: () -> Unit,
 ){
     Row(
         modifier = Modifier
@@ -59,17 +58,18 @@ fun ReplyItem(
                 Text(
                     modifier = Modifier
                         .padding(end = 4.dp),
-                    text = reply.owner?.nickname ?: "(알 수 없음)",
+                    text = reply.owner?.nickname ?: "",
                     fontSize = 17.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
 
                 Text(
-                    modifier = Modifier.weight(1f),
                     text = "2022/03/29",
                     fontSize = 14.sp
                 )
+                
+                Spacer(modifier = Modifier.weight(1f))
 
                 TextButton(
                     onClick = onReplyLikeClick

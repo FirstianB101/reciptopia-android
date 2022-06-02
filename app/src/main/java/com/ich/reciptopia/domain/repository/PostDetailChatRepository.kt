@@ -15,4 +15,6 @@ interface PostDetailChatRepository {
     suspend fun likeReply(ownerId: Long?, replyId: Long): ReplyLikeTag
     suspend fun unlikeComment(commentLikeTagId : Long?)
     suspend fun unlikeReply(replyLikeTagId: Long?)
+    suspend fun deleteComment(commentId: Long)
+    suspend fun deleteReply(replyId: Long)
 }

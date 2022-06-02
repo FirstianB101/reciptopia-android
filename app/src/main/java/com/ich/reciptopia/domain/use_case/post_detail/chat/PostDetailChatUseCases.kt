@@ -11,5 +11,7 @@ data class PostDetailChatUseCases(
     val unlikeComment: UnLikeCommentUseCase,
     val likeReply: LikeReplyUseCase,
     val unlikeReply: UnLikeReplyUseCase,
-    val getOwner: GetCommentOwnerUseCase
+    val getOwner: GetCommentOwnerUseCase,
+    val deleteComment: DeleteCommentUseCase,
+    val deleteReply: DeleteReplyUseCase
 )

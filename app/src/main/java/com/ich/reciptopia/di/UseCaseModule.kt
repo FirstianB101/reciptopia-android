@@ -115,7 +115,9 @@ object UseCaseModule {
             likeReply = LikeReplyUseCase(repository),
             unlikeReply = UnLikeReplyUseCase(repository),
             getOwner = GetCommentOwnerUseCase(repository),
-            createReply = CreateReplyUseCase(repository)
+            createReply = CreateReplyUseCase(repository),
+            deleteComment = DeleteCommentUseCase(repository),
+            deleteReply = DeleteReplyUseCase(repository)
         )
     }
 }

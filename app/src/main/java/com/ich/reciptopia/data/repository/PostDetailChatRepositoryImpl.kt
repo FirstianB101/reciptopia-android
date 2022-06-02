@@ -28,6 +28,14 @@ class PostDetailChatRepositoryImpl(
         return api.createReply(reply).toReply()
     }
 
+    override suspend fun deleteComment(commentId: Long) {
+        api.deleteComment(commentId)
+    }
+
+    override suspend fun deleteReply(replyId: Long) {
+        api.deleteReply(replyId)
+    }
+
     override suspend fun getReplyLikeTags(ownerId: Long?): List<ReplyLikeTag> {
         return api.getReplyLikeTags().map{it.toReplyLikeTag()}
     }

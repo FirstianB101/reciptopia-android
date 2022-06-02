@@ -113,7 +113,7 @@ fun CommunityScreen(
                         }
                     }
 
-                    if(state.value.posts.isEmpty()){
+                    if(state.value.posts.isEmpty() && !state.value.isLoading){
                         EmptyText(
                             modifier = Modifier
                                 .fillMaxWidth()

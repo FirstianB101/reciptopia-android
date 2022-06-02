@@ -10,4 +10,6 @@ sealed class PostDetailChatEvent{
     data class CommentLikeButtonClick(val comment: Comment, val idx: Int): PostDetailChatEvent()
     data class SelectComment(val idx: Int): PostDetailChatEvent()
     data class ReplyLikeButtonClick(val reply: Reply, val commentIdx: Int, val replyIdx: Int): PostDetailChatEvent()
+    data class DeleteComment(val comment: Comment): PostDetailChatEvent()
+    data class DeleteReply(val reply: Reply): PostDetailChatEvent()
 }

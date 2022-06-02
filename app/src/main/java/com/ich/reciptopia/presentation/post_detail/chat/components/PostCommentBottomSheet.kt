@@ -1,6 +1,7 @@
 package com.ich.reciptopia.presentation.post_detail.chat.components
 
 import android.widget.Toast
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -8,9 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
@@ -36,6 +35,7 @@ import com.ich.reciptopia.presentation.post_detail.components.CommentItem
 import com.ich.reciptopia.presentation.post_detail.components.ReplyItem
 import kotlinx.coroutines.flow.collectLatest
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PostCommentBottomSheet(
     modifier: Modifier = Modifier,
@@ -67,7 +67,7 @@ fun PostCommentBottomSheet(
             fontWeight = FontWeight.Bold
         )
 
-        if(state.value.comments.isEmpty()){
+        if(state.value.comments.isEmpty() && !state.value.isLoading){
             EmptyText(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -82,36 +82,70 @@ fun PostCommentBottomSheet(
                 .weight(1f)
         ){
             itemsIndexed(state.value.comments){ cIdx, comment ->
+                val commentDismissState = rememberDismissState(
+                    confirmStateChange = {
+                        if (it == DismissValue.DismissedToStart) {
+                            viewModel.onEvent(PostDetailChatEvent.DeleteComment(comment))
+                        }
+                        false
+                    }
+                )
+
                 val commentBackground =
                     if(cIdx == state.value.selectedCommentIdx) colorResource(R.color.selected_comment_bg)
                     else Color.White
-                CommentItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(commentBackground)
-                        .padding(8.dp)
-                        .offset(y = (-4).dp),
-                    comment = comment,
-                    onCommentClick = {
-                        viewModel.onEvent(PostDetailChatEvent.SelectComment(cIdx))
-                    },
-                    onCommentLikeClick = {
-                        viewModel.onEvent(PostDetailChatEvent.CommentLikeButtonClick(comment, cIdx))
+
+                CommentReplySwipeDismiss(
+                    dismissState = commentDismissState,
+                    threshold = 0.2f
+                ){
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        elevation = animateDpAsState(targetValue = if (commentDismissState.dismissDirection != null) 4.dp else 0.dp).value
+                    ) {
+                        CommentItem(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(commentBackground)
+                                .padding(8.dp)
+                                .offset(y = (-4).dp),
+                            comment = comment,
+                            onCommentClick = {
+                                viewModel.onEvent(PostDetailChatEvent.SelectComment(cIdx))
+                            },
+                            onCommentLikeClick = {
+                                viewModel.onEvent(PostDetailChatEvent.CommentLikeButtonClick(comment, cIdx))
+                            },
+                        )
                     }
-                )
+                }
+
                 comment.replies?.forEachIndexed { rIdx, reply ->
-                    ReplyItem(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp)
-                            .offset(y = (-4).dp),
-                        reply = reply,
-                        onReplyClick = {},
-                        onReplyLikeClick = {
-                            viewModel.onEvent(PostDetailChatEvent.ReplyLikeButtonClick(reply, cIdx, rIdx))
+                    val replyDismissState = rememberDismissState(
+                        confirmStateChange = {
+                            if (it == DismissValue.DismissedToStart) {
+                                viewModel.onEvent(PostDetailChatEvent.DeleteReply(reply))
+                            }
+                            true
                         }
                     )
-                    Spacer(modifier = Modifier.height(4.dp))
+
+                    CommentReplySwipeDismiss(
+                        dismissState = replyDismissState,
+                        threshold = 0.2f
+                    ) {
+                        ReplyItem(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp)
+                                .offset(y = (-4).dp),
+                            reply = reply,
+                            onReplyClick = {},
+                            onReplyLikeClick = {
+                                viewModel.onEvent(PostDetailChatEvent.ReplyLikeButtonClick(reply, cIdx, rIdx))
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -159,6 +193,15 @@ fun PostCommentBottomSheet(
                     tint = Color.White
                 )
             }
+        }
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ){
+        if(state.value.isLoading){
+            CircularProgressIndicator()
         }
     }
 }
