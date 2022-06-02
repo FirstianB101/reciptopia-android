@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class SearchHistory(
     @PrimaryKey val id: Long? = null,
     val ownerId: Long? = null,
-    val ingredientNames: List<String?> = emptyList()
+    val ingredientNames: List<String> = emptyList(),
+    val isSubIngredient: List<Boolean> = emptyList()
 )

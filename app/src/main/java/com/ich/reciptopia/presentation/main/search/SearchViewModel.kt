@@ -46,7 +46,7 @@ class SearchViewModel @Inject constructor(
             }
             is SearchScreenEvent.DoSearch -> {
                 _state.value = _state.value.copy(
-                    chipInfosForSearch = event.ingredients
+                    chipsForSearch = event.ingredients
                 )
 
                 viewModelScope.launch {
@@ -54,7 +54,8 @@ class SearchViewModel @Inject constructor(
                         getSearchedPostList()
                         val newHistory = SearchHistory(
                             ownerId = _state.value.currentUser?.account?.id,
-                            ingredientNames = event.ingredients.map{it.text}
+                            ingredientNames = event.ingredients.map{it.text},
+                            isSubIngredient = event.ingredients.map{it.isSubIngredient.value}
                         )
                         addSearchHistory(newHistory).join()
                         getSearchHistories()
@@ -66,7 +67,7 @@ class SearchViewModel @Inject constructor(
                 }
             }
             is SearchScreenEvent.ClickHistory -> {
-                getSearchedPostList()
+                getPostsByHistory(event.history)
 
                 viewModelScope.launch {
                     _eventFlow.emit(UiEvent.NavigateToSearchResultScreen)
@@ -108,12 +109,25 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun getSearchedPostList() = viewModelScope.launch{
-        getSearchedPosts().join()
+        getPostsByChips().join()
         getFavoritesForFillingStar()
         getPostLikeTags()
         _state.value.posts.forEachIndexed { i, post ->
             getOwnerOfPost(i, post.ownerId!!)
         }
+    }
+
+    private fun getPostsByHistory(history: SearchHistory) = viewModelScope.launch {
+        val chips = mutableListOf<ChipState>()
+        val ingredients = history.ingredientNames
+        val isSubIngredients = history.isSubIngredient
+        for(i in ingredients.indices){
+            chips.add(ChipState(ingredients[i], mutableStateOf(isSubIngredients[i])))
+        }
+        _state.value = _state.value.copy(
+            chipsForSearch = chips
+        )
+        getSearchedPostList()
     }
 
     private fun getFavoritePosts() = viewModelScope.launch {
@@ -323,11 +337,11 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun getSearchedPosts() = viewModelScope.launch {
+    private fun getPostsByChips() = viewModelScope.launch {
         val mainIngredients = mutableListOf<String>()
         val subIngredients = mutableListOf<String>()
 
-        _state.value.chipInfosForSearch?.forEach{ chip ->
+        _state.value.chipsForSearch?.forEach{ chip ->
             if(chip.isSubIngredient.value) subIngredients.add(chip.text)
             else mainIngredients.add(chip.text)
         }

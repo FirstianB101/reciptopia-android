@@ -17,6 +17,16 @@ class SearchHistoryTypeConverter(private val gson: Gson) {
     fun jsonToStringList(value: String): List<String>{
         return gson.fromJson(value, Array<String>::class.java).toList()
     }
+
+    @TypeConverter
+    fun booleanListToJson(value: List<Boolean>): String? {
+        return gson.toJson(value)
+    }
+
+    @TypeConverter
+    fun jsonToBooleanList(value: String): List<Boolean>{
+        return gson.fromJson(value, Array<Boolean>::class.java).toList()
+    }
 }
 
 @ProvidedTypeConverter
