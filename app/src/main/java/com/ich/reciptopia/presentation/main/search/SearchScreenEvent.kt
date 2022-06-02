@@ -4,9 +4,10 @@ import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
+import com.ich.reciptopia.presentation.main.search.util.ChipState
 
 sealed class SearchScreenEvent{
-    data class DoSearch(val ingredientNames: List<String?>): SearchScreenEvent()
+    data class DoSearch(val ingredients: List<ChipState>): SearchScreenEvent()
     data class ClickHistory(val history: SearchHistory): SearchScreenEvent()
     data class DeleteSearchHistory(val history: SearchHistory): SearchScreenEvent()
     data class DeleteFavorite(val favorite: Favorite): SearchScreenEvent()

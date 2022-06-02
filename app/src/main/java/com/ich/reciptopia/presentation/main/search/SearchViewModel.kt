@@ -11,6 +11,7 @@ import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.model.SearchHistory
 import com.ich.reciptopia.domain.use_case.search.SearchUseCases
+import com.ich.reciptopia.presentation.main.search.util.ChipState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,12 +45,16 @@ class SearchViewModel @Inject constructor(
                 getSearchedPostList()
             }
             is SearchScreenEvent.DoSearch -> {
+                _state.value = _state.value.copy(
+                    chipInfosForSearch = event.ingredients
+                )
+
                 viewModelScope.launch {
-                    if(event.ingredientNames.isNotEmpty()) {
+                    if(event.ingredients.isNotEmpty()) {
                         getSearchedPostList()
                         val newHistory = SearchHistory(
                             ownerId = _state.value.currentUser?.account?.id,
-                            ingredientNames = event.ingredientNames
+                            ingredientNames = event.ingredients.map{it.text}
                         )
                         addSearchHistory(newHistory).join()
                         getSearchHistories()
@@ -102,13 +107,12 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun getSearchedPostList(){
-        getSearchedPosts().invokeOnCompletion {
-            getFavoritesForFillingStar()
-            getPostLikeTags()
-            _state.value.posts.forEachIndexed { i, post ->
-                getOwnerOfPost(i, post.ownerId!!)
-            }
+    private fun getSearchedPostList() = viewModelScope.launch{
+        getSearchedPosts().join()
+        getFavoritesForFillingStar()
+        getPostLikeTags()
+        _state.value.posts.forEachIndexed { i, post ->
+            getOwnerOfPost(i, post.ownerId!!)
         }
     }
 
@@ -324,7 +328,7 @@ class SearchViewModel @Inject constructor(
         val subIngredients = mutableListOf<String>()
 
         _state.value.chipInfosForSearch?.forEach{ chip ->
-            if(chip.isSubIngredient) subIngredients.add(chip.text)
+            if(chip.isSubIngredient.value) subIngredients.add(chip.text)
             else mainIngredients.add(chip.text)
         }
 
