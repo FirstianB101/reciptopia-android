@@ -126,7 +126,7 @@ fun PostCommentBottomSheet(
                             if (it == DismissValue.DismissedToStart) {
                                 viewModel.onEvent(PostDetailChatEvent.DeleteReply(reply))
                             }
-                            true
+                            false
                         }
                     )
 
