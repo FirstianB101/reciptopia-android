@@ -67,11 +67,17 @@ class SearchViewModel @Inject constructor(
                 }
             }
             is SearchScreenEvent.ClickHistory -> {
-                getPostsByHistory(event.history)
-
-                viewModelScope.launch {
-                    _eventFlow.emit(UiEvent.NavigateToSearchResultScreen)
+                val chips = event.history.ingredientNames.map{
+                    ChipState(it, mutableStateOf(true))
                 }
+                _state.value = _state.value.copy(
+                    chipsForSearch = chips
+                )
+//                getPostsByHistory(event.history)
+//
+//                viewModelScope.launch {
+//                    _eventFlow.emit(UiEvent.NavigateToSearchResultScreen)
+//                }
             }
             is SearchScreenEvent.DeleteSearchHistory -> {
                 deleteSearchHistory(event.history.id!!)

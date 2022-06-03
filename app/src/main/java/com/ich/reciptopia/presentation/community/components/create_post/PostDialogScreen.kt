@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.community.components
+package com.ich.reciptopia.presentation.community.components.create_post
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder

@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.community.components
+package com.ich.reciptopia.presentation.community.components.create_post
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box

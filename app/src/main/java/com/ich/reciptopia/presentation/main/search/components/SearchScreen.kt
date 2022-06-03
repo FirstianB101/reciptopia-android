@@ -37,6 +37,7 @@ fun SearchScreen(
     viewModel: SearchViewModel = hiltViewModel(),
     onChipClicked: (String, Boolean, Int) -> Unit,
     onDeleteClicked: (String, Boolean, Int) -> Unit,
+    onChipStatesChange: (List<ChipState>) -> Unit,
     onChipReset: () -> Unit
 ) {
     val state = viewModel.state.collectAsState()
@@ -118,6 +119,7 @@ fun SearchScreen(
                                     items = history.ingredientNames,
                                     onItemClicked = {
                                         viewModel.onEvent(SearchScreenEvent.ClickHistory(history))
+                                        state.value.chipsForSearch?.let { onChipStatesChange(it) }
                                     },
                                     onDeleteItem = {
                                         viewModel.onEvent(SearchScreenEvent.DeleteSearchHistory(history))

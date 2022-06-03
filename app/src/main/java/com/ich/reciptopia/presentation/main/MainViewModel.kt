@@ -53,6 +53,11 @@ class MainViewModel @Inject constructor(
                     }
                 }
             }
+            is MainScreenEvent.AddChips -> {
+                _state.value = _state.value.copy(
+                    chipStates = event.chips
+                )
+            }
             is MainScreenEvent.RemoveChip -> {
                 _state.value = _state.value.copy(
                     chipStates = _state.value.chipStates.getRemovedList(event.chip)

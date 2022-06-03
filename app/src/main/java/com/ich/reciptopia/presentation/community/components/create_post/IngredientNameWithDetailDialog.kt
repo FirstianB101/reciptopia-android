@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.community.components
+package com.ich.reciptopia.presentation.community.components.create_post
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,7 +16,6 @@ import androidx.compose.ui.window.Dialog
 import com.ich.reciptopia.R
 import com.ich.reciptopia.presentation.main.analyze_ingredient.components.VerticalChips
 import com.ich.reciptopia.presentation.main.search.util.ChipState
-import com.ich.reciptopia.presentation.my_page.components.MyPageNavigation
 
 @Composable
 fun IngredientNameWithDetailDialog(

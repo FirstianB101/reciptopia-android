@@ -1,6 +1,5 @@
 package com.ich.reciptopia.presentation.main.components
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,8 +14,8 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.components.ReciptopiaTabRow
-import com.ich.reciptopia.presentation.my_page.components.MyPageDialog
 import com.ich.reciptopia.presentation.community.components.CommunityScreen
+import com.ich.reciptopia.presentation.my_page.components.MyPageDialog
 import com.ich.reciptopia.presentation.notification.components.NotificationDialog
 import kotlinx.coroutines.launch
 

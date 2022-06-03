@@ -5,7 +5,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -104,6 +103,9 @@ fun MainNavigation(
                     },
                     onChipReset = {
                         viewModel.onEvent(MainScreenEvent.ResetChips)
+                    },
+                    onChipStatesChange = {
+                        viewModel.onEvent(MainScreenEvent.AddChips(it))
                     },
                     viewModel = searchViewModel
                 )

@@ -25,6 +25,7 @@ import com.ich.reciptopia.R
 import com.ich.reciptopia.common.components.EmptyText
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 import com.ich.reciptopia.presentation.community.CommunityViewModel
+import com.ich.reciptopia.presentation.community.components.create_post.CreatePostDialog
 import com.ich.reciptopia.presentation.post_detail.PostActivity
 import kotlinx.coroutines.flow.collectLatest
 
