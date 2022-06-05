@@ -10,7 +10,7 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class NicknameChangeUseCase @Inject constructor(
+class EditNicknameUseCase @Inject constructor(
     private val repository: ProfileRepository
 ) {
     operator fun invoke(account: Account): Flow<Resource<Account>> = flow{

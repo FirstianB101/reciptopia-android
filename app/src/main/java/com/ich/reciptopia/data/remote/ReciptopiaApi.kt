@@ -2,6 +2,8 @@ package com.ich.reciptopia.data.remote
 
 import com.ich.reciptopia.data.remote.dto.*
 import com.ich.reciptopia.domain.model.*
+import okhttp3.MultipartBody
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -229,4 +231,18 @@ interface ReciptopiaApi {
 
     @DELETE("account/favorites/{id}")
     suspend fun deleteFavorite(@Path("id")favoriteId: Long?): Response<Unit>
+
+    // AccountProfileImg
+    @Multipart
+    @POST("account/profileImages")
+    suspend fun putAccountProfileImg(
+        @Part("ownerId") ownerId: Long,
+        @Part imgFile: MultipartBody.Part
+    ): ProfileImageResponseDto
+
+    @GET("account/profileImages")
+    suspend fun getAccountProfileImage(@Query("ownerId")ownerId: Long): ResponseBody
+
+    @GET("account/profileImages/{id}")
+    suspend fun getProfileImg(@Path("id")id: Long): AccountProfileImgDto
 }

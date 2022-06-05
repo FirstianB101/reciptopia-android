@@ -1,8 +1,10 @@
 package com.ich.reciptopia.presentation.my_page.profile.components
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -13,7 +15,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -76,21 +81,32 @@ fun ProfileScreen(
             )
         }
 
-        Icon(
-            modifier = Modifier.size(128.dp),
-            imageVector = Icons.Filled.AccountCircle,
-            contentDescription = "Profile Login Icon",
-            tint = colorResource(id = R.color.main_color)
-        )
+        if(state.value.profileImage != null){
+            Image(
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape),
+                bitmap = state.value.profileImage!!.asImageBitmap(),
+                contentDescription = "profile image",
+                contentScale = ContentScale.Crop
+            )
+        }else {
+            Icon(
+                modifier = Modifier.size(128.dp),
+                imageVector = Icons.Filled.AccountCircle,
+                contentDescription = "Profile Login Icon",
+                tint = colorResource(id = R.color.main_color)
+            )
+        }
         
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(30))
                 .padding(4.dp),
-            text = state.value.nickname,
+            text = state.value.curAccount?.nickname ?: "",
             textAlign = TextAlign.Center,
             fontSize = 17.sp
         )
@@ -116,15 +132,16 @@ fun ProfileScreen(
         }
     }
 
-    TextInputDialog(
+    EditAccountDialog(
         modifier = Modifier.padding(16.dp),
-        initialValue = state.value.nickname,
-        title = stringResource(id = R.string.edit_nickname),
+        initialNickname = state.value.curAccount?.nickname ?: "",
+        initialProfileImage = state.value.profileImage,
+        title = stringResource(id = R.string.edit_profile),
         buttonText = stringResource(id = R.string.modify),
         dialogState = state.value.showEditDialogState,
         onDismiss = { viewModel.onEvent(ProfileScreenEvent.EditDialogStateChanged(false)) },
-        onButtonClick = {
-            viewModel.onEvent(ProfileScreenEvent.ChangeNickname(it))
+        onButtonClick = { nickname, image ->
+            viewModel.onEvent(ProfileScreenEvent.EditProfile(nickname, image))
         }
     )
 }

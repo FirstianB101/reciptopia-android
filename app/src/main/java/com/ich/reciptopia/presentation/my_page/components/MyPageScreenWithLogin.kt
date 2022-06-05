@@ -62,14 +62,14 @@ fun MyPageScreenWithLogin(
 
             Column {
                 Text(
-                    text = state.value.nickname,
+                    text = state.value.curAccount?.nickname ?: "",
                     color = Color.Black,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp
                 )
 
                 Text(
-                    text = state.value.email,
+                    text = state.value.curAccount?.email ?: "",
                     color = Color.Gray,
                     fontSize = 16.sp
                 )

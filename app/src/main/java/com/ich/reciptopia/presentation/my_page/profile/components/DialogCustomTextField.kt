@@ -25,7 +25,7 @@ fun DialogCustomTextField(
     Column (
         modifier = modifier
     ){
-        val maxLength = 50
+        val maxLength = 20
         val blue = Color(0xff76a9ff)
         Text(
             text = caption,

@@ -6,7 +6,7 @@ import com.ich.reciptopia.domain.use_case.community.CreatePostUseCase
 import com.ich.reciptopia.domain.use_case.community.GetPostsByTimeUseCase
 import com.ich.reciptopia.domain.use_case.community.GetPostsByViewsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
-import com.ich.reciptopia.domain.use_case.my_page.profile.NicknameChangeUseCase
+import com.ich.reciptopia.domain.use_case.my_page.profile.*
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
@@ -61,8 +61,8 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideProfileUseCase(repository: ProfileRepository): NicknameChangeUseCase{
-        return NicknameChangeUseCase(repository)
+    fun provideProfileUseCase(repository: ProfileRepository): EditNicknameUseCase{
+        return EditNicknameUseCase(repository)
     }
 
     @Provides
@@ -118,6 +118,16 @@ object UseCaseModule {
             createReply = CreateReplyUseCase(repository),
             deleteComment = DeleteCommentUseCase(repository),
             deleteReply = DeleteReplyUseCase(repository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideProfileUseCases(repository: ProfileRepository): ProfileUseCases{
+        return ProfileUseCases(
+            editNickname = EditNicknameUseCase(repository),
+            uploadProfileImg = UploadProfileImgUseCase(repository),
+            getAccountProfileImg = GetAccountProfileImgUseCase(repository)
         )
     }
 }

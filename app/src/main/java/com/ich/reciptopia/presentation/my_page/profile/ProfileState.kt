@@ -1,9 +1,11 @@
 package com.ich.reciptopia.presentation.my_page.profile
 
+import android.graphics.Bitmap
+import com.ich.reciptopia.domain.model.Account
+
 data class ProfileState(
     val isLoading: Boolean = false,
-    val nickname: String = "",
     val showEditDialogState: Boolean = false,
-    val email: String = "",
-
+    val curAccount: Account? = null,
+    val profileImage: Bitmap? = null
 )
