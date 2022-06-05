@@ -73,6 +73,9 @@ class SearchViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     chipsForSearch = chips
                 )
+                viewModelScope.launch {
+                    _eventFlow.emit(UiEvent.ChangeChips(chips))
+                }
             }
             is SearchScreenEvent.DeleteSearchHistory -> {
                 deleteSearchHistory(event.history.id!!)
@@ -647,5 +650,6 @@ class SearchViewModel @Inject constructor(
     sealed class UiEvent {
         data class ShowToast(val message: String) : UiEvent()
         object NavigateToSearchResultScreen: UiEvent()
+        data class ChangeChips(val chips: List<ChipState>): UiEvent()
     }
 }

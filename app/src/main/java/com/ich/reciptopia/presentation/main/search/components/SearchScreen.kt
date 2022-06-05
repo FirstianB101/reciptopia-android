@@ -64,6 +64,9 @@ fun SearchScreen(
                     }
                     onChipReset()
                 }
+                is SearchViewModel.UiEvent.ChangeChips -> {
+                    onChipStatesChange(event.chips)
+                }
             }
         }
     }
@@ -119,7 +122,6 @@ fun SearchScreen(
                                     items = history.ingredientNames,
                                     onItemClicked = {
                                         viewModel.onEvent(SearchScreenEvent.ClickHistory(history))
-                                        state.value.chipsForSearch?.let { onChipStatesChange(it) }
                                     },
                                     onDeleteItem = {
                                         viewModel.onEvent(SearchScreenEvent.DeleteSearchHistory(history))
