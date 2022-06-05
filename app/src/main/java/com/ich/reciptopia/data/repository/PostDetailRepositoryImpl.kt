@@ -25,7 +25,7 @@ class PostDetailRepositoryImpl(
         return api.getMainIngredientsByPostId(postId).toMainIngredientList()
     }
 
-    override suspend fun getSubIngredients(postId: Long): List<SubIngredient> {
-        return api.getSubIngredientsByPostId(postId).toSubIngredientList()
+    override suspend fun getSubIngredients(recipeId: Long): List<SubIngredient> {
+        return api.getSubIngredientsByRecipeId(recipeId).toSubIngredientList()
     }
 }

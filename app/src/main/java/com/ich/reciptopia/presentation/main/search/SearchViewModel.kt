@@ -73,11 +73,6 @@ class SearchViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     chipsForSearch = chips
                 )
-//                getPostsByHistory(event.history)
-//
-//                viewModelScope.launch {
-//                    _eventFlow.emit(UiEvent.NavigateToSearchResultScreen)
-//                }
             }
             is SearchScreenEvent.DeleteSearchHistory -> {
                 deleteSearchHistory(event.history.id!!)
@@ -121,19 +116,6 @@ class SearchViewModel @Inject constructor(
         _state.value.posts.forEachIndexed { i, post ->
             getOwnerOfPost(i, post.ownerId!!)
         }
-    }
-
-    private fun getPostsByHistory(history: SearchHistory) = viewModelScope.launch {
-        val chips = mutableListOf<ChipState>()
-        val ingredients = history.ingredientNames
-        val isSubIngredients = history.isSubIngredient
-        for(i in ingredients.indices){
-            chips.add(ChipState(ingredients[i], mutableStateOf(isSubIngredients[i])))
-        }
-        _state.value = _state.value.copy(
-            chipsForSearch = chips
-        )
-        getSearchedPostList()
     }
 
     private fun getFavoritePosts() = viewModelScope.launch {

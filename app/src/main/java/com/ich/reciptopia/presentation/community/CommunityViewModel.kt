@@ -87,11 +87,6 @@ class CommunityViewModel @Inject constructor(
                     newPostContent = event.content
                 )
             }
-            is CommunityScreenEvent.CreatePostStepChanged -> {
-                _state.value = _state.value.copy(
-                    newPostStep = event.step
-                )
-            }
             is CommunityScreenEvent.CreatePostAddImage -> {
                 _state.value = _state.value.copy(
                     newPictureUrls = _state.value.newPictureUrls.getAddedList(event.uri)
@@ -152,9 +147,7 @@ class CommunityViewModel @Inject constructor(
                         mainIngredients.add(MainIngredient(name = chipState.text, detail = chipState.detail))
                     }
                 }
-                val steps = _state.value.newPostStep.split('\n')
-                    .filter{ it.isNotBlank() }
-                    .map{ Step(description = it, pictureUrl = null) }
+                val steps = _state.value.newPostSteps
                 val newPost = RecipePost(
                     post = Post(
                         ownerId = _state.value.currentUser?.account?.id,
@@ -185,6 +178,16 @@ class CommunityViewModel @Inject constructor(
                         _eventFlow.emit(UiEvent.ShowToast("좋아요를 표시하려면 로그인 해주세요"))
                     }
                 }
+            }
+            is CommunityScreenEvent.AddSteps -> {
+                _state.value = _state.value.copy(
+                    newPostSteps = event.steps
+                )
+            }
+            is CommunityScreenEvent.StepDialogStateChanged -> {
+                _state.value = _state.value.copy(
+                    showStepDialog = event.show
+                )
             }
         }
     }

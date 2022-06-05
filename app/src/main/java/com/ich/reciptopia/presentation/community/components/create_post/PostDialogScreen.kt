@@ -12,7 +12,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
@@ -31,13 +33,16 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.Constants
+import com.ich.reciptopia.domain.model.Step
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
 import com.ich.reciptopia.presentation.community.CommunityViewModel
+import com.ich.reciptopia.ui.theme.ReciptopiaTheme
 
 @Composable
 fun PostDialogScreen(
@@ -194,7 +199,7 @@ fun PostDialogScreen(
         BasicTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f),
+                .height(100.dp),
             value = state.value.newPostContent,
             onValueChange = { viewModel.onEvent(CommunityScreenEvent.CreatePostContentChanged(it)) },
             decorationBox = { innerTextField ->
@@ -214,26 +219,29 @@ fun PostDialogScreen(
 
         Divider()
 
-        BasicTextField(
+        Button(
             modifier = Modifier
+                .align(Alignment.End)
+                .padding(8.dp),
+            onClick = {viewModel.onEvent(CommunityScreenEvent.StepDialogStateChanged(true))}
+        ) {
+            Text(text = stringResource(id = R.string.input_step))
+        }
+
+        LazyColumn(
+            modifier = Modifier
+                .weight(1f)
                 .fillMaxWidth()
-                .weight(3f),
-            value = state.value.newPostStep,
-            onValueChange = { viewModel.onEvent(CommunityScreenEvent.CreatePostStepChanged(it)) },
-            decorationBox = { innerTextField ->
-                Row(
-                    Modifier.padding(16.dp)
-                ) {
-                    if (state.value.newPostStep.isEmpty()) {
-                        Text(
-                            text = stringResource(id = R.string.comment_input_step),
-                            color = Color.LightGray
-                        )
-                    }
-                    innerTextField()
-                }
-            },
-        )
+        ){
+            itemsIndexed(state.value.newPostSteps) { idx, step ->
+                ReadOnlyStepItem(
+                    index = idx + 1,
+                    step = step,
+                    backgroundColor = Color.White,
+                    contentColor = Color.LightGray
+                )
+            }
+        }
 
         IngredientNameWithDetailDialog(
             modifier = Modifier
@@ -246,6 +254,17 @@ fun PostDialogScreen(
             onButtonClick = { chips ->
                 viewModel.onEvent(CommunityScreenEvent.AddChips(chips))
                 viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(false))
+            }
+        )
+
+        StepInputDialog(
+            modifier = Modifier.fillMaxSize(),
+            dialogState = state.value.showStepDialog,
+            onDismiss = { viewModel.onEvent(CommunityScreenEvent.StepDialogStateChanged(false)) },
+            initialValue = state.value.newPostSteps,
+            onButtonClick = {
+                viewModel.onEvent(CommunityScreenEvent.AddSteps(it))
+                viewModel.onEvent(CommunityScreenEvent.StepDialogStateChanged(false))
             }
         )
     }

@@ -82,8 +82,8 @@ class PostDetailViewModel @Inject constructor(
         getPostLikeTagsForFillingThumb()
         getRecipe(postId).join()
         getMainIngredients(postId)
-        getSubIngredients(postId)
-        getSteps(_state.value.curRecipe?.id!!)
+        getSubIngredients()
+        getSteps()
     }
 
     private fun getPostInfo() = viewModelScope.launch{
@@ -354,8 +354,9 @@ class PostDetailViewModel @Inject constructor(
         }
     }
 
-    private fun getSubIngredients(postId: Long) = viewModelScope.launch {
-        useCases.getSubIngredients(postId).collect { result ->
+    private fun getSubIngredients() = viewModelScope.launch {
+        val recipeId = _state.value.curRecipe?.id
+        useCases.getSubIngredients(recipeId!!).collect { result ->
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
@@ -377,7 +378,8 @@ class PostDetailViewModel @Inject constructor(
         }
     }
 
-    private fun getSteps(recipeId: Long) = viewModelScope.launch {
+    private fun getSteps() = viewModelScope.launch {
+        val recipeId = state.value.curRecipe?.id!!
         useCases.getSteps(recipeId).collect { result ->
             when(result){
                 is Resource.Success -> {

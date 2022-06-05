@@ -11,6 +11,6 @@
     <color name="sub_ingredient">#5F8FED</color>
     <color name="main_ingredient">#EAAD11</color>
     <color name="light_blue">#ffd8e6ff</color>
-    <color name="selected_comment_bg">#ECF2FF</color>
+    <color name="selected_bg">#ECF2FF</color>
     <color name="new_notification_background">#ECF2FF</color>
 </resources>

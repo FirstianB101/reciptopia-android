@@ -4,7 +4,9 @@ import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.ich.reciptopia.R
+import com.ich.reciptopia.presentation.community.components.create_post.ReadOnlyStepItem
 import com.ich.reciptopia.presentation.post_detail.PostDetailEvent
 import com.ich.reciptopia.presentation.post_detail.PostDetailViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -54,10 +57,7 @@ fun PostDetailScreen(
         }
     }
 
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-    ) {
+    Column{
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -122,76 +122,86 @@ fun PostDetailScreen(
 
         Divider()
 
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-        ){
-            state.value.curPost?.pictureUrls?.let {
-                itemsIndexed(it){ idx, url ->
-                    Image(
-                        modifier = Modifier
-                            .size(200.dp)
-                            .padding(8.dp),
-                        painter = rememberImagePainter(url),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = ""
-                    )
-                }
-            }
-        }
-
-        Text(
-            modifier = Modifier
-                .padding(12.dp),
-            text = "메인 재료",
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-
-        state.value.mainIngredients.forEach {
-            Text(
-                modifier = Modifier.offset(x = 24.dp),
-                text = "${it.name} (${it.detail}) "
-            )
-        }
-        
-        Text(
-            modifier = Modifier
-                .padding(12.dp),
-            text = "서브 재료",
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-
-        state.value.subIngredients.forEach {
-            Text(
-                modifier = Modifier.offset(x = 24.dp),
-                text = "${it.name} (${it.detail}) "
-            )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-        
-        Text(
-            modifier = Modifier.padding(12.dp),
-            text = stringResource(id = R.string.how_to_make),
-            fontSize = 19.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-
-        Column(
+        LazyColumn(
             modifier = Modifier.weight(1f)
         ) {
-            state.value.curPostSteps.forEachIndexed { idx, step ->
+            item {
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                ) {
+                    state.value.curPost?.pictureUrls?.let {
+                        itemsIndexed(it) { idx, url ->
+                            Image(
+                                modifier = Modifier
+                                    .size(200.dp)
+                                    .padding(8.dp),
+                                painter = rememberImagePainter(url),
+                                contentScale = ContentScale.Crop,
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                }
+            }
+
+            item{
+                Text(
+                    modifier = Modifier.padding(12.dp),
+                    text = "메인 재료",
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+            }
+
+            items(state.value.mainIngredients){
                 Text(
                     modifier = Modifier.offset(x = 24.dp),
-                    text = "${step.description}"
+                    text = "${it.name} (${it.detail}) ",
+                    color = Color.Black
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            item{
+                Text(
+                    modifier = Modifier.padding(12.dp),
+                    text = "서브 재료",
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+            }
+
+            items(state.value.subIngredients){
+                Text(
+                    modifier = Modifier.offset(x = 24.dp),
+                    text = "${it.name} (${it.detail}) ",
+                    color = Color.Black
+                )
+            }
+
+            item{
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    modifier = Modifier.padding(12.dp),
+                    text = stringResource(id = R.string.how_to_make),
+                    fontSize = 19.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+            }
+
+            itemsIndexed(state.value.curPostSteps){ idx, step ->
+                ReadOnlyStepItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    index = idx + 1,
+                    step = step,
+                    backgroundColor = Color.White,
+                    contentColor = Color.LightGray
+                )
             }
         }
 
@@ -211,10 +221,10 @@ fun PostDetailScreen(
                         .padding(end = 4.dp),
                     imageVector = Icons.Default.ThumbUp,
                     contentDescription = "",
-                    tint = if(state.value.curPost?.like == true) colorResource(id = R.color.main_color)
-                            else Color.Gray
+                    tint = if (state.value.curPost?.like == true) colorResource(id = R.color.main_color)
+                    else Color.Gray
                 )
-                
+
                 AnimatedLikeCounter(
                     count = state.value.curPost?.likeCount ?: 0,
                     like = state.value.curPost?.like ?: false
@@ -222,7 +232,7 @@ fun PostDetailScreen(
             }
 
             Spacer(modifier = Modifier.width(8.dp))
-            
+
             TextButton(
                 onClick = onCommentClicked
             ) {

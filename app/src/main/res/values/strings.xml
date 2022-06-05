@@ -25,6 +25,7 @@
     <string name="input_ingredient">재료 입력</string>
     <string name="how_to_make">만드는 법</string>
     <string name="delete">삭제</string>
+    <string name="input_step">조리 과정 입력</string>
 
     <string name="signup_success">회원가입 완료</string>
     <string name="analyze_pictures">%d개의 재료 분석하기</string>

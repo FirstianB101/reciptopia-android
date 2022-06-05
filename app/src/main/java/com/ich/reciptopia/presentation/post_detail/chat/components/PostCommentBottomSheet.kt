@@ -92,7 +92,7 @@ fun PostCommentBottomSheet(
                 )
 
                 val commentBackground =
-                    if(cIdx == state.value.selectedCommentIdx) colorResource(R.color.selected_comment_bg)
+                    if(cIdx == state.value.selectedCommentIdx) colorResource(R.color.selected_bg)
                     else Color.White
 
                 CommentReplySwipeDismiss(

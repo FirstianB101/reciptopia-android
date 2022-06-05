@@ -135,7 +135,7 @@ interface ReciptopiaApi {
     suspend fun createSubIngredient(@Body ingredient: SubIngredient): SubIngredientDto
 
     @GET("post/recipe/subIngredients")
-    suspend fun getSubIngredientsByPostId(@Query("postId")postId: Long): SubIngredientsDto
+    suspend fun getSubIngredientsByRecipeId(@Query("recipeId")recipeId: Long): SubIngredientsDto
 
     @PATCH("post/recipe/subIngredients/{id}")
     suspend fun patchSubIngredient(@Path("id")ingredientId: Long, @Body ingredient: SubIngredient): SubIngredientDto
