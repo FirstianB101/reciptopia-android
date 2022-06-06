@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,10 +40,12 @@ fun ReadOnlyStepItem(
             verticalAlignment = Alignment.CenterVertically
         ){
             Text(
+                modifier = Modifier.width(20.dp),
                 text = "$index",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -63,8 +66,7 @@ fun ReadOnlyStepItem(
                     .weight(1f)
                     .height(80.dp)
                     .background(backgroundColor)
-                    .border(1.dp, contentColor, RoundedCornerShape(10))
-                    .padding(4.dp),
+                    .padding(top = 8.dp, bottom = 4.dp, start = 4.dp, end = 4.dp),
                 text = step.description ?: "",
             )
 

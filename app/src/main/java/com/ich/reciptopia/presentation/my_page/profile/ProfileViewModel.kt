@@ -28,8 +28,6 @@ class ProfileViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private var curUser: User? = null
-
     init {
         observeUserChanged()
     }
@@ -55,8 +53,6 @@ class ProfileViewModel @Inject constructor(
     private fun observeUserChanged(){
         viewModelScope.launch {
             app.user.collect { user ->
-                curUser = user
-
                 _state.value = _state.value.copy(
                     curAccount = user?.account
                 )
@@ -68,7 +64,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun editNickname(newNickname: String) = viewModelScope.launch {
-        val edited = curUser?.account?.copy(
+        val edited = _state.value.curAccount?.copy(
             nickname = newNickname
         )!!
         useCases.editNickname(edited).collect{ result ->

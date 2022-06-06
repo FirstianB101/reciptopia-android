@@ -3,7 +3,7 @@ package com.ich.reciptopia.data.remote.dto
 import com.ich.reciptopia.domain.model.Post
 
 data class PostWithCommentAndLikeTagCountsDto(
-    val postWithCommentAndLikeTagCounts: Map<String, PostWithCommentAndLikeTagCounts>
+    val postWithCommentAndLikeTagCounts: LinkedHashMap<String, PostWithCommentAndLikeTagCounts>
 )
 
 data class PostWithCommentAndLikeTagCounts(

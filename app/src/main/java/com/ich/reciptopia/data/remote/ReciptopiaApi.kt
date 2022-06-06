@@ -240,7 +240,7 @@ interface ReciptopiaApi {
         @Part imgFile: MultipartBody.Part
     ): ProfileImageResponseDto
 
-    @GET("account/profileImages")
+    @GET("account/profileImages/download")
     suspend fun getAccountProfileImage(@Query("ownerId")ownerId: Long): ResponseBody
 
     @GET("account/profileImages/{id}")
