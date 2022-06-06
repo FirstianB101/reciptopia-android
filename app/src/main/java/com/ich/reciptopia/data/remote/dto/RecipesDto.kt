@@ -3,7 +3,7 @@ package com.ich.reciptopia.data.remote.dto
 import com.ich.reciptopia.domain.model.Recipe
 
 data class RecipesDto(
-    val recipes: Map<String, RecipeDto>?
+    val recipes: LinkedHashMap<String, RecipeDto>?
 )
 
 fun RecipesDto.toRecipeList(): List<Recipe>{

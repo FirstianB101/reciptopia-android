@@ -8,14 +8,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +56,7 @@ fun PostDetailScreen(
         }
     }
 
-    Column{
+    Column(modifier = modifier){
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -71,6 +70,51 @@ fun PostDetailScreen(
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
             )
+
+            if(state.value.isOwner) {
+                Box(
+                    modifier = Modifier.size(32.dp)
+                ) {
+                    IconButton(
+                        modifier = Modifier.padding(top = 8.dp, end = 8.dp),
+                        onClick = {
+                            viewModel.onEvent(PostDetailEvent.ShowSettingMenu(true))
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(32.dp),
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = "Setting Icon",
+                            tint = Color.Gray
+                        )
+                    }
+
+                    DropdownMenu(
+                        expanded = state.value.showSettingMenu,
+                        onDismissRequest = { viewModel.onEvent(PostDetailEvent.ShowSettingMenu(false)) },
+                    ) {
+                        DropdownMenuItem(
+                            onClick = {
+                                viewModel.onEvent(PostDetailEvent.ShowSettingMenu(false))
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.edit_post)
+                            )
+                        }
+                        DropdownMenuItem(
+                            onClick = {
+                                viewModel.onEvent(PostDetailEvent.ShowSettingMenu(false))
+                            }
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.delete_post),
+                                color = Color.Red
+                            )
+                        }
+                    }
+                }
+            }
 
             IconButton(
                 modifier = Modifier.padding(top = 8.dp, end = 8.dp),
@@ -204,6 +248,8 @@ fun PostDetailScreen(
                 )
             }
         }
+
+        Divider()
 
         Row(
             modifier = Modifier.fillMaxWidth(),

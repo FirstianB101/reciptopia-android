@@ -53,6 +53,11 @@ class PostDetailViewModel @Inject constructor(
                     }
                 }
             }
+            is PostDetailEvent.ShowSettingMenu -> {
+                _state.value = _state.value.copy(
+                    showSettingMenu = event.show
+                )
+            }
         }
     }
 
@@ -90,9 +95,11 @@ class PostDetailViewModel @Inject constructor(
         useCases.getPostInfo(postId).collect{ result ->
             when(result){
                 is Resource.Success -> {
+                    val isOwner = _state.value.currentUser?.account?.id == result.data?.ownerId
                     _state.value = _state.value.copy(
                         curPost = result.data!!,
-                        isLoading = false
+                        isLoading = false,
+                        isOwner = isOwner
                     )
                 }
                 is Resource.Loading -> {
@@ -112,11 +119,13 @@ class PostDetailViewModel @Inject constructor(
 
     // call after get current post
     private fun getOwnerById() = viewModelScope.launch {
-        useCases.getOwnerById(_state.value.curPost?.ownerId!!).collect{ result ->
+        val ownerId = _state.value.curPost?.ownerId!!
+        useCases.getOwnerById(ownerId).collect{ result ->
             if(result is Resource.Success){
                 val post = _state.value.curPost?.copy(
                     owner = result.data
                 )
+
                 _state.value = _state.value.copy(
                     curPost = post
                 )

@@ -28,56 +28,52 @@ fun ReadOnlyStepItem(
     step: Step,
     backgroundColor: Color,
     contentColor: Color
-){
-    Card(
+) {
+    Row(
         modifier = modifier
-    ){
-        Row(
+            .fillMaxWidth()
+            .background(backgroundColor)
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.width(20.dp),
+            text = "$index",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Image(
             modifier = Modifier
-                .fillMaxWidth()
+                .size(80.dp)
+                .border(1.dp, contentColor, RoundedCornerShape(10)),
+            painter = rememberImagePainter(step.pictureUrl),
+            contentDescription = "",
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .height(80.dp)
                 .background(backgroundColor)
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            Text(
-                modifier = Modifier.width(20.dp),
-                text = "$index",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-                textAlign = TextAlign.Center
-            )
+                .padding(top = 8.dp, bottom = 4.dp, start = 4.dp, end = 4.dp),
+            text = step.description ?: "",
+        )
 
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Image(
-                modifier = Modifier
-                    .size(80.dp)
-                    .border(1.dp, contentColor, RoundedCornerShape(10)),
-                painter = rememberImagePainter(step.pictureUrl),
-                contentDescription = "",
-                contentScale = ContentScale.Crop
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Text(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(80.dp)
-                    .background(backgroundColor)
-                    .padding(top = 8.dp, bottom = 4.dp, start = 4.dp, end = 4.dp),
-                text = step.description ?: "",
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-        }
+        Spacer(modifier = Modifier.width(8.dp))
     }
 }
 
 @Preview
 @Composable
-fun ReadOnlyStepItemPreview(){
+fun ReadOnlyStepItemPreview() {
     ReciptopiaTheme {
         ReadOnlyStepItem(
             index = 1,

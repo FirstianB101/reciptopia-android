@@ -3,7 +3,7 @@ package com.ich.reciptopia.data.remote.dto
 import com.ich.reciptopia.domain.model.MainIngredient
 
 data class MainIngredientsDto(
-    val mainIngredients: Map<String, List<MainIngredientDto>>
+    val mainIngredients: LinkedHashMap<String, List<MainIngredientDto>>
 )
 
 fun MainIngredientsDto.toMainIngredientList(): List<MainIngredient>{

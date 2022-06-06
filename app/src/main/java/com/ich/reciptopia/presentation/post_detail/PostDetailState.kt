@@ -11,5 +11,7 @@ data class PostDetailState(
     val curRecipe: Recipe? = null,
     val curPostLikeTag: PostLikeTag? = null,
     val curPostFavorite: Favorite? = null,
-    val curPostSteps: List<Step> = emptyList()
+    val curPostSteps: List<Step> = emptyList(),
+    val isOwner: Boolean = false,
+    val showSettingMenu: Boolean = false
 )

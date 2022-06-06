@@ -3,7 +3,7 @@ package com.ich.reciptopia.data.remote.dto
 import com.ich.reciptopia.domain.model.SearchHistory
 
 data class SearchHistoriesDto(
-    val searchHistories: Map<String, SearchHistoryDto>
+    val searchHistories: LinkedHashMap<String, SearchHistoryDto>
 )
 
 fun SearchHistoriesDto.toSearchHistoryList(): List<SearchHistory>{

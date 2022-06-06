@@ -3,7 +3,7 @@ package com.ich.reciptopia.data.remote.dto
 import com.ich.reciptopia.domain.model.Reply
 
 data class RepliesDto(
-    val replies: Map<String, ReplyDto>
+    val replies: LinkedHashMap<String, ReplyDto>
 )
 
 fun RepliesDto.toReplyList(): List<Reply>{
