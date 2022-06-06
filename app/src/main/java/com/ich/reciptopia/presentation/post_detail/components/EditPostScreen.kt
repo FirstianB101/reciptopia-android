@@ -1,4 +1,4 @@
-package com.ich.reciptopia.presentation.community.components.create_post
+package com.ich.reciptopia.presentation.post_detail.components
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -23,10 +23,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Image
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,30 +32,37 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.util.Constants
+import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.domain.model.Step
-import com.ich.reciptopia.presentation.community.CommunityScreenEvent
-import com.ich.reciptopia.presentation.community.CommunityViewModel
-import com.ich.reciptopia.ui.theme.ReciptopiaTheme
+import com.ich.reciptopia.presentation.community.components.create_post.*
+import com.ich.reciptopia.presentation.main.search.util.ChipState
 
 @Composable
-fun PostDialogScreen(
-    viewModel: CommunityViewModel = hiltViewModel()
+fun EditPostScreen(
+    initialPost: Post,
+    initialSteps: List<Step>,
+    initialChips: List<ChipState>,
+    onEdit: (Post, List<Step>, List<ChipState>) -> Unit
 ){
-    val state = viewModel.state.collectAsState()
     val context = LocalContext.current
+
     val images = remember { mutableStateListOf<Bitmap>() }
+    val chips = remember { mutableStateListOf<ChipState>().also { it.addAll(initialChips) } }
+    var title by remember { mutableStateOf(initialPost.title ?: "")}
+    var content by remember { mutableStateOf(initialPost.content ?: "")}
+    val steps = remember { mutableStateListOf<Step>().also{it.addAll(initialSteps)} }
+    var addChipDialogState by remember { mutableStateOf(false) }
+    var stepDialogState by remember { mutableStateOf(false) }
 
     val galleryLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         if (uri != null) {
-            viewModel.onEvent(CommunityScreenEvent.CreatePostAddImage(uri.toString()))
+            //viewModel.onEvent(CommunityScreenEvent.CreatePostAddImage(uri.toString()))
             val bitmap: Bitmap? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 ImageDecoder.decodeBitmap(ImageDecoder.createSource(context.contentResolver, uri))
             } else {
@@ -89,7 +93,8 @@ fun PostDialogScreen(
                     .align(Alignment.TopEnd)
                     .padding(16.dp),
                 onClick = {
-                    viewModel.onEvent(CommunityScreenEvent.CreatePost)
+                    val editedPost = initialPost.copy(title = title, content = content)
+                    onEdit(editedPost, steps, chips)
                 },
                 shape = RoundedCornerShape(50)
             ) {
@@ -104,14 +109,14 @@ fun PostDialogScreen(
 
         BasicTextField(
             modifier = Modifier.fillMaxWidth(),
-            value = state.value.newPostTitle,
-            onValueChange = { viewModel.onEvent(CommunityScreenEvent.CreatePostTitleChanged(it)) },
+            value = title,
+            onValueChange = { title = it },
             decorationBox = { innerTextField ->
                 Row(
                     modifier = Modifier.padding(16.dp)
                 ) {
 
-                    if (state.value.newPostTitle.isEmpty()) {
+                    if (title.isBlank()) {
                         Text(
                             text = stringResource(id = R.string.comment_input_title),
                             color = Color.LightGray
@@ -175,7 +180,6 @@ fun PostDialogScreen(
                     imageSize = 98.dp
                 ) {
                     images.removeAt(idx)
-                    viewModel.onEvent(CommunityScreenEvent.CreatePostRemoveImage(idx))
                 }
             }
         }
@@ -184,15 +188,16 @@ fun PostDialogScreen(
 
         HorizontalAddableChips(
             modifier = Modifier.padding(4.dp, 8.dp),
-            elements = state.value.newPostChips,
+            elements = chips,
             onChipClicked = { text, isMain, idx ->
-                viewModel.onEvent(CommunityScreenEvent.ClickChip(idx))
+                val previous = chips[idx].isSubIngredient.value
+                chips[idx].isSubIngredient.value = !previous
             },
             onImageClicked = { text, isMain, idx ->
-                viewModel.onEvent(CommunityScreenEvent.RemoveChip(idx))
+                chips.removeAt(idx)
             },
             onAddChip = {
-                viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(true))
+                addChipDialogState = true
             }
         )
 
@@ -202,13 +207,13 @@ fun PostDialogScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(100.dp),
-            value = state.value.newPostContent,
-            onValueChange = { viewModel.onEvent(CommunityScreenEvent.CreatePostContentChanged(it)) },
+            value = content,
+            onValueChange = { content = it },
             decorationBox = { innerTextField ->
                 Row(
                     Modifier.padding(16.dp)
                 ) {
-                    if (state.value.newPostContent.isEmpty()) {
+                    if (content.isBlank()) {
                         Text(
                             text = stringResource(id = R.string.comment_input_content),
                             color = Color.LightGray
@@ -225,7 +230,7 @@ fun PostDialogScreen(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(4.dp),
-            onClick = { viewModel.onEvent(CommunityScreenEvent.StepDialogStateChanged(true)) }
+            onClick = { stepDialogState = true }
         ) {
             Text(
                 text = "${stringResource(id = R.string.input_step)} >",
@@ -234,12 +239,14 @@ fun PostDialogScreen(
             )
         }
 
+        Divider()
+
         LazyColumn(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
         ){
-            itemsIndexed(state.value.newPostSteps) { idx, step ->
+            itemsIndexed(steps) { idx, step ->
                 ReadOnlyStepItem(
                     index = idx + 1,
                     step = step,
@@ -255,22 +262,25 @@ fun PostDialogScreen(
                 .padding(8.dp),
             title = stringResource(id = R.string.input_ingredient),
             buttonText = stringResource(id = R.string.add),
-            dialogState = state.value.showAddChipDialog,
-            onDismiss = { viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(false)) },
-            onButtonClick = { chips ->
-                viewModel.onEvent(CommunityScreenEvent.AddChips(chips))
-                viewModel.onEvent(CommunityScreenEvent.AddChipDialogStateChanged(false))
+            dialogState = addChipDialogState,
+            initialChips = chips,
+            onDismiss = { addChipDialogState = false },
+            onButtonClick = {
+                chips.clear()
+                chips.addAll(it)
+                addChipDialogState = false
             }
         )
 
         StepInputDialog(
             modifier = Modifier.fillMaxSize(),
-            dialogState = state.value.showStepDialog,
-            onDismiss = { viewModel.onEvent(CommunityScreenEvent.StepDialogStateChanged(false)) },
-            initialValue = state.value.newPostSteps,
+            dialogState = stepDialogState,
+            onDismiss = { stepDialogState = false },
+            initialValue = steps,
             onButtonClick = {
-                viewModel.onEvent(CommunityScreenEvent.AddSteps(it))
-                viewModel.onEvent(CommunityScreenEvent.StepDialogStateChanged(false))
+                steps.clear()
+                steps.addAll(it)
+                stepDialogState = false
             }
         )
     }

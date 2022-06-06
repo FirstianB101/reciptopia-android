@@ -2,7 +2,10 @@ package com.ich.reciptopia.presentation.community.components.create_post
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.Divider
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -21,6 +24,7 @@ import com.ich.reciptopia.presentation.main.search.util.ChipState
 fun IngredientNameWithDetailDialog(
     modifier: Modifier = Modifier,
     title: String,
+    initialChips: List<ChipState> = emptyList(),
     buttonText: String,
     dialogState: Boolean,
     onDismiss: () -> Unit,
@@ -30,7 +34,7 @@ fun IngredientNameWithDetailDialog(
     if (dialogState) {
         var name by rememberSaveable { mutableStateOf("") }
         var detail by rememberSaveable { mutableStateOf("") }
-        val chips = remember { mutableStateListOf<ChipState>()}
+        val chips = remember { mutableStateListOf<ChipState>().also{it.addAll(initialChips)}}
 
         Dialog(onDismissRequest = onDismiss) {
             Surface(

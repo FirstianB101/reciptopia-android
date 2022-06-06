@@ -33,6 +33,7 @@ import coil.compose.rememberImagePainter
 import com.ich.reciptopia.R
 import com.ich.reciptopia.common.components.TwoButtonDialog
 import com.ich.reciptopia.presentation.community.components.create_post.ReadOnlyStepItem
+import com.ich.reciptopia.presentation.main.search.util.ChipState
 import com.ich.reciptopia.presentation.post_detail.PostDetailEvent
 import com.ich.reciptopia.presentation.post_detail.PostDetailViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -47,6 +48,7 @@ fun PostDetailScreen(
     val context = LocalContext.current
 
     var deleteDialogState by remember { mutableStateOf(false) }
+    var editDialogState by remember { mutableStateOf(false) }
             
     LaunchedEffect(Unit){
         viewModel.eventFlow.collectLatest { event ->
@@ -100,6 +102,7 @@ fun PostDetailScreen(
                     ) {
                         DropdownMenuItem(
                             onClick = {
+                                editDialogState = true
                                 viewModel.onEvent(PostDetailEvent.ShowSettingMenu(false))
                             }
                         ) {
@@ -323,6 +326,26 @@ fun PostDetailScreen(
     ) {
         viewModel.onEvent(PostDetailEvent.DeletePost)
         deleteDialogState = false
+    }
+
+    if(state.value.curPost != null) {
+        val initialChips = mutableListOf<ChipState>()
+        state.value.mainIngredients.forEach { initialChips.add(
+            ChipState(it.name ?: "", mutableStateOf(false), it.detail ?: "")
+        )}
+        state.value.subIngredients.forEach { initialChips.add(
+            ChipState(it.name ?: "", mutableStateOf(true), it.detail ?: "")
+        )}
+        EditPostDialog(
+            showDialog = editDialogState,
+            initialPost = state.value.curPost!!,
+            initialSteps = state.value.curPostSteps,
+            initialChips = initialChips,
+            onEdit = { post, steps, chips ->
+
+            },
+            onClose = { editDialogState = false }
+        )
     }
 }
 
