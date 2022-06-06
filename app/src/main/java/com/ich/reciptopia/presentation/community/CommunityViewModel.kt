@@ -427,10 +427,15 @@ class CommunityViewModel @Inject constructor(
             when(result){
                 is Resource.Success -> {
                     val posts = _state.value.posts.toMutableList()
+                    val favorites = _state.value.favorites.toMutableList()
+                    favorites.removeIf { it.postId == postId }
+                    favorites.add(result.data!!)
+
                     posts[idx] = posts[idx].copy(
                         isFavorite = true
                     )
                     _state.value = _state.value.copy(
+                        favorites = favorites,
                         posts = posts,
                         isLoading = false
                     )

@@ -83,7 +83,7 @@ fun EditPostScreen(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(16.dp),
-                text = stringResource(id = R.string.write_recipe),
+                text = stringResource(id = R.string.edit_recipe),
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             )
