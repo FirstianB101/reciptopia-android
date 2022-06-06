@@ -16,4 +16,5 @@ data class PostDetailUseCases(
     val getSteps: GetStepsUseCase,
     val getMainIngredients: GetMainIngredientsUseCase,
     val getSubIngredients: GetSubIngredientsUseCase,
+    val deletePost: DeletePostUseCase
 )

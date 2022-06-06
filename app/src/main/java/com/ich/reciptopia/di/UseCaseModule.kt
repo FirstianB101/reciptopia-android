@@ -6,7 +6,10 @@ import com.ich.reciptopia.domain.use_case.community.CreatePostUseCase
 import com.ich.reciptopia.domain.use_case.community.GetPostsByTimeUseCase
 import com.ich.reciptopia.domain.use_case.community.GetPostsByViewsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
-import com.ich.reciptopia.domain.use_case.my_page.profile.*
+import com.ich.reciptopia.domain.use_case.my_page.profile.EditNicknameUseCase
+import com.ich.reciptopia.domain.use_case.my_page.profile.GetAccountProfileImgUseCase
+import com.ich.reciptopia.domain.use_case.my_page.profile.ProfileUseCases
+import com.ich.reciptopia.domain.use_case.my_page.profile.UploadProfileImgUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.CreateAccountUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.EmailExistsUseCase
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
@@ -97,7 +100,8 @@ object UseCaseModule {
             getRecipe = GetRecipeUseCase(postDetailRepository),
             getMainIngredients = GetMainIngredientsUseCase(postDetailRepository),
             getSteps = GetStepsUseCase(postDetailRepository),
-            getSubIngredients = GetSubIngredientsUseCase(postDetailRepository)
+            getSubIngredients = GetSubIngredientsUseCase(postDetailRepository),
+            deletePost = DeletePostUseCase(postDetailRepository)
         )
     }
 

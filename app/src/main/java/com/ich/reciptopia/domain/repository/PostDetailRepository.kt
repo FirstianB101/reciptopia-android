@@ -8,4 +8,5 @@ interface PostDetailRepository {
     suspend fun getSteps(recipeId: Long): List<Step>
     suspend fun getMainIngredients(postId: Long): List<MainIngredient>
     suspend fun getSubIngredients(recipeId: Long): List<SubIngredient>
+    suspend fun deletePost(postId: Long)
 }

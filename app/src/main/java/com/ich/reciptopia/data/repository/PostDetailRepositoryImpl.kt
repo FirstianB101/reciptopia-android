@@ -28,4 +28,8 @@ class PostDetailRepositoryImpl(
     override suspend fun getSubIngredients(recipeId: Long): List<SubIngredient> {
         return api.getSubIngredientsByRecipeId(recipeId).toSubIngredientList()
     }
+
+    override suspend fun deletePost(postId: Long) {
+        api.deletePost(postId)
+    }
 }

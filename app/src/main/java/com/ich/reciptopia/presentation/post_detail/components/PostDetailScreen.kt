@@ -1,5 +1,6 @@
 package com.ich.reciptopia.presentation.post_detail.components
 
+import android.app.Activity
 import android.widget.Toast
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
@@ -16,9 +17,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.StarBorder
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.components.TwoButtonDialog
 import com.ich.reciptopia.presentation.community.components.create_post.ReadOnlyStepItem
 import com.ich.reciptopia.presentation.post_detail.PostDetailEvent
 import com.ich.reciptopia.presentation.post_detail.PostDetailViewModel
@@ -46,11 +46,16 @@ fun PostDetailScreen(
     val state = viewModel.state.collectAsState()
     val context = LocalContext.current
 
+    var deleteDialogState by remember { mutableStateOf(false) }
+            
     LaunchedEffect(Unit){
         viewModel.eventFlow.collectLatest { event ->
             when(event){
                 is PostDetailViewModel.UiEvent.ShowToast -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+                is PostDetailViewModel.UiEvent.GoToPostList -> {
+                    (context as Activity).finish()
                 }
             }
         }
@@ -104,6 +109,7 @@ fun PostDetailScreen(
                         }
                         DropdownMenuItem(
                             onClick = {
+                                deleteDialogState = true
                                 viewModel.onEvent(PostDetailEvent.ShowSettingMenu(false))
                             }
                         ) {
@@ -304,6 +310,19 @@ fun PostDetailScreen(
         if(state.value.isLoading){
             CircularProgressIndicator()
         }
+    }
+    
+    TwoButtonDialog(
+        modifier = Modifier.padding(16.dp),
+        title = stringResource(id = R.string.delete_post),
+        content = stringResource(id = R.string.comment_delete_post),
+        dialogState = deleteDialogState,
+        cancelText = stringResource(id = R.string.cancel),
+        confirmText = stringResource(id = R.string.confirm),
+        onCancel = { deleteDialogState = false }
+    ) {
+        viewModel.onEvent(PostDetailEvent.DeletePost)
+        deleteDialogState = false
     }
 }
 

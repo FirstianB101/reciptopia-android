@@ -7,10 +7,7 @@ import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.domain.model.PostLikeTag
 import com.ich.reciptopia.domain.use_case.post_detail.PostDetailUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -57,6 +54,9 @@ class PostDetailViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     showSettingMenu = event.show
                 )
+            }
+            is PostDetailEvent.DeletePost -> {
+                deletePost()
             }
         }
     }
@@ -411,7 +411,34 @@ class PostDetailViewModel @Inject constructor(
         }
     }
 
+    private fun deletePost() = viewModelScope.launch {
+        val postId = _state.value.curPost?.id!!
+        useCases.deletePost(postId).collect{ result ->
+            when(result){
+                is Resource.Success -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("게시글이 삭제되었습니다"))
+                    _eventFlow.emit(UiEvent.GoToPostList)
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                    _eventFlow.emit(UiEvent.ShowToast("게시글을 삭제하지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
     sealed class UiEvent{
         data class ShowToast(val message: String): UiEvent()
+        object GoToPostList: UiEvent()
     }
 }
