@@ -22,7 +22,7 @@
     <string name="save">저장</string>
     <string name="confirm">확인</string>
     <string name="input_ingredient">재료 입력</string>
-    <string name="how_to_make">만드는 법</string>
+    <string name="recipe_steps">조리 순서</string>
     <string name="delete">삭제</string>
     <string name="input_step">조리 과정 입력</string>
     <string name="edit_profile">프로필 변경</string>

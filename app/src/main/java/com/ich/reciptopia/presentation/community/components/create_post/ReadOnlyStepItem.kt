@@ -63,7 +63,7 @@ fun ReadOnlyStepItem(
                 .weight(1f)
                 .height(80.dp)
                 .background(backgroundColor)
-                .padding(top = 8.dp, bottom = 4.dp, start = 4.dp, end = 4.dp),
+                .padding(top = 16.dp, bottom = 4.dp, start = 4.dp, end = 4.dp),
             text = step.description ?: "",
         )
 

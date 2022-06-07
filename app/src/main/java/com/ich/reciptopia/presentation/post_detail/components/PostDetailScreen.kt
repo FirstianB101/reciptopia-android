@@ -203,36 +203,70 @@ fun PostDetailScreen(
                 Text(
                     modifier = Modifier.padding(12.dp),
                     text = "메인 재료",
-                    fontSize = 19.sp,
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
+
+                Divider()
             }
 
             items(state.value.mainIngredients){
-                Text(
-                    modifier = Modifier.offset(x = 24.dp),
-                    text = "${it.name} (${it.detail}) ",
-                    color = Color.Black
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                ){
+                    Text(
+                        modifier = Modifier.offset(x = 24.dp),
+                        text = "${it.name}",
+                        color = Color.Black
+                    )
+                    
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        modifier = Modifier.offset(x = (-24).dp),
+                        text = "${it.detail}",
+                        color = Color.Black
+                    )
+                }
+                Divider()
             }
 
             item{
                 Text(
                     modifier = Modifier.padding(12.dp),
-                    text = "서브 재료",
-                    fontSize = 19.sp,
+                    text = "부가 재료",
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
+
+                Divider()
             }
 
             items(state.value.subIngredients){
-                Text(
-                    modifier = Modifier.offset(x = 24.dp),
-                    text = "${it.name} (${it.detail}) ",
-                    color = Color.Black
-                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                ){
+                    Text(
+                        modifier = Modifier.offset(x = 24.dp),
+                        text = "${it.name}",
+                        color = Color.Black
+                    )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        modifier = Modifier.offset(x = (-24).dp),
+                        text = "${it.detail}",
+                        color = Color.Black
+                    )
+                }
+                Divider()
             }
 
             item{
@@ -240,11 +274,13 @@ fun PostDetailScreen(
 
                 Text(
                     modifier = Modifier.padding(12.dp),
-                    text = stringResource(id = R.string.how_to_make),
-                    fontSize = 19.sp,
+                    text = stringResource(id = R.string.recipe_steps),
+                    fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black
                 )
+
+                Divider()
             }
 
             itemsIndexed(state.value.curPostSteps){ idx, step ->
@@ -254,6 +290,26 @@ fun PostDetailScreen(
                     step = step,
                     backgroundColor = Color.White,
                     contentColor = Color.LightGray
+                )
+
+                Divider()
+            }
+
+            item{
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    modifier = Modifier.padding(12.dp),
+                    text = "레시피 정보",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+
+                Text(
+                    modifier = Modifier.padding(12.dp),
+                    text = state.value.curPost?.content ?: "",
+                    color = Color.Black
                 )
             }
         }
