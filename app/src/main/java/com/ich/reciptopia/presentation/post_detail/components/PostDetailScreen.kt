@@ -236,7 +236,8 @@ fun PostDetailScreen(
 
             item{
                 Text(
-                    modifier = Modifier.padding(12.dp),
+                    modifier = Modifier
+                        .padding(top = 16.dp, start = 12.dp, end = 12.dp, bottom = 12.dp),
                     text = "부가 재료",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
@@ -291,8 +292,6 @@ fun PostDetailScreen(
                     backgroundColor = Color.White,
                     contentColor = Color.LightGray
                 )
-
-                Divider()
             }
 
             item{

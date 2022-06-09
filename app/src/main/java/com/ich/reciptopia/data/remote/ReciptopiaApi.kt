@@ -164,11 +164,8 @@ interface ReciptopiaApi {
 
 
     // PostLikeTag
-    @GET("post/likeTags/{id}")
-    suspend fun getPostLikeTag(@Path("id")tagId: Long): PostLikeTagDto
-
     @GET("post/likeTags")
-    suspend fun getPostLikeTags(): List<PostLikeTagDto>
+    suspend fun getPostLikeTags(@Query("ownerIds")ownerIds: List<Long>): PostLikeTagsDto
 
     @POST("post/likeTags")
     suspend fun createPostLikeTag(@Body tag: PostLikeTag): PostLikeTagDto

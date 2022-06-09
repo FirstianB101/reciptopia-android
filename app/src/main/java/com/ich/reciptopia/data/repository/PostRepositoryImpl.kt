@@ -2,10 +2,7 @@ package com.ich.reciptopia.data.repository
 
 import com.ich.reciptopia.data.data_source.ReciptopiaDao
 import com.ich.reciptopia.data.remote.ReciptopiaApi
-import com.ich.reciptopia.data.remote.dto.toAccount
-import com.ich.reciptopia.data.remote.dto.toFavorite
-import com.ich.reciptopia.data.remote.dto.toFavoriteList
-import com.ich.reciptopia.data.remote.dto.toPostLikeTag
+import com.ich.reciptopia.data.remote.dto.*
 import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.PostLikeTag
@@ -65,6 +62,6 @@ class PostRepositoryImpl(
 
 
     override suspend fun getLikeTags(userId: Long): List<PostLikeTag> {
-        return api.getPostLikeTags().map{it.toPostLikeTag()}
+        return api.getPostLikeTags(listOf(userId)).toPostLikeTagList()
     }
 }
