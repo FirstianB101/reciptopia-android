@@ -49,7 +49,7 @@ object UseCaseModule {
 
     @Provides
     @Singleton
-    fun provideLoginUseCase(repository: LoginRepository): LoginUseCase{
+    fun provideLoginUseCases(repository: LoginRepository): LoginUseCase{
         return LoginUseCase(repository)
     }
 

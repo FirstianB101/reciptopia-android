@@ -7,6 +7,5 @@ import com.ich.reciptopia.domain.model.ProfileImageResponse
 interface ProfileRepository {
     suspend fun patchAccount(accountId: Long, account: Account): Account
     suspend fun uploadProfileImg(ownerId: Long, img: Bitmap): ProfileImageResponse
-    suspend fun getProfileImgUriById(id: Long): String
-    suspend fun getAccountProfileImg(ownerId: Long): Bitmap?
+    suspend fun getAccountProfileImage(ownerId: Long): Bitmap?
 }

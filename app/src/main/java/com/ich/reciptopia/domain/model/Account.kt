@@ -7,6 +7,6 @@ data class Account(
     val id: Long? = null,
     val email: String? = null,
     val nickname: String? = null,
-    val profilePicture: Bitmap? = null,
-    val password: String?
+    val profileImage: Bitmap? = null,
+    val password: String? = null
 )

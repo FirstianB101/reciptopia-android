@@ -66,6 +66,7 @@ fun MainNavigation(
                 modifier = Modifier.fillMaxWidth(),
                 searchMode = state.value.searchMode,
                 searchText = state.value.searchQuery,
+                profileImage = state.value.currentUser?.account?.profileImage,
                 searchSource = searchSource,
                 onLoginButtonClicked = loginButtonClicked,
                 onNotificationButtonClicked = notificationButtonClicked,

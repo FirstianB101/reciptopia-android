@@ -16,6 +16,5 @@ fun AccountDto.toAccount(): Account{
         role = role,
         email = email,
         nickname = nickname,
-        profilePictureUrl = profilePictureUrl
     )
 }

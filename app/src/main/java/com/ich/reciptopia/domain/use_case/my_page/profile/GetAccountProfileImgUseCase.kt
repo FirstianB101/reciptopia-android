@@ -17,7 +17,7 @@ class GetAccountProfileImgUseCase @Inject constructor(
         try{
             emit(Resource.Loading<Bitmap>())
 
-            val response = repository.getAccountProfileImg(ownerId)
+            val response = repository.getAccountProfileImage(ownerId)
             emit(Resource.Success<Bitmap>(response))
         }catch (e: HttpException){
             emit(Resource.Error<Bitmap>(e.localizedMessage ?: Constants.HTTP_EXCEPTION_COMMENT))

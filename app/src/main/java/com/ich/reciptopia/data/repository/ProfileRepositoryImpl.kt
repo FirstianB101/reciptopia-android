@@ -6,7 +6,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.ich.reciptopia.common.util.DateTimeUtils
 import com.ich.reciptopia.data.remote.ReciptopiaApi
-import com.ich.reciptopia.data.remote.dto.getImageUri
 import com.ich.reciptopia.data.remote.dto.toAccount
 import com.ich.reciptopia.data.remote.dto.toProfileImageResponse
 import com.ich.reciptopia.domain.model.Account
@@ -20,18 +19,15 @@ import java.io.ByteArrayOutputStream
 class ProfileRepositoryImpl(
     private val api: ReciptopiaApi
 ): ProfileRepository {
+
     override suspend fun patchAccount(accountId: Long, account: Account): Account {
         return api.patchAccount(accountId, account).toAccount()
-    }
-
-    override suspend fun getProfileImgUriById(id: Long): String {
-        return api.getProfileImg(id).getImageUri()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun uploadProfileImg(ownerId: Long, img: Bitmap): ProfileImageResponse{
         val stream = ByteArrayOutputStream()
-        img.compress(Bitmap.CompressFormat.JPEG, 50, stream)
+        img.compress(Bitmap.CompressFormat.JPEG, 30, stream)
         val dateTime = DateTimeUtils.getCurrentDatetimeString()
         val fileName = "${dateTime}(android).jpeg"
         val bitmapRequestBody = RequestBody.create("image/jpeg".toMediaType(), stream.toByteArray())
@@ -42,7 +38,7 @@ class ProfileRepositoryImpl(
         return api.putAccountProfileImg(ownerId, bitmapMultipartBody).toProfileImageResponse()
     }
 
-    override suspend fun getAccountProfileImg(ownerId: Long): Bitmap? {
+    override suspend fun getAccountProfileImage(ownerId: Long): Bitmap? {
         val response = api.getAccountProfileImage(ownerId)
         return BitmapFactory.decodeStream(response.byteStream())
     }

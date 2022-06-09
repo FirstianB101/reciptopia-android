@@ -30,6 +30,7 @@ class ProfileViewModel @Inject constructor(
 
     init {
         observeUserChanged()
+        getAccountProfileImage()
     }
 
     fun onEvent(event: ProfileScreenEvent){
@@ -39,7 +40,6 @@ class ProfileViewModel @Inject constructor(
                 if(event.profileImg != null){
                     uploadProfileImg(event.profileImg).join()
                     getAccountProfileImage()
-                    app.editAccount(_state.value.curAccount!!)
                 }
             }
             is ProfileScreenEvent.EditDialogStateChanged -> {
@@ -56,9 +56,6 @@ class ProfileViewModel @Inject constructor(
                 _state.value = _state.value.copy(
                     curAccount = user?.account
                 )
-                if(user != null) {
-                    getAccountProfileImage()
-                }
             }
         }
     }
@@ -129,6 +126,10 @@ class ProfileViewModel @Inject constructor(
                             profileImage = result.data,
                             isLoading = false
                         )
+
+                        _state.value.curAccount?.copy(
+                            profileImage = result.data
+                        )?.let { app.editAccount(it) }
                     }
                     is Resource.Loading -> {
                         _state.value = _state.value.copy(

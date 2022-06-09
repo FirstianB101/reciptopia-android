@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.Resource
-import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Auth
 import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -39,8 +39,9 @@ class LoginViewModel @Inject constructor(
                     password = event.password
                 )
             }
-            is LoginScreenEvent.Login -> {
-                login()
+            is LoginScreenEvent.Login -> viewModelScope.launch(Dispatchers.IO){
+                login().join()
+                //getProfileImage()
             }
             is LoginScreenEvent.Logout -> {
                 app.logout()
@@ -48,7 +49,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    private fun login() = viewModelScope.launch {
+    private fun login() = viewModelScope.launch{
         val auth = Auth(
             email = _state.value.email,
             password = _state.value.password
@@ -57,6 +58,7 @@ class LoginViewModel @Inject constructor(
             when(result){
                 is Resource.Success -> {
                     _state.value = _state.value.copy(
+                        loginUser = result.data,
                         isLoading = false
                     )
                     app.login(result.data!!)

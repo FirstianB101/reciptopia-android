@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,8 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
-import com.ich.reciptopia.application.ReciptopiaApplication
-import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.presentation.my_page.MyPageScreens
 import com.ich.reciptopia.presentation.my_page.login.LoginScreenEvent
 import com.ich.reciptopia.presentation.my_page.login.LoginViewModel

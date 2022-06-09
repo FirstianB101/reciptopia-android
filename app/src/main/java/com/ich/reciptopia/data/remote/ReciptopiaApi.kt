@@ -240,6 +240,5 @@ interface ReciptopiaApi {
     @GET("account/profileImages/download")
     suspend fun getAccountProfileImage(@Query("ownerId")ownerId: Long): ResponseBody
 
-    @GET("account/profileImages/{id}")
-    suspend fun getProfileImg(@Path("id")id: Long): AccountProfileImgDto
+    // Post
 }

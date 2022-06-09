@@ -3,6 +3,7 @@ package com.ich.reciptopia.presentation.main
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ich.reciptopia.application.ReciptopiaApplication
 import com.ich.reciptopia.common.util.getAddedList
 import com.ich.reciptopia.common.util.getRemovedList
 import com.ich.reciptopia.presentation.main.search.util.ChipState
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-
+    private val app: ReciptopiaApplication
 ): ViewModel() {
 
     private val _state = MutableStateFlow(MainScreenState())
@@ -24,6 +25,10 @@ class MainViewModel @Inject constructor(
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    init {
+        observeUserChanged()
+    }
 
     fun onEvent(event: MainScreenEvent){
         when(event){
@@ -73,6 +78,14 @@ class MainViewModel @Inject constructor(
                     chipStates = event.chips
                 )
             }
+        }
+    }
+
+    private fun observeUserChanged() = viewModelScope.launch {
+        app.user.collect{ user ->
+            _state.value = _state.value.copy(
+                currentUser = user
+            )
         }
     }
 
