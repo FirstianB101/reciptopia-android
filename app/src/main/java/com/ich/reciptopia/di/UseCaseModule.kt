@@ -43,7 +43,8 @@ object UseCaseModule {
             unFavoritePost = UnFavoritePostUseCase(postRepository),
             likePost = PostLikeUseCase(postRepository),
             unlikePost = PostUnLikeUseCase(postRepository),
-            getPostLikeTags = GetPostLikeTagsUseCase(postRepository)
+            getPostLikeTags = GetPostLikeTagsUseCase(postRepository),
+            getOwnerProfileImage = GetOwnerProfileImageUseCase(postRepository)
         )
     }
 
@@ -81,7 +82,8 @@ object UseCaseModule {
             getFavorites = GetFavoritesUseCase(postRepository),
             unFavoritePost = UnFavoritePostUseCase(postRepository),
             likePost = PostLikeUseCase(postRepository),
-            unlikePost = PostUnLikeUseCase(postRepository)
+            unlikePost = PostUnLikeUseCase(postRepository),
+            getOwnerProfileImage = GetOwnerProfileImageUseCase(postRepository)
         )
     }
 

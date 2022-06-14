@@ -1,5 +1,6 @@
 package com.ich.reciptopia.domain.repository
 
+import android.graphics.Bitmap
 import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Favorite
 import com.ich.reciptopia.domain.model.PostLikeTag
@@ -18,4 +19,6 @@ interface PostRepository{
     suspend fun likePost(ownerId: Long?, postId: Long?): PostLikeTag
     suspend fun unLikePost(postLikeTagId: Long)
     suspend fun getLikeTags(userId: Long): List<PostLikeTag>
+
+    suspend fun getOwnerProfileImage(ownerId: Long): Bitmap?
 }

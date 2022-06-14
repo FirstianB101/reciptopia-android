@@ -2,30 +2,24 @@ package com.ich.reciptopia.presentation.community.components
 
 import android.graphics.Bitmap
 import androidx.compose.animation.*
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.components.ProfileImageIfExistOrAccountIcon
 import com.ich.reciptopia.presentation.main.search.components.CustomTextField
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -47,23 +41,7 @@ fun CommunityTopBar(
         IconButton(
             onClick = onLoginButtonClicked
         ) {
-            if(profileImage != null){
-                Image(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape),
-                    bitmap = profileImage.asImageBitmap(),
-                    contentDescription = "Profile Image",
-                    contentScale = ContentScale.Crop
-                )
-            }else{
-                Icon(
-                    modifier = Modifier.size(36.dp),
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "Login Icon",
-                    tint = colorResource(id = R.color.main_color)
-                )
-            }
+            ProfileImageIfExistOrAccountIcon(image = profileImage)
         }
 
         if(!searchMode)

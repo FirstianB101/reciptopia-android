@@ -65,6 +65,7 @@ fun ReadOnlyStepItem(
                 .background(backgroundColor)
                 .padding(top = 16.dp, bottom = 4.dp, start = 4.dp, end = 4.dp),
             text = step.description ?: "",
+            fontSize = 14.sp
         )
 
         Spacer(modifier = Modifier.width(8.dp))

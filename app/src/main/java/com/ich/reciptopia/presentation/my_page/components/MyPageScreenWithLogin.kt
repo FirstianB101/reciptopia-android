@@ -1,22 +1,14 @@
 package com.ich.reciptopia.presentation.my_page.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
 import com.ich.reciptopia.application.ReciptopiaApplication
+import com.ich.reciptopia.common.components.ProfileImageIfExistOrAccountIcon
 import com.ich.reciptopia.presentation.my_page.MyPageScreens
 import com.ich.reciptopia.presentation.my_page.profile.ProfileViewModel
 
@@ -57,23 +50,7 @@ fun MyPageScreenWithLogin(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ){
-            if(state.value.curAccount?.profileImage != null){
-                Image(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape),
-                    bitmap = state.value.curAccount?.profileImage!!.asImageBitmap(),
-                    contentDescription = "Profile Image",
-                    contentScale = ContentScale.Crop
-                )
-            }else{
-                Icon(
-                    modifier = Modifier.size(36.dp),
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "MyPage Login Icon",
-                    tint = colorResource(id = R.color.main_color)
-                )
-            }
+            ProfileImageIfExistOrAccountIcon(image = state.value.curAccount?.profileImage)
 
             Spacer(modifier = Modifier.width(8.dp))
 

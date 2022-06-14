@@ -1,5 +1,7 @@
 package com.ich.reciptopia.data.repository
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.ich.reciptopia.data.data_source.ReciptopiaDao
 import com.ich.reciptopia.data.remote.ReciptopiaApi
 import com.ich.reciptopia.data.remote.dto.*
@@ -63,5 +65,10 @@ class PostRepositoryImpl(
 
     override suspend fun getLikeTags(userId: Long): List<PostLikeTag> {
         return api.getPostLikeTags(listOf(userId)).toPostLikeTagList()
+    }
+
+    override suspend fun getOwnerProfileImage(ownerId: Long): Bitmap? {
+        val response = api.getAccountProfileImage(ownerId)
+        return BitmapFactory.decodeStream(response.byteStream())
     }
 }

@@ -31,7 +31,7 @@ interface ReciptopiaApi {
 
     // Post
     @GET("posts/{id}")
-    suspend fun getPost(): PostDto
+    suspend fun getPost(@Path("id")id: Long): PostDto
 
     @GET("posts")
     suspend fun getPostsByOwnerId(@Query("ownerId")ownerId: Long): PostWithCommentAndLikeTagCountsDto

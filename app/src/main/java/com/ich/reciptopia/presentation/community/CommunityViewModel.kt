@@ -11,10 +11,8 @@ import com.ich.reciptopia.common.util.getRemovedList
 import com.ich.reciptopia.domain.model.*
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -122,18 +120,18 @@ class CommunityViewModel @Inject constructor(
                     showAddChipDialog = event.show
                 )
             }
-            is CommunityScreenEvent.SearchPosts -> {
-                val job = when (_state.value.sortOption) {
+            is CommunityScreenEvent.SearchPosts -> viewModelScope.launch{
+                when (_state.value.sortOption) {
                     "최신순" -> getPostsByTime()
                     "조회순" -> getPostsByViews()
                     else -> throw Exception("sort exception")
-                }
-                job.invokeOnCompletion {
-                    getFavoritesForFillingStar()
-                    getPostLikeTags()
-                    _state.value.posts.forEachIndexed { i, post ->
-                        getOwnerOfPost(i, post.ownerId!!)
-                    }
+                }.join()
+
+                getFavoritesForFillingStar()
+                getPostLikeTags()
+                _state.value.posts.forEachIndexed { i, post ->
+                    getOwnerOfPost(i, post.ownerId!!).join()
+                    getOwnerProfileOfPost(i, post.ownerId)
                 }
             }
             is CommunityScreenEvent.CreatePost -> {
@@ -497,6 +495,36 @@ class CommunityViewModel @Inject constructor(
                         owner = result.data
                     )
                     posts[postIdx] = postWithAccount
+                    _state.value = _state.value.copy(
+                        posts = posts,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getOwnerProfileOfPost(postIdx: Int, ownerId: Long) = viewModelScope.launch {
+        useCases.getOwnerProfileImage(ownerId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val posts = _state.value.posts.toMutableList()
+                    val owner = posts[postIdx].owner?.copy(
+                        profileImage = result.data
+                    )
+                    posts[postIdx] = posts[postIdx].copy(
+                        owner = owner
+                    )
                     _state.value = _state.value.copy(
                         posts = posts,
                         isLoading = false

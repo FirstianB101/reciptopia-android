@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.components.ProfileImageIfExistOrAccountIcon
 import com.ich.reciptopia.presentation.my_page.profile.ProfileScreenEvent
 import com.ich.reciptopia.presentation.my_page.profile.ProfileViewModel
 import kotlinx.coroutines.flow.collectLatest

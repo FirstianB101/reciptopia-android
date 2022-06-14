@@ -116,17 +116,19 @@ class SearchViewModel @Inject constructor(
         getPostsByChips().join()
         getFavoritesForFillingStar()
         getPostLikeTags()
-        _state.value.posts.forEachIndexed { i, post ->
-            getOwnerOfPost(i, post.ownerId!!)
+        _state.value.posts.forEachIndexed { index, post ->
+            getOwnerOfPost(index, post.ownerId!!).join()
+            getOwnerProfileOfSearchedPost(index, post.ownerId)
         }
     }
 
     private fun getFavoritePosts() = viewModelScope.launch {
         getFavorites().join()
         getPostsWithFavorites().join()
-        getFavoritePostLikeTags()
+        getFavoritePostLikeTags().join()
         _state.value.favorites.forEachIndexed { index, favorite ->
-            getPostOwner(index, favorite.post)
+            getPostOwner(index, favorite.post).join()
+            getOwnerProfileOfFavoritePost(index, favorite.post?.ownerId)
         }
     }
 
@@ -300,29 +302,31 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun getPostOwner(idx: Int, post: Post?) = viewModelScope.launch {
-        val accountId = post?.ownerId!!
-        useCases.getOwner(accountId).collect { result ->
-            when (result) {
-                is Resource.Success -> {
-                    val postWithAccount = post?.copy(owner = result.data)
-                    val favorites = _state.value.favorites.toMutableList()
-                    favorites[idx] = favorites[idx].copy(
-                        post = postWithAccount
-                    )
-                    _state.value = _state.value.copy(
-                        favorites = favorites,
-                        isLoading = false
-                    )
-                }
-                is Resource.Loading -> {
-                    _state.value = _state.value.copy(
-                        isLoading = true
-                    )
-                }
-                is Resource.Error -> {
-                    _state.value = _state.value.copy(
-                        isLoading = false
-                    )
+        val accountId = post?.ownerId
+        if(accountId != null) {
+            useCases.getOwner(accountId).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val postWithAccount = post.copy(owner = result.data)
+                        val favorites = _state.value.favorites.toMutableList()
+                        favorites[idx] = favorites[idx].copy(
+                            post = postWithAccount
+                        )
+                        _state.value = _state.value.copy(
+                            favorites = favorites,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = _state.value.copy(
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }
@@ -647,6 +651,74 @@ class SearchViewModel @Inject constructor(
                     _state.value = _state.value.copy(
                         isLoading = false
                     )
+                }
+            }
+        }
+    }
+
+    private fun getOwnerProfileOfFavoritePost(favIdx: Int, ownerId: Long?) = viewModelScope.launch {
+        if(ownerId != null) {
+            useCases.getOwnerProfileImage(ownerId).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val favorites = _state.value.favorites.toMutableList()
+                        val owner = favorites[favIdx].post?.owner?.copy(
+                            profileImage = result.data
+                        )
+                        val post = favorites[favIdx].post?.copy(
+                            owner = owner
+                        )
+                        favorites[favIdx] = favorites[favIdx].copy(
+                            post = post
+                        )
+                        _state.value = _state.value.copy(
+                            favorites = favorites,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = _state.value.copy(
+                            isLoading = false
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    private fun getOwnerProfileOfSearchedPost(postIdx: Int, ownerId: Long?) = viewModelScope.launch {
+        if(ownerId != null) {
+            useCases.getOwnerProfileImage(ownerId).collect { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val posts = _state.value.posts.toMutableList()
+                        val owner = posts[postIdx].owner?.copy(
+                            profileImage = result.data
+                        )
+                        posts[postIdx] = posts[postIdx].copy(
+                            owner = owner
+                        )
+
+                        _state.value = _state.value.copy(
+                            posts = posts,
+                            isLoading = false
+                        )
+                    }
+                    is Resource.Loading -> {
+                        _state.value = _state.value.copy(
+                            isLoading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        _state.value = _state.value.copy(
+                            isLoading = false
+                        )
+                    }
                 }
             }
         }

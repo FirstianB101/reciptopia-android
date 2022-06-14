@@ -13,4 +13,5 @@ data class CommunityUseCases(
     val likePost: PostLikeUseCase,
     val unlikePost: PostUnLikeUseCase,
     val getPostLikeTags: GetPostLikeTagsUseCase,
+    val getOwnerProfileImage: GetOwnerProfileImageUseCase
 )

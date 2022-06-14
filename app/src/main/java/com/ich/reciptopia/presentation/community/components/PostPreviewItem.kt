@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.components.ProfileImageIfExistOrAccountIcon
 import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.model.Post
 import com.ich.reciptopia.presentation.community.CommunityScreenEvent
@@ -72,17 +73,13 @@ fun PostPreviewItem(
             }
         }
 
-        TextButton(
-            modifier = Modifier.padding(start = 8.dp),
-            onClick = {}
+        Row(
+            modifier = Modifier.padding(start = 16.dp, end = 8.dp, bottom = 8.dp, top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Filled.AccountCircle, 
-                contentDescription = "",
-                tint = colorResource(id = R.color.main_color)
-            )
+            ProfileImageIfExistOrAccountIcon(image = owner?.profileImage)
             
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             
             Text(
                 text = owner?.nickname ?: "",
