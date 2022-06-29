@@ -7,21 +7,16 @@ import com.google.common.truth.Truth.assertThat
 import com.ich.reciptopia.MainDispatcherRule
 import com.ich.reciptopia.domain.use_case.analyze_ingredient.ImageAnalyzeUseCase
 import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.withContext
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class AnalyzeIngredientViewModelTest {
-
-    @get:Rule
-    val instantExecutorRule = InstantTaskExecutorRule()
 
     @ExperimentalCoroutinesApi
     @get:Rule
@@ -86,27 +81,26 @@ class AnalyzeIngredientViewModelTest {
 
     @Test
     fun `사진 분석 및 분석 결과 다이얼로그 상태 변경 테스트`() = runTest {
-        withContext(Dispatchers.Default) {
-            val testImages = List(5) { mockk<Bitmap>() }
-            testImages.forEach {
-                viewModel.onEvent(AnalyzeIngredientEvent.OnImageCaptured(it))
+        val testImages = List(5) { mockk<Bitmap>() }
+        testImages.forEach {
+            viewModel.onEvent(AnalyzeIngredientEvent.OnImageCaptured(it))
+        }
+
+        viewModel.onEvent(AnalyzeIngredientEvent.StartAnalyzing)
+
+        viewModel.state.test {
+            val initial = awaitItem() // skip initial state
+            assertThat(initial.images.size).isEqualTo(5)
+
+            val loading = awaitItem()
+            assertThat(loading.isLoading).isTrue()
+
+            val state = awaitItem()
+            for (key in state.analyzeResults.keys) {
+                assertThat(state.analyzeResults[key] == "ingredient$key")
             }
 
-            viewModel.onEvent(AnalyzeIngredientEvent.StartAnalyzing)
-
-            viewModel.state.test {
-                awaitItem() // skip initial state
-
-                val loading = awaitItem()
-                assertThat(loading.isLoading).isTrue()
-
-                val state = awaitItem()
-                for (key in state.analyzeResults.keys) {
-                    assertThat(state.analyzeResults[key] == "ingredient$key")
-                }
-
-                assertThat(state.showAnalyzeResultDialog).isTrue()
-            }
+            assertThat(state.showAnalyzeResultDialog).isTrue()
         }
     }
 }
