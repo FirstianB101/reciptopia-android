@@ -1,8 +1,10 @@
 package com.ich.reciptopia.presentation.main
 
+import androidx.compose.runtime.mutableStateOf
 import com.google.common.truth.Truth.assertThat
 import com.ich.reciptopia.MainDispatcherRule
 import com.ich.reciptopia.application.ReciptopiaApplication
+import com.ich.reciptopia.presentation.main.search.util.ChipState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.Before
 import org.junit.Rule
@@ -23,6 +25,19 @@ class MainViewModelTest {
         viewModel = MainViewModel(ReciptopiaApplication())
     }
 
+    @Test
+    fun `검색 쿼리 변경 테스트`(){
+        assertThat(viewModel.state.value.searchQuery.isBlank()).isTrue()
+        
+        viewModel.onEvent(MainScreenEvent.SearchQueryChanged("테스"))
+        
+        assertThat(viewModel.state.value.searchQuery).isEqualTo("테스")
+
+        viewModel.onEvent(MainScreenEvent.SearchQueryChanged("테스트"))
+        
+        assertThat(viewModel.state.value.searchQuery).isEqualTo("테스트")
+    }
+    
     @Test
     fun `검색 버튼 클릭에 따른 상태 변화 테스트`() {
         assertThat(viewModel.state.value.searchMode).isFalse()
@@ -95,5 +110,28 @@ class MainViewModelTest {
                 assertThat(chipState.isSubIngredient.value).isFalse()
             }
         }
+    }
+    
+    @Test
+    fun `검색 결과 다이얼로그부터 온 칩들 세팅 테스트`(){
+        assertThat(viewModel.state.value.chipStates.isEmpty()).isTrue()
+
+        val chipsFromAnalyze = listOf(
+            ChipState("서브재료1", mutableStateOf(true)),
+            ChipState("서브재료2", mutableStateOf(true)),
+            ChipState("메인재료1", mutableStateOf(false)),
+        )
+
+        viewModel.onEvent(MainScreenEvent.SetChipsFromAnalyze(chipsFromAnalyze))
+
+        val chips = viewModel.state.value.chipStates
+        assertThat(chips[0].text).isEqualTo("서브재료1")
+        assertThat(chips[0].isSubIngredient.value).isTrue()
+
+        assertThat(chips[1].text).isEqualTo("서브재료2")
+        assertThat(chips[1].isSubIngredient.value).isTrue()
+
+        assertThat(chips[2].text).isEqualTo("메인재료1")
+        assertThat(chips[2].isSubIngredient.value).isFalse()
     }
 }
