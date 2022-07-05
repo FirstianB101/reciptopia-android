@@ -2,7 +2,7 @@ package com.ich.reciptopia.domain.use_case.analyze_ingredient
 
 import android.graphics.Bitmap
 import com.ich.reciptopia.common.util.Resource
-import com.ich.reciptopia.repository.AnalyzeIngredientFakeRepository
+import com.ich.reciptopia.presentation.main.analyze_ingredient.AnalyzeIngredientFakeRepository
 import io.mockk.mockk
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.flow.collectIndexed
@@ -24,7 +24,6 @@ class ImageAnalyzeUseCaseTest {
     @Test
     fun `send images with no errors`() = runBlocking{
         val bitmaps = List(5){mockk<Bitmap>()}
-        fakeRepository.exception = null
 
         useCase(bitmaps).collectIndexed { index, value ->
             when(index){
@@ -35,36 +34,6 @@ class ImageAnalyzeUseCaseTest {
                     result?.keys?.forEach {
                         assertEquals(result[it], "ingredient${it}")
                     }
-                }
-            }
-        }
-    }
-
-    @Test
-    fun `send images with http exception`() = runBlocking{
-        val bitmaps = List(5){mockk<Bitmap>()}
-        fakeRepository.exception = AnalyzeIngredientFakeRepository.ExceptionCase.HttpException
-
-        useCase(bitmaps).collectIndexed { index, value ->
-            when(index){
-                0 -> assertEquals(value.javaClass, Resource.Loading::class.java)
-                1 -> {
-                    assertEquals(value.javaClass, Resource.Error::class.java)
-                }
-            }
-        }
-    }
-
-    @Test
-    fun `send images with io exception`() = runBlocking{
-        val bitmaps = List(5){mockk<Bitmap>()}
-        fakeRepository.exception = AnalyzeIngredientFakeRepository.ExceptionCase.IOException
-
-        useCase(bitmaps).collectIndexed { index, value ->
-            when(index){
-                0 -> assertEquals(value.javaClass, Resource.Loading::class.java)
-                1 -> {
-                    assertEquals(value.javaClass, Resource.Error::class.java)
                 }
             }
         }
