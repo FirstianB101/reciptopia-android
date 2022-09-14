@@ -113,7 +113,7 @@ class MainViewModelTest {
     }
     
     @Test
-    fun `검색 결과 다이얼로그부터 온 칩들 세팅 테스트`(){
+    fun `분석 결과 다이얼로그부터 온 칩들 세팅 테스트`(){
         assertThat(viewModel.state.value.chipStates.isEmpty()).isTrue()
 
         val chipsFromAnalyze = listOf(

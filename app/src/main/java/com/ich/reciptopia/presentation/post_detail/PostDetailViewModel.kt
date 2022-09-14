@@ -89,6 +89,7 @@ class PostDetailViewModel @Inject constructor(
         getMainIngredients(postId)
         getSubIngredients()
         getSteps()
+        getOwnerProfileOfPost()
     }
 
     private fun getPostInfo() = viewModelScope.launch{
@@ -432,6 +433,36 @@ class PostDetailViewModel @Inject constructor(
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("게시글을 삭제하지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun getOwnerProfileOfPost() = viewModelScope.launch {
+        val ownerId = _state.value.curPost?.ownerId!!
+        useCases.getOwnerProfileImage(ownerId).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val owner = _state.value.curPost?.owner?.copy(
+                        profileImage = result.data
+                    )
+                    val post = _state.value.curPost?.copy(
+                        owner = owner
+                    )
+                    _state.value = _state.value.copy(
+                        curPost = post,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
                 }
             }
         }

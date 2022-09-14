@@ -132,6 +132,7 @@ fun LoginScreen(
             )
         }
 
+        /*
         TextButton(
             onClick = {
                 navController.navigate(MyPageScreens.FindAccountScreen.route)
@@ -142,6 +143,7 @@ fun LoginScreen(
                 color = colorResource(id = R.color.main_color)
             )
         }
+        */
 
         Box(
             modifier = Modifier

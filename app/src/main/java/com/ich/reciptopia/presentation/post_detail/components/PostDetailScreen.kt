@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberImagePainter
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.components.ProfileImageIfExistOrAccountIcon
 import com.ich.reciptopia.common.components.TwoButtonDialog
 import com.ich.reciptopia.presentation.community.components.create_post.ReadOnlyStepItem
 import com.ich.reciptopia.presentation.main.search.util.ChipState
@@ -150,11 +151,8 @@ fun PostDetailScreen(
                 modifier = Modifier.padding(8.dp),
                 onClick = {}
             ) {
-                Icon(
-                    imageVector = Icons.Filled.AccountCircle,
-                    contentDescription = "",
-                    tint = colorResource(id = R.color.main_color)
-                )
+
+                ProfileImageIfExistOrAccountIcon(state.value.curPost?.owner?.profileImage)
 
                 Spacer(modifier = Modifier.width(4.dp))
 

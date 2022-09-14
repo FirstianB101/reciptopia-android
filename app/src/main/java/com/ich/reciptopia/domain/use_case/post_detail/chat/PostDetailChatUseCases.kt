@@ -1,5 +1,7 @@
 package com.ich.reciptopia.domain.use_case.post_detail.chat
 
+import com.ich.reciptopia.domain.use_case.post.GetOwnerProfileImageUseCase
+
 data class PostDetailChatUseCases(
     val getComments: GetCommentsUseCase,
     val getReplies: GetRepliesUseCase,
@@ -13,5 +15,6 @@ data class PostDetailChatUseCases(
     val unlikeReply: UnLikeReplyUseCase,
     val getOwner: GetCommentOwnerUseCase,
     val deleteComment: DeleteCommentUseCase,
-    val deleteReply: DeleteReplyUseCase
+    val deleteReply: DeleteReplyUseCase,
+    val getOwnerProfileImage: GetOwnerProfileImageUseCase
 )

@@ -119,12 +119,14 @@ class PostDetailChatViewModel @Inject constructor(
     private fun getCommentsWithReply() = viewModelScope.launch{
         getComments(postId).join()
         _state.value.comments.forEachIndexed { cIdx, comment ->
-            getOwnerOfComment(comment.ownerId!!,cIdx)
+            getOwnerOfComment(comment.ownerId!!,cIdx).join()
+            getOwnerProfileOfComment(comment, cIdx).join()
             getReplies(comment.id!!, cIdx).join()
         }
         _state.value.comments.forEachIndexed { cIdx, comment ->
             comment.replies?.forEachIndexed { rIdx, reply ->
-                getOwnerOfReply(reply.ownerId!!, cIdx, rIdx)
+                getOwnerOfReply(reply.ownerId!!, cIdx, rIdx).join()
+                getOwnerProfileOfReply(reply, cIdx, rIdx).join()
             }
         }
         getCommentLikeTags()
@@ -558,6 +560,68 @@ class PostDetailChatViewModel @Inject constructor(
                         isLoading = false
                     )
                     _eventFlow.emit(UiEvent.ShowToast("답글을 삭제하지 못했습니다 (${result.message})"))
+                }
+            }
+        }
+    }
+
+    private fun getOwnerProfileOfComment(comment: Comment, cIdx: Int) = viewModelScope.launch {
+        useCases.getOwnerProfileImage(comment.ownerId!!).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val comments = _state.value.comments.toMutableList()
+                    val owner = comments[cIdx].owner?.copy(
+                        profileImage = result.data
+                    )
+                    comments[cIdx] = comments[cIdx].copy(
+                        owner = owner
+                    )
+                    _state.value = _state.value.copy(
+                        comments = comments,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getOwnerProfileOfReply(reply: Reply, cIdx: Int, rIdx: Int) = viewModelScope.launch {
+        useCases.getOwnerProfileImage(reply.ownerId!!).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    val comments = _state.value.comments.toMutableList()
+                    val replies = comments[cIdx].replies!!.toMutableList()
+                    val owner = comments[cIdx].owner?.copy(
+                        profileImage = result.data
+                    )
+
+                    replies[rIdx] = replies[rIdx].copy(owner = owner)
+                    comments[cIdx] = comments[cIdx].copy(replies = replies)
+
+                    _state.value = _state.value.copy(
+                        comments = comments,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
                 }
             }
         }

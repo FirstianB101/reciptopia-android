@@ -103,13 +103,14 @@ object UseCaseModule {
             getMainIngredients = GetMainIngredientsUseCase(postDetailRepository),
             getSteps = GetStepsUseCase(postDetailRepository),
             getSubIngredients = GetSubIngredientsUseCase(postDetailRepository),
-            deletePost = DeletePostUseCase(postDetailRepository)
+            deletePost = DeletePostUseCase(postDetailRepository),
+            getOwnerProfileImage = GetOwnerProfileImageUseCase(postRepository)
         )
     }
 
     @Provides
     @Singleton
-    fun providePostDetailChatUseCases(repository: PostDetailChatRepository): PostDetailChatUseCases{
+    fun providePostDetailChatUseCases(repository: PostDetailChatRepository, postRepository: PostRepository): PostDetailChatUseCases{
         return PostDetailChatUseCases(
             getComments = GetCommentsUseCase(repository),
             getReplies = GetRepliesUseCase(repository),
@@ -123,7 +124,8 @@ object UseCaseModule {
             getOwner = GetCommentOwnerUseCase(repository),
             createReply = CreateReplyUseCase(repository),
             deleteComment = DeleteCommentUseCase(repository),
-            deleteReply = DeleteReplyUseCase(repository)
+            deleteReply = DeleteReplyUseCase(repository),
+            getOwnerProfileImage = GetOwnerProfileImageUseCase(postRepository)
         )
     }
 

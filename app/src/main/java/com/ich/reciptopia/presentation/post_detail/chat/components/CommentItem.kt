@@ -1,14 +1,11 @@
-package com.ich.reciptopia.presentation.post_detail.components
+package com.ich.reciptopia.presentation.post_detail.chat.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ich.reciptopia.R
+import com.ich.reciptopia.common.components.ProfileImageIfExistOrAccountIcon
 import com.ich.reciptopia.domain.model.Comment
 
 @Composable
@@ -34,17 +32,11 @@ fun CommentItem(
             .then(modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(
-            onClick = {}
+
+        Box(
+            modifier = Modifier.padding(8.dp)
         ) {
-            Icon(
-                modifier = Modifier
-                    .size(50.dp)
-                    .padding(8.dp),
-                imageVector = Icons.Filled.AccountCircle,
-                contentDescription = "",
-                tint = colorResource(id = R.color.main_color)
-            )
+            ProfileImageIfExistOrAccountIcon(comment.owner?.profileImage)
         }
 
         Column(
@@ -81,7 +73,7 @@ fun CommentItem(
                     )
 
                     Text(
-                        text = " 123",
+                        text = " 0",
                         color = Color.Gray
                     )
                 }

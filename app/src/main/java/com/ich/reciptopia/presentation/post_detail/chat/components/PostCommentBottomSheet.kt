@@ -31,8 +31,6 @@ import com.ich.reciptopia.common.components.EmptyText
 import com.ich.reciptopia.presentation.main.search.components.CustomTextField
 import com.ich.reciptopia.presentation.post_detail.chat.PostDetailChatEvent
 import com.ich.reciptopia.presentation.post_detail.chat.PostDetailChatViewModel
-import com.ich.reciptopia.presentation.post_detail.components.CommentItem
-import com.ich.reciptopia.presentation.post_detail.components.ReplyItem
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialApi::class)
