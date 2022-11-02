@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "619054888707",
+    "project_id": "reciptopia-525b0",
+    "storage_bucket": "reciptopia-525b0.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:619054888707:android:53125b00666f89091d5b36",
+        "android_client_info": {
+          "package_name": "com.ich.reciptopia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "619054888707-2kgor7u2996otf1dhb5gnbgqt0qbkv7f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ich.reciptopia",
+            "certificate_hash": "f4d12ea639efe692664027d4fdecd924ce337372"
+          }
+        },
+        {
+          "client_id": "619054888707-6ad1gbgump7m629067dssudefql3qvjq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTleg1bPrNky0yIbHnVrlrpZA6Dyl_OCE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "619054888707-6ad1gbgump7m629067dssudefql3qvjq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

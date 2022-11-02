@@ -1,10 +1,7 @@
 package com.ich.reciptopia.di
 
 import com.ich.reciptopia.domain.repository.*
-import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
-import com.ich.reciptopia.domain.use_case.community.CreatePostUseCase
-import com.ich.reciptopia.domain.use_case.community.GetPostsByTimeUseCase
-import com.ich.reciptopia.domain.use_case.community.GetPostsByViewsUseCase
+import com.ich.reciptopia.domain.use_case.community.*
 import com.ich.reciptopia.domain.use_case.my_page.login.LoginUseCase
 import com.ich.reciptopia.domain.use_case.my_page.profile.EditNicknameUseCase
 import com.ich.reciptopia.domain.use_case.my_page.profile.GetAccountProfileImgUseCase
@@ -83,7 +80,9 @@ object UseCaseModule {
             unFavoritePost = UnFavoritePostUseCase(postRepository),
             likePost = PostLikeUseCase(postRepository),
             unlikePost = PostUnLikeUseCase(postRepository),
-            getOwnerProfileImage = GetOwnerProfileImageUseCase(postRepository)
+            getOwnerProfileImage = GetOwnerProfileImageUseCase(postRepository),
+            uploadPostImageUseCase = UploadPostImageUseCase(communityRepository),
+            uploadStepImageUseCase = UploadStepImageUseCase(communityRepository)
         )
     }
 

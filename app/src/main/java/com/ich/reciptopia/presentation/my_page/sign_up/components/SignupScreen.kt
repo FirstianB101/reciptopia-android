@@ -163,6 +163,7 @@ fun SignupScreen(
                 )
             }
 
+            /*
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -188,6 +189,8 @@ fun SignupScreen(
                     }
                 }
             }
+
+             */
         }
     }
 

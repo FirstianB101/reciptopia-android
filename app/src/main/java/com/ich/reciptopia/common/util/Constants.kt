@@ -11,6 +11,8 @@ object Constants {
     const val MAX_IMAGE_CNT = 10
     const val PW_MIN_LENGTH = 8
     const val PW_MAX_LENGTH = 16
+    const val NICKNAME_MIN_LENGTH = 5
+    const val NICKNAME_MAX_LENGTH = 16
 
     const val PW_EXPRESSION = "^[\\x00-\\x7F]*$"
 }

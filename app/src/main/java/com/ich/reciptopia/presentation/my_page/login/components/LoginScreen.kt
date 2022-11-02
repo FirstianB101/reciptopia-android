@@ -154,6 +154,7 @@ fun LoginScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                /*
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -168,6 +169,8 @@ fun LoginScreen(
                         color = Color.White
                     )
                 }
+
+                 */
 
                 Spacer(modifier = Modifier.height(8.dp))
 

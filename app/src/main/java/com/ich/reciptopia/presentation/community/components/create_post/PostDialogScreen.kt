@@ -17,10 +17,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Image
 import androidx.compose.runtime.Composable
@@ -142,13 +139,7 @@ fun PostDialogScreen(
                             if (images.size < Constants.MAX_IMAGE_CNT) {
                                 galleryLauncher.launch("image/*")
                             } else {
-                                Toast
-                                    .makeText(
-                                        context,
-                                        "이미지는 최대 10장까지 추가할 수 있습니다.",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                    .show()
+                                Toast.makeText(context, "이미지는 최대 10장까지 추가할 수 있습니다.", Toast.LENGTH_SHORT).show()
                             }
                         },
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -273,5 +264,14 @@ fun PostDialogScreen(
                 viewModel.onEvent(CommunityScreenEvent.StepDialogStateChanged(false))
             }
         )
+    }
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ){
+        if(state.value.isLoading){
+            CircularProgressIndicator()
+        }
     }
 }

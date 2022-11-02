@@ -9,5 +9,6 @@ sealed class SignUpFormatErrors(val msg: String){
     object PasswordFormatError: SignUpFormatErrors("비밀번호에 사용할 수 없는 문자가 존재합니다")
     object PasswordCheckError: SignUpFormatErrors("비밀번호를 확인해주세요")
     object NicknameBlank: SignUpFormatErrors("닉네임을 입력해주세요")
+    object NicknameLengthError: SignUpFormatErrors("닉네임은 5~16자로 입력해주세요")
     object NoError: SignUpFormatErrors("")
 }

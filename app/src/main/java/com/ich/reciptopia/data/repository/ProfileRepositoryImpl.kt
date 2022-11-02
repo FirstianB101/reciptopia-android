@@ -35,7 +35,7 @@ class ProfileRepositoryImpl(
         val bitmapMultipartBody: MultipartBody.Part =
             MultipartBody.Part.createFormData("imgFile", fileName, bitmapRequestBody)
 
-        return api.putAccountProfileImg(ownerId, bitmapMultipartBody).toProfileImageResponse()
+        return api.putAccountProfileImage(ownerId, bitmapMultipartBody).toProfileImageResponse()
     }
 
     override suspend fun getAccountProfileImage(ownerId: Long): Bitmap? {

@@ -60,6 +60,10 @@ interface ReciptopiaApi {
     @DELETE("posts/{id}")
     suspend fun deletePost(@Path("id")postId: Long): Response<Unit>
 
+    @POST("post/images")
+    suspend fun getPostImageIds(@Query("postId")postId: Long): PostImagesDto
+
+
 
     // Comment
     @GET("post/comments/{id}")
@@ -110,6 +114,9 @@ interface ReciptopiaApi {
 
     @DELETE("post/recipe/steps/{id}")
     suspend fun deleteStep(@Path("id")stepId: Long): Response<Unit>
+
+    @GET("post/recipe/step/images")
+    suspend fun getStepImageIds(@Query("stepId")stepId: Long): StepImagesDto
 
 
     // MainIngredient
@@ -229,10 +236,10 @@ interface ReciptopiaApi {
     @DELETE("account/favorites/{id}")
     suspend fun deleteFavorite(@Path("id")favoriteId: Long?): Response<Unit>
 
-    // AccountProfileImg
+    // Images
     @Multipart
     @POST("account/profileImages")
-    suspend fun putAccountProfileImg(
+    suspend fun putAccountProfileImage(
         @Part("ownerId") ownerId: Long,
         @Part imgFile: MultipartBody.Part
     ): ProfileImageResponseDto
@@ -240,5 +247,23 @@ interface ReciptopiaApi {
     @GET("account/profileImages/download")
     suspend fun getAccountProfileImage(@Query("ownerId")ownerId: Long): ResponseBody
 
-    // Post
+    @Multipart
+    @POST("post/bulk-images")
+    suspend fun uploadPostImages(
+        @Part("postId") postId: Long,
+        @Part imgFiles: List<MultipartBody.Part>
+    ): PostImageResponseDto
+
+    @GET("post/images/{id}/download")
+    suspend fun getPostImage(@Path("id")postImgId: Long): ResponseBody
+
+    @Multipart
+    @POST("post/recipe/step/images")
+    suspend fun putStepImage(
+        @Part("stepId") stepId: Long,
+        @Part imgFile: MultipartBody.Part
+    ): StepImageResponseDto
+
+    @GET("post/recipe/step/images/{id}/download")
+    suspend fun getStepImage(@Query("ownerId")stepId: Long): ResponseBody
 }

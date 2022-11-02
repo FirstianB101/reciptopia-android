@@ -3,6 +3,8 @@ package com.ich.reciptopia.presentation.my_page.sign_up
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ich.reciptopia.common.util.Constants
+import com.ich.reciptopia.common.util.Constants.NICKNAME_MAX_LENGTH
+import com.ich.reciptopia.common.util.Constants.NICKNAME_MIN_LENGTH
 import com.ich.reciptopia.common.util.Resource
 import com.ich.reciptopia.domain.model.Account
 import com.ich.reciptopia.domain.use_case.my_page.sign_up.SignUpUseCases
@@ -132,6 +134,7 @@ class SignUpViewModel @Inject constructor(
             _state.value.password.isBlank() -> SignUpFormatErrors.PasswordBlank
             _state.value.password != _state.value.passwordCheck -> SignUpFormatErrors.PasswordCheckError
             _state.value.nickname.isBlank() -> SignUpFormatErrors.NicknameBlank
+            _state.value.nickname.length !in NICKNAME_MIN_LENGTH..NICKNAME_MAX_LENGTH -> SignUpFormatErrors.NicknameLengthError
             _state.value.password.length < Constants.PW_MIN_LENGTH -> SignUpFormatErrors.PasswordTooShort
             _state.value.password.length > Constants.PW_MAX_LENGTH -> SignUpFormatErrors.PasswordTooLong
             !Pattern.matches(Constants.PW_EXPRESSION, _state.value.password) -> SignUpFormatErrors.PasswordFormatError

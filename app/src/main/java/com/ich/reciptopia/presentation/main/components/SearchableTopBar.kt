@@ -96,6 +96,7 @@ fun SearchableTopBar(
             )
         }
 
+        /*
         IconButton(
             onClick = onNotificationButtonClicked
         ) {
@@ -106,6 +107,7 @@ fun SearchableTopBar(
                 tint = Color.Black
             )
         }
+         */
     }
 
     if(!searchMode) {

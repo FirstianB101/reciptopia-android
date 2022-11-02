@@ -1,5 +1,6 @@
 package com.ich.reciptopia.presentation.community
 
+import android.net.Uri
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -12,7 +13,6 @@ import com.ich.reciptopia.domain.model.*
 import com.ich.reciptopia.domain.use_case.community.CommunityUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -134,30 +134,16 @@ class CommunityViewModel @Inject constructor(
                     getOwnerProfileOfPost(i, post.ownerId)
                 }
             }
-            is CommunityScreenEvent.CreatePost -> {
-                val mainIngredients = mutableListOf<MainIngredient>()
-                val subIngredients = mutableListOf<SubIngredient>()
-
-                _state.value.newPostChips.forEach { chipState ->
-                    if(chipState.isSubIngredient.value){
-                        subIngredients.add(SubIngredient(name = chipState.text, detail = chipState.detail))
-                    }else{
-                        mainIngredients.add(MainIngredient(name = chipState.text, detail = chipState.detail))
-                    }
+            is CommunityScreenEvent.CreatePost -> viewModelScope.launch{
+                _state.value.newPictureUrls.forEachIndexed { idx, uri ->
+                    uploadPostImages(idx, Uri.parse(uri)).join()
                 }
-                val steps = _state.value.newPostSteps
-                val newPost = RecipePost(
-                    post = Post(
-                        ownerId = _state.value.currentUser?.account?.id,
-                        title = _state.value.newPostTitle,
-                        content = _state.value.newPostContent,
-                        pictureUrls = _state.value.newPictureUrls
-                    ),
-                    mainIngredients = RecipePostMainIngredients(mainIngredients),
-                    subIngredients = RecipePostSubIngredients(subIngredients),
-                    steps = RecipePostSteps(steps)
-                )
-                createRecipePost(newPost)
+
+                _state.value.newPostSteps.forEachIndexed { idx, step ->
+                    uploadStepImages(idx, Uri.parse(step.pictureUrl)).join()
+                }
+
+                makePost()
             }
             is CommunityScreenEvent.FavoriteButtonClicked -> {
                 if (event.post.isFavorite)
@@ -527,6 +513,82 @@ class CommunityViewModel @Inject constructor(
                     )
                     _state.value = _state.value.copy(
                         posts = posts,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun makePost(){
+        val mainIngredients = mutableListOf<MainIngredient>()
+        val subIngredients = mutableListOf<SubIngredient>()
+
+        _state.value.newPostChips.forEach { chipState ->
+            if(chipState.isSubIngredient.value){
+                subIngredients.add(SubIngredient(name = chipState.text, detail = chipState.detail))
+            }else{
+                mainIngredients.add(MainIngredient(name = chipState.text, detail = chipState.detail))
+            }
+        }
+        val steps = _state.value.newPostSteps
+        val newPost = RecipePost(
+            post = Post(
+                ownerId = _state.value.currentUser?.account?.id,
+                title = _state.value.newPostTitle,
+                content = _state.value.newPostContent,
+                pictureUrls = _state.value.newPictureUrls
+            ),
+            mainIngredients = RecipePostMainIngredients(mainIngredients),
+            subIngredients = RecipePostSubIngredients(subIngredients),
+            steps = RecipePostSteps(steps)
+        )
+        createRecipePost(newPost)
+    }
+
+    private fun uploadPostImages(idx: Int, uri: Uri) = viewModelScope.launch{
+        useCases.uploadPostImageUseCase(uri).collect{ result ->
+            when (result) {
+                is Resource.Success -> {
+                    val images = _state.value.newPictureUrls.toMutableList()
+                    images[idx] = result.data!!
+                    _state.value = _state.value.copy(
+                        newPictureUrls = images,
+                        isLoading = false
+                    )
+                }
+                is Resource.Loading -> {
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    _state.value = _state.value.copy(
+                        isLoading = false
+                    )
+                }
+            }
+        }
+    }
+
+    private fun uploadStepImages(idx: Int, uri: Uri) = viewModelScope.launch{
+        useCases.uploadStepImageUseCase(uri).collect{ result ->
+            when (result) {
+                is Resource.Success -> {
+                    val steps = _state.value.newPostSteps.toMutableList()
+                    steps[idx] = steps[idx].copy(pictureUrl = result.data!!)
+                    _state.value = _state.value.copy(
+                        newPostSteps = steps,
                         isLoading = false
                     )
                 }
